@@ -1,5 +1,6 @@
 package;
 
+import burst.util.BurstImageUtil;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
@@ -10,7 +11,6 @@ import flixel.ui.FlxButton;
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
 
-import sys.Http;
 import sys.io.File;
 
 class PlayState extends FlxState
@@ -35,6 +35,8 @@ class PlayState extends FlxState
 		Sys.print("\nDecrypt: ");
 		encrypted = BitmapData.fromFile("data/Test.png");
 		Sys.println(BurstEncryptor.decrypt(encrypted));
+
+		BurstImageUtil.getFromGoogleSearch();
 	}
 
 	override public function update(elapsed:Float):Void
