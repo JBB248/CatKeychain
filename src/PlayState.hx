@@ -1,9 +1,9 @@
 package;
 
-import burst.util.BurstImageUtil;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
@@ -36,7 +36,20 @@ class PlayState extends FlxState
 		encrypted = BitmapData.fromFile("data/Test.png");
 		Sys.println(BurstEncryptor.decrypt(encrypted));
 
-		BurstImageUtil.getFromGoogleSearch();
+		var generator = new CatGenerator();
+		generator.requestCat();
+		generator.onCatGenerated.add((pixels) -> {
+			var sprite = new FlxSprite().loadGraphic(pixels);
+			if(sprite.width > sprite.height)
+				sprite.setGraphicSize(FlxG.width);
+			else
+				sprite.setGraphicSize(0, FlxG.height);
+			sprite.updateHitbox();
+			sprite.screenCenter();
+			add(sprite);
+
+			generator.requestCat();
+		});
 	}
 
 	override public function update(elapsed:Float):Void
