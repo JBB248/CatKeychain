@@ -1,6 +1,5 @@
 package burst;
 
-import flixel.FlxG;
 import openfl.display.BitmapData;
 
 class BurstEncryptor
@@ -16,7 +15,7 @@ class BurstEncryptor
         }
 		else if(index != Message.length - 1)
 		{
-			FlxG.log.warn('Cannot encrypt ${Message} because it contains "~"');
+			flixel.FlxG.log.warn('Cannot encrypt ${Message} because it contains "~"');
             return null;
         }
 

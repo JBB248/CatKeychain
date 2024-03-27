@@ -9,7 +9,6 @@ import openfl.events.HTTPStatusEvent;
 import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
-import openfl.net.URLRequestHeader;
 
 class CatGenerator
 {
@@ -17,23 +16,26 @@ class CatGenerator
 
     var _request:URLRequest;
     var _loader:URLLoader;
+
+    var _requestCount:Int = 0;
     var _busy:Bool = false;
 
     public function new()
     {
-        _request = new URLRequest("https://api.thecatapi.com/v1/images/search");
+        _request = new URLRequest('https://api.thecatapi.com/v1/images/search');
 
         _loader = new URLLoader();
         _loader.dataFormat = URLLoaderDataFormat.TEXT;
         _loader.addEventListener(Event.COMPLETE, onComplete);
         _loader.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onStatusRecieved);
-        _loader.load(_request);
     }
 
     public function requestCat():Void
     {
+        _requestCount++;
+
         if(_busy)
-            return FlxG.log.warn("Cat generator is busy");
+            return FlxG.log.add("Cat generator is busy");
 
         _busy = true;
         _loader.load(_request);
@@ -61,7 +63,15 @@ class CatGenerator
     function onCatLoaded(event:Event):Void
     {
         _busy = false;
+        _requestCount--;
+
         onCatGenerated.dispatch(BitmapData.fromBytes(event.target.data));
+
+        if(_requestCount > 0)
+        {
+            _requestCount--;
+            requestCat();
+        }
     }
 
     @:noCompletion function get_onCatGenerated():FlxTypedSignal<BitmapData->Void>

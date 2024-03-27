@@ -38,8 +38,11 @@ class PlayState extends FlxState
 
 		var generator = new CatGenerator();
 		generator.requestCat();
+		generator.requestCat();
+
 		generator.onCatGenerated.add((pixels) -> {
 			var sprite = new FlxSprite().loadGraphic(pixels);
+			sprite.antialiasing = true;
 			if(sprite.width > sprite.height)
 				sprite.setGraphicSize(FlxG.width);
 			else
@@ -47,8 +50,6 @@ class PlayState extends FlxState
 			sprite.updateHitbox();
 			sprite.screenCenter();
 			add(sprite);
-
-			generator.requestCat();
 		});
 	}
 
