@@ -7,9 +7,22 @@ package burst.sys;
 /**
  * Helper class to get variables from embedded variables in .env file
  * 
+ * __Example formats:__
+ * ```text
+ * TEST_1=test1
+ * TEST_2="test2" TEST_2POINT5=test2.5
+ * TEST_3 = 2.25
+ * TEST_4=false
+ * TEST_5=`~!@$%^&*()_=-+{}[]\|<>,./?
+ * ```
+ * 
  * _Note:_ A .env file must exist at the project root _AND_ 
  * `BURST_DOTENV` must be flagged for this class to function properly. 
- * Otherwise, the project will throw a missing asset error or all functions _always_ will return null.
+ * Otherwise, the project will throw a missing asset error or functions will _always_ return null.
+ * 
+ * _Note:_ Features such as `export`, interpolation, comments, and multi-lined variables are not supported as of now
+ * 
+ * [Dotenv file format](https://hexdocs.pm/dotenvy/dotenv-file-format.html)
  */
 class BurstDotEnv
 {
@@ -24,7 +37,7 @@ class BurstDotEnv
     {
         #if BURST_DOTENV
         var content = new DotEnvFile().toString();
-        var check = ~/\w+=([A-z0-9\.]+|".+?")/;
+        var check = ~/[A-Z_]+[A-Z0-9_]*\s*=\s*([^\s"]+|".+?")/i;
 
         while(check.match(content))
         {
