@@ -1,3 +1,4 @@
 # Unnecessary
 export/*
 *.java
+.env

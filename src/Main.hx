@@ -1,11 +1,17 @@
 package;
 
-class Main extends openfl.display.Sprite
+import burst.sys.BurstDotEnv;
+import flixel.FlxGame;
+import openfl.display.Sprite;
+
+class Main extends Sprite
 {
 	public function new()
 	{
 		super();
 
-		addChild(new flixel.FlxGame(0, 0, PlayState, true));
+		BurstDotEnv.init();
+
+		addChild(new FlxGame(0, 0, PlayState, true));
 	}
 }
