@@ -37,7 +37,7 @@ class PlayState extends FlxState
 		Sys.println(BurstEncryptor.decrypt(encrypted));
 
 		var generator = new CatGenerator();
-		generator.requestCat(2);
+		generator.requestCat(15);
 
 		generator.onCatGenerated.add((pixels) -> {
 			var sprite = new FlxSprite().loadGraphic(pixels);

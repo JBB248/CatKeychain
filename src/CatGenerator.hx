@@ -53,6 +53,7 @@ class CatGenerator
             "https://api.thecatapi.com/v1/images/search"
             + "?api_key=" + BurstDotEnv.get("CAT_API_KEY")
             + "&limit=" + limit
+            + "&mime_types=jpg"
         ));
     }
 
