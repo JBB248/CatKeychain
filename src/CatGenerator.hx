@@ -10,6 +10,7 @@ import haxe.Json;
 import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.events.HTTPStatusEvent;
+import openfl.events.ProgressEvent;
 import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
@@ -19,7 +20,7 @@ class CatGenerator
     public var onCatGenerated(get, null):FlxTypedSignal<BitmapData -> Void>;
 
     var loader:URLLoader;
-    var catLoader:CatLoader;
+    public var catLoader:CatLoader;
 
     var busy:Bool = false;
     var requestCount:Int = 0;
@@ -51,9 +52,9 @@ class CatGenerator
         requestCount -= limit;
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
-            + "?api_key=" + BurstDotEnv.get("CAT_API_KEY")
-            + "&limit=" + limit
+            + "?limit=" + limit
             + "&mime_types=jpg"
+            + "&api_key=" + BurstDotEnv.get("CAT_API_KEY")
         ));
     }
 
@@ -67,9 +68,9 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var requests = [for(object in cast(Json.parse(event.target.data), Array<Dynamic>)) object.url];
+        var response:CatResponseData = Json.parse(event.target.data);
 
-        catLoader.pushRequests(requests);
+        catLoader.pushRequests([for(object in response) object.url]);
 
         if(requestCount > 0)
             getDataFromServer();
@@ -85,6 +86,8 @@ class CatGenerator
 
 class CatLoader
 {
+    public var progress:Float = 0.0;
+
     var loader:URLLoader;
     var requests:Array<String> = [];
     var busy:Bool = false;
@@ -97,6 +100,7 @@ class CatLoader
 
         loader = new URLLoader();
         loader.dataFormat = URLLoaderDataFormat.BINARY;
+        loader.addEventListener(ProgressEvent.PROGRESS, onProgress);
         loader.addEventListener(Event.COMPLETE, dispatchCat);
     }
 
@@ -111,6 +115,11 @@ class CatLoader
         }
     }
 
+    function onProgress(event:ProgressEvent):Void
+    {
+        progress = event.bytesLoaded / event.bytesTotal;
+    }
+
     function dispatchCat(event:Event):Void
     {
         generator.onCatGenerated.dispatch(BitmapData.fromBytes(event.target.data));
@@ -122,13 +131,13 @@ class CatLoader
     }
 }
 
-typedef CatResponseData = {
+typedef CatResponseData = Array<{
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;
     var width:Int;
     var height:Int;
-}
+}>;
 
 typedef CatBreedData = {
     var weight: {
@@ -170,4 +179,4 @@ typedef CatBreedData = {
     var wikipedia_url:String;
     var hypoallergenic:Int;
     var reference_image_id:String;
-}
+};
