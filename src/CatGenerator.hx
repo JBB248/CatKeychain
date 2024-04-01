@@ -17,7 +17,7 @@ import openfl.net.URLRequest;
 
 class CatGenerator
 {
-    public var onCatGenerated(get, null):FlxTypedSignal<BitmapData -> Void>;
+    public var onCatGenerated(get, null):FlxTypedSignal<BitmapData->Void>;
 
     var loader:URLLoader;
     public var catLoader:CatLoader;

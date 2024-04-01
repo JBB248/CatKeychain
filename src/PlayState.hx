@@ -1,5 +1,6 @@
 package;
 
+import openfl.geom.Rectangle;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
@@ -7,7 +8,6 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.ui.FlxBar;
 import flixel.ui.FlxButton;
@@ -29,7 +29,7 @@ class PlayState extends FlxState
 	public var photoCount:Int = 15;
 	public var target:Int = 0;
 
-	var photoFrameSize:FlxPoint = FlxPoint.get(200, 200);
+	var photoFrameSize:Float = 50.0;
 
 	public var generator:CatGenerator;
 
@@ -64,11 +64,18 @@ class PlayState extends FlxState
 
 	function catGenerated(pixels:BitmapData):Void
 	{
+		if(photos.length == 0)
+			pixels.fillRect(new Rectangle(0, 0, pixels.width * 0.5, pixels.height * 0.5), 0xFFFF0000);
+
 		var sprite = new FlxSprite().loadGraphic(pixels);
 		sprite.antialiasing = true;
-		shrinkSpriteByDepth(sprite, photos.length);
-		sprite.screenCenter();
+		if(sprite.frameWidth > sprite.frameHeight)
+			sprite.setGraphicSize(photoFrameSize);
+		else
+			sprite.setGraphicSize(0, photoFrameSize);
 
+		sprite.updateHitbox();
+		sprite.screenCenter();
 		photos.add(sprite);
 
 		if(photos.length == photoCount)
@@ -85,10 +92,12 @@ class PlayState extends FlxState
 		do
 		{
 			var theta = 2 * i * Math.PI / photoCount;
-			var dx = r * Math.cos(theta);
-			var dy = r * Math.sin(theta);
+			var dx = r * Math.sin(theta);
+			var dy = r * Math.cos(theta);
+			var dz = r * -Math.cos(theta) / photoFrameSize;
 
 			var sprite = photos.members[i];
+			setSpriteZ(sprite, dz);
 			sprite.x = cx + dx - sprite.width / 2;
 			sprite.y = cy + dy - sprite.height / 2;
 
@@ -102,12 +111,12 @@ class PlayState extends FlxState
 		super.update(elapsed);
 	}
 
-	function shrinkSpriteByDepth(sprite:FlxSprite, distance:Float):Void
+	function setSpriteZ(sprite:FlxSprite, value:Float):Void
 	{
 		if(sprite.frameWidth > sprite.frameHeight)
-			sprite.setGraphicSize(photoFrameSize.x / distance);
+			sprite.setGraphicSize(photoFrameSize / Math.pow(2, value));
 		else
-			sprite.setGraphicSize(0, photoFrameSize.y / distance);
+			sprite.setGraphicSize(0, photoFrameSize / Math.pow(2, value));
 
 		sprite.updateHitbox();
 	}
