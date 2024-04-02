@@ -1,6 +1,5 @@
 package;
 
-import openfl.geom.Rectangle;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
@@ -14,8 +13,18 @@ import flixel.ui.FlxButton;
 
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
+import openfl.geom.Rectangle;
 
 import sys.io.File;
+
+typedef CarouselItem = {
+	var sprite:FlxSprite;
+	var position: {
+		var x:Float;
+		var y:Float;
+		var z:Float;
+	}
+};
 
 class PlayState extends FlxState
 {
@@ -26,12 +35,14 @@ class PlayState extends FlxState
 	public var progress(get, never):Float;
 
 	public var photos:FlxTypedGroup<FlxSprite>;
+	public var carousel:Array<CarouselItem> = [];
 	public var photoCount:Int = 15;
 	public var target:Int = 0;
 
 	var photoFrameSize:Float = 50.0;
 
 	public var generator:CatGenerator;
+	public var ready:Bool = false;
 
 	var pixels:BitmapData;
 
@@ -96,29 +107,70 @@ class PlayState extends FlxState
 			var dy = r * Math.cos(theta);
 			var dz = r * -Math.cos(theta) / photoFrameSize;
 
-			var sprite = photos.members[i];
-			setSpriteZ(sprite, dz);
-			sprite.x = cx + dx - sprite.width / 2;
-			sprite.y = cy + dy - sprite.height / 2;
+			carousel.push({
+				sprite: photos.members[i], 
+				position: {
+					x: cx + dx,
+					y: cy + dy,
+					z: photoFrameSize / Math.pow(2, dz)
+				}
+			});
 
 			i = FlxMath.wrap(i + 1, 0, photoCount - 1);
 		}
 		while(i != target);
+
+		var newMembers = carousel.copy();
+		newMembers.sort((obj1, obj2) -> Std.int(obj1.position.z - obj2.position.z));
+		photos.members = [for(obj in newMembers) obj.sprite];
+
+		ready = true;
 	}
 
+	function setSpriteZ(sprite:FlxSprite, value:Float):Float
+	{
+		if(sprite.frameWidth > sprite.frameHeight)
+			sprite.setGraphicSize(value);
+		else
+			sprite.setGraphicSize(0, value);
+		sprite.updateHitbox();
+
+		return value;
+	}
+
+	var delay = 0.4;
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		if(ready)
+		{
+			delay -= elapsed;
+			if(delay <= 0)
+			{
+				delay = 0.4;
+				spinWheel();
+			}
+		}
 	}
 
-	function setSpriteZ(sprite:FlxSprite, value:Float):Void
+	function spinWheel()
 	{
-		if(sprite.frameWidth > sprite.frameHeight)
-			sprite.setGraphicSize(photoFrameSize / Math.pow(2, value));
-		else
-			sprite.setGraphicSize(0, photoFrameSize / Math.pow(2, value));
+		var shifted = [for(obj in carousel) obj.sprite];
+		shifted.unshift(shifted.pop());
 
-		sprite.updateHitbox();
+		for(i in 0...carousel.length)
+		{
+			var sprite = carousel[i].sprite = shifted[i];
+			var position = carousel[i].position;
+
+			setSpriteZ(sprite, position.z);
+			sprite.setPosition(position.x - sprite.width * 0.5, position.y - sprite.height * 0.5);
+		}
+
+		var newMembers = carousel.copy();
+		newMembers.sort((obj1, obj2) -> Std.int(obj1.position.z - obj2.position.z));
+		photos.members = [for(obj in newMembers) obj.sprite];
 	}
 
 	@:noCompletion function get_progress():Float
