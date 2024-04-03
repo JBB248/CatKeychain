@@ -149,15 +149,15 @@ class PlayState extends FlxState
 			if(delay <= 0)
 			{
 				delay = 0.4;
-				spinWheel();
+				spinWheel(false);
 			}
 		}
 	}
 
-	function spinWheel()
+	function spinWheel(CCW:Bool = false)
 	{
 		var shifted = [for(obj in carousel) obj.sprite];
-		shifted.unshift(shifted.pop());
+		shifted = shifted.concat(shifted.splice(0, (CCW ? shifted.length - 1 : 1)));
 
 		for(i in 0...carousel.length)
 		{
