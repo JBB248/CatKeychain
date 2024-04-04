@@ -1,5 +1,6 @@
 package;
 
+import flixel.tweens.FlxTween;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
@@ -18,13 +19,13 @@ import openfl.geom.Rectangle;
 import sys.io.File;
 
 typedef CarouselItem = {
-	var sprite:FlxSprite;
+	var sprite:CarouselSprite;
 	var position: {
 		var x:Float;
 		var y:Float;
 		var z:Float;
 	}
-};
+}
 
 class PlayState extends FlxState
 {
@@ -34,7 +35,7 @@ class PlayState extends FlxState
 	public var progressBar:FlxBar;
 	public var progress(get, never):Float;
 
-	public var photos:FlxTypedGroup<FlxSprite>;
+	public var photos:FlxTypedGroup<CarouselSprite>;
 	public var carousel:Array<CarouselItem> = [];
 	public var photoCount:Int = 15;
 	public var target:Int = 0;
@@ -78,7 +79,8 @@ class PlayState extends FlxState
 		if(photos.length == 0)
 			pixels.fillRect(new Rectangle(0, 0, pixels.width * 0.5, pixels.height * 0.5), 0xFFFF0000);
 
-		var sprite = new FlxSprite().loadGraphic(pixels);
+		var sprite = new CarouselSprite();
+		sprite.loadGraphic(pixels);
 		sprite.antialiasing = true;
 		if(sprite.frameWidth > sprite.frameHeight)
 			sprite.setGraphicSize(photoFrameSize);
@@ -127,17 +129,6 @@ class PlayState extends FlxState
 		ready = true;
 	}
 
-	function setSpriteZ(sprite:FlxSprite, value:Float):Float
-	{
-		if(sprite.frameWidth > sprite.frameHeight)
-			sprite.setGraphicSize(value);
-		else
-			sprite.setGraphicSize(0, value);
-		sprite.updateHitbox();
-
-		return value;
-	}
-
 	var delay = 0.4;
 	override public function update(elapsed:Float):Void
 	{
@@ -151,6 +142,9 @@ class PlayState extends FlxState
 				delay = 0.4;
 				spinWheel(false);
 			}
+			var newMembers = carousel.copy();
+			newMembers.sort((obj1, obj2) -> Std.int(obj1.sprite.z - obj2.sprite.z));
+			photos.members = [for(obj in newMembers) obj.sprite];
 		}
 	}
 
@@ -164,13 +158,17 @@ class PlayState extends FlxState
 			var sprite = carousel[i].sprite = shifted[i];
 			var position = carousel[i].position;
 
-			setSpriteZ(sprite, position.z);
-			sprite.setPosition(position.x - sprite.width * 0.5, position.y - sprite.height * 0.5);
-		}
+			var tween = FlxTween.tween(sprite, {
+				x: position.x - sprite.width * 0.5, 
+				y: position.y - sprite.height * 0.5,
+				z: position.z
+			});
 
-		var newMembers = carousel.copy();
-		newMembers.sort((obj1, obj2) -> Std.int(obj1.position.z - obj2.position.z));
-		photos.members = [for(obj in newMembers) obj.sprite];
+			if(sprite.transitionTween != null)
+				sprite.transitionTween.then(tween);
+
+			sprite.transitionTween = tween;
+		}
 	}
 
 	@:noCompletion function get_progress():Float
