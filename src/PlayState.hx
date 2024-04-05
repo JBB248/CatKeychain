@@ -1,30 +1,31 @@
 package;
 
-import flixel.tweens.FlxTween;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.ui.FlxButton;
 
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
+import openfl.events.KeyboardEvent;
 import openfl.geom.Rectangle;
 
 import sys.io.File;
 
 typedef CarouselItem = {
 	var sprite:CarouselSprite;
-	var position: {
-		var x:Float;
-		var y:Float;
-		var z:Float;
-	}
+	var x:Float;
+	var y:Float;
+	var z:Float;
 }
 
 class PlayState extends FlxState
@@ -40,7 +41,7 @@ class PlayState extends FlxState
 	public var photoCount:Int = 15;
 	public var target:Int = 0;
 
-	var photoFrameSize:Float = 50.0;
+	var photoFrameSize:Float = 200.0;
 
 	public var generator:CatGenerator;
 	public var ready:Bool = false;
@@ -62,6 +63,8 @@ class PlayState extends FlxState
 
 		add(photos);
 		add(progressBar);
+
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 
 		/*********************** Encryption ***********************/
 
@@ -99,7 +102,7 @@ class PlayState extends FlxState
 	{
 		var cx = FlxG.width / 2;
 		var cy = FlxG.height / 2;
-		var r = 100;
+		var r = photoFrameSize;
 		var i = target;
 
 		do
@@ -111,20 +114,21 @@ class PlayState extends FlxState
 
 			carousel.push({
 				sprite: photos.members[i], 
-				position: {
-					x: cx + dx,
-					y: cy + dy,
-					z: photoFrameSize / Math.pow(2, dz)
-				}
+				x: cx + dx,
+				y: cy,
+				z: photoFrameSize / Math.pow(2, dz)
 			});
 
 			i = FlxMath.wrap(i + 1, 0, photoCount - 1);
 		}
 		while(i != target);
 
-		var newMembers = carousel.copy();
-		newMembers.sort((obj1, obj2) -> Std.int(obj1.position.z - obj2.position.z));
-		photos.members = [for(obj in newMembers) obj.sprite];
+		for(item in carousel)
+		{
+			item.sprite.x = item.x - item.sprite.width * 0.5;
+			item.sprite.y = item.y - item.sprite.height * 0.5;
+			item.sprite.z = item.x;
+		}
 
 		ready = true;
 	}
@@ -136,19 +140,24 @@ class PlayState extends FlxState
 
 		if(ready)
 		{
-			delay -= elapsed;
-			if(delay <= 0)
-			{
-				delay = 0.4;
-				spinWheel(false);
-			}
 			var newMembers = carousel.copy();
 			newMembers.sort((obj1, obj2) -> Std.int(obj1.sprite.z - obj2.sprite.z));
 			photos.members = [for(obj in newMembers) obj.sprite];
 		}
 	}
 
-	function spinWheel(CCW:Bool = false)
+	function keyPressed(event:KeyboardEvent):Void
+	{
+		switch(event.keyCode)
+		{
+			case FlxKey.LEFT:
+				spinWheel(true);
+			case FlxKey.RIGHT:
+				spinWheel(false);
+		}
+	}
+
+	function spinWheel(CCW:Bool)
 	{
 		var shifted = [for(obj in carousel) obj.sprite];
 		shifted = shifted.concat(shifted.splice(0, (CCW ? shifted.length - 1 : 1)));
@@ -156,18 +165,38 @@ class PlayState extends FlxState
 		for(i in 0...carousel.length)
 		{
 			var sprite = carousel[i].sprite = shifted[i];
-			var position = carousel[i].position;
-
-			var tween = FlxTween.tween(sprite, {
-				x: position.x - sprite.width * 0.5, 
-				y: position.y - sprite.height * 0.5,
-				z: position.z
-			});
+			var item = carousel[i];
 
 			if(sprite.transitionTween != null)
-				sprite.transitionTween.then(tween);
+			{
+				sprite.transitionTween.cancel();
+				var lastItem = null;
+				if(CCW)
+				{
+					lastItem = carousel[i - 1];
+					if(lastItem == null)
+						lastItem = carousel[carousel.length - 1];
+				}
+				else
+				{
+					lastItem = carousel[i + 1];
+					if(lastItem == null)
+						lastItem = carousel[0];
+				}
 
-			sprite.transitionTween = tween;
+				sprite.x = lastItem.x - sprite.width * 0.5;
+				sprite.y = lastItem.y - sprite.height * 0.5;
+				sprite.z = lastItem.z;
+			}
+
+			sprite.transitionTween = FlxTween.tween(sprite, {
+				x: item.x - sprite.width * 0.5, 
+				y: item.y - sprite.height * 0.5,
+				z: item.z
+			}, 0.4, {
+				ease: FlxEase.quadOut,
+				onComplete: (tween) -> sprite.transitionTween = null
+			});
 		}
 	}
 
