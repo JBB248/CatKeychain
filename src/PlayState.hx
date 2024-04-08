@@ -39,12 +39,10 @@ class PlayState extends FlxState
 	public var photos:FlxTypedGroup<CarouselSprite>;
 	public var carousel:Array<CarouselItem> = [];
 	public var photoCount:Int = 15;
-	public var target:Int = 0;
 
-	var photoFrameSize:Float = 200.0;
+	var photoFrameSize:Float = 115.0;
 
 	public var generator:CatGenerator;
-	public var ready:Bool = false;
 
 	var pixels:BitmapData;
 
@@ -79,9 +77,6 @@ class PlayState extends FlxState
 
 	function catGenerated(pixels:BitmapData):Void
 	{
-		if(photos.length == 0)
-			pixels.fillRect(new Rectangle(0, 0, pixels.width * 0.5, pixels.height * 0.5), 0xFFFF0000);
-
 		var sprite = new CarouselSprite();
 		sprite.loadGraphic(pixels);
 		sprite.antialiasing = true;
@@ -102,48 +97,41 @@ class PlayState extends FlxState
 	{
 		var cx = FlxG.width / 2;
 		var cy = FlxG.height / 2;
-		var r = photoFrameSize;
-		var i = target;
 
-		do
+		for(i in 0...photos.length)
 		{
 			var theta = 2 * i * Math.PI / photoCount;
-			var dx = r * Math.sin(theta);
-			var dy = r * Math.cos(theta);
-			var dz = r * -Math.cos(theta) / photoFrameSize;
+			var dx = 250 * Math.sin(theta);
+			var dy = 80 * Math.cos(theta);
+			var dz = -Math.cos(theta);
 
-			carousel.push({
-				sprite: photos.members[i], 
+			var sprite = photos.members[i];
+			var item = {
+				sprite: sprite, 
 				x: cx + dx,
-				y: cy,
+				y: cy + dy - 100,
 				z: photoFrameSize / Math.pow(2, dz)
-			});
+			};
 
-			i = FlxMath.wrap(i + 1, 0, photoCount - 1);
-		}
-		while(i != target);
-
-		for(item in carousel)
-		{
-			item.sprite.x = item.x - item.sprite.width * 0.5;
-			item.sprite.y = item.y - item.sprite.height * 0.5;
-			item.sprite.z = item.x;
+			carousel.push(item);
+			sprite.x = item.x - item.sprite.width * 0.5;
+			sprite.y = item.y - item.sprite.height * 0.5;
+			sprite.z = item.x;
 		}
 
-		ready = true;
+		spinWheel(true);
 	}
 
-	var delay = 0.4;
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+	}
 
-		if(ready)
-		{
-			var newMembers = carousel.copy();
-			newMembers.sort((obj1, obj2) -> Std.int(obj1.sprite.z - obj2.sprite.z));
-			photos.members = [for(obj in newMembers) obj.sprite];
-		}
+	function sortByZ():Void
+	{
+		var newMembers = carousel.copy();
+		newMembers.sort((obj1, obj2) -> Std.int(obj1.sprite.z - obj2.sprite.z));
+		photos.members = [for(obj in newMembers) obj.sprite];
 	}
 
 	function keyPressed(event:KeyboardEvent):Void
@@ -195,6 +183,7 @@ class PlayState extends FlxState
 				z: item.z
 			}, 0.4, {
 				ease: FlxEase.quadOut,
+				onUpdate: (tween) -> sortByZ(),
 				onComplete: (tween) -> sprite.transitionTween = null
 			});
 		}
