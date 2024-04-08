@@ -7,7 +7,6 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -17,7 +16,6 @@ import flixel.ui.FlxButton;
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
 import openfl.events.KeyboardEvent;
-import openfl.geom.Rectangle;
 
 import sys.io.File;
 
@@ -48,13 +46,14 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
-		photos = new FlxTypedGroup(photoCount);
-
 		progressBar = new FlxBar(0, 0, LEFT_TO_RIGHT, Std.int(FlxG.width * 0.4), 10, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFCD5D5D, 0xFF0F99EE);
 		// progressBar.screenCenter();
 		// progressBar.visible = false;
+		
+		fillCarousel();
 
+		photos = new FlxTypedGroup(photoCount);
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
@@ -78,60 +77,46 @@ class PlayState extends FlxState
 	function catGenerated(pixels:BitmapData):Void
 	{
 		var sprite = new CarouselSprite();
-		sprite.loadGraphic(pixels);
 		sprite.antialiasing = true;
-		if(sprite.frameWidth > sprite.frameHeight)
-			sprite.setGraphicSize(photoFrameSize);
-		else
-			sprite.setGraphicSize(0, photoFrameSize);
-
-		sprite.updateHitbox();
-		sprite.screenCenter();
+		sprite.loadGraphic(pixels);
 		photos.add(sprite);
 
-		if(photos.length == photoCount)
-			postCatLoad();
+		var item = carousel[0];
+		item.sprite = sprite;
+		sprite.x = item.x - sprite.width * 0.5;
+		sprite.y = item.y - sprite.height * 0.5;
+		sprite.z = item.z;
+
+		spinWheel(true);
+
+		// if(photos.length == photoCount)
+			// Notify that the carousel is ready
 	}
 
-	function postCatLoad():Void
+	function fillCarousel():Void
 	{
 		var cx = FlxG.width / 2;
 		var cy = FlxG.height / 2;
 
-		for(i in 0...photos.length)
+		for(i in 0...photoCount)
 		{
 			var theta = 2 * i * Math.PI / photoCount;
 			var dx = 250 * Math.sin(theta);
 			var dy = 80 * Math.cos(theta);
 			var dz = -Math.cos(theta);
 
-			var sprite = photos.members[i];
-			var item = {
-				sprite: sprite, 
+			carousel.push({
+				sprite: null, 
 				x: cx + dx,
 				y: cy + dy - 100,
 				z: photoFrameSize / Math.pow(2, dz)
-			};
-
-			carousel.push(item);
-			sprite.x = item.x - item.sprite.width * 0.5;
-			sprite.y = item.y - item.sprite.height * 0.5;
-			sprite.z = item.x;
+			});
 		}
-
-		spinWheel(true);
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-	}
-
-	function sortByZ():Void
-	{
-		var newMembers = carousel.copy();
-		newMembers.sort((obj1, obj2) -> Std.int(obj1.sprite.z - obj2.sprite.z));
-		photos.members = [for(obj in newMembers) obj.sprite];
 	}
 
 	function keyPressed(event:KeyboardEvent):Void
@@ -152,6 +137,8 @@ class PlayState extends FlxState
 
 		for(i in 0...carousel.length)
 		{
+			if(shifted[i] == null) continue;
+
 			var sprite = carousel[i].sprite = shifted[i];
 			var item = carousel[i];
 
@@ -183,7 +170,7 @@ class PlayState extends FlxState
 				z: item.z
 			}, 0.4, {
 				ease: FlxEase.quadOut,
-				onUpdate: (tween) -> sortByZ(),
+				onUpdate: (tween) -> photos.members.sort((s1, s2) -> Std.int(s1.z - s2.z)),
 				onComplete: (tween) -> sprite.transitionTween = null
 			});
 		}
