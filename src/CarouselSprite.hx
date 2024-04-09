@@ -16,6 +16,7 @@ class CarouselSprite extends FlxSprite
     @:noCompletion function set_z(value:Float):Float
     {
         scale.set(value / frameWidth, value / frameHeight);
+        updateHitbox();
 
         return z = value;
     }   

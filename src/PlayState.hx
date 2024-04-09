@@ -1,10 +1,12 @@
 package;
 
+import CatGenerator;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
@@ -16,6 +18,7 @@ import flixel.ui.FlxButton;
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
 import openfl.events.KeyboardEvent;
+import openfl.geom.Rectangle;
 
 import sys.io.File;
 
@@ -46,11 +49,17 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
-		progressBar = new FlxBar(0, 0, LEFT_TO_RIGHT, Std.int(FlxG.width * 0.4), 10, this, "progress", 0, 1);
-		progressBar.createFilledBar(0xFFCD5D5D, 0xFF0F99EE);
+		progressBar = new FlxBar(0, 0, null, 16 * 15, 15, this, "progress", 0, 1);
+		progressBar.createFilledBar(0xFFFF3535, 0xFF0F99EE);
 		// progressBar.screenCenter();
 		// progressBar.visible = false;
-		
+
+		var graphic = FlxG.bitmap.create(30, 30, 0xFFFFB6CC);
+		graphic.bitmap.fillRect(new Rectangle(0, 0, 15, 15), 0xFFD4608E);
+		graphic.bitmap.fillRect(new Rectangle(15, 15, 15, 15), 0xFFD4608E);
+
+		var backdrop = new FlxBackdrop(graphic);
+
 		fillCarousel();
 
 		photos = new FlxTypedGroup(photoCount);
@@ -58,7 +67,11 @@ class PlayState extends FlxState
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
 
+		text = new FlxText(40, FlxG.height * 0.5 + 100);
+
+		add(backdrop);
 		add(photos);
+		add(text);
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -74,12 +87,16 @@ class PlayState extends FlxState
 		var message = BurstEncryptor.decrypt(encrypted);
 	}
 
-	function catGenerated(pixels:BitmapData):Void
+	function catGenerated(data:CatResponseData):Void
 	{
 		var sprite = new CarouselSprite();
 		sprite.antialiasing = true;
-		sprite.loadGraphic(pixels);
+		sprite.loadGraphic(data.image);
 		photos.add(sprite);
+
+		trace(data.breeds);
+
+		text.text = Std.string(data.breeds);
 
 		var item = carousel[0];
 		item.sprite = sprite;
@@ -88,9 +105,6 @@ class PlayState extends FlxState
 		sprite.z = item.z;
 
 		spinWheel(true);
-
-		// if(photos.length == photoCount)
-			// Notify that the carousel is ready
 	}
 
 	function fillCarousel():Void
@@ -108,7 +122,7 @@ class PlayState extends FlxState
 			carousel.push({
 				sprite: null, 
 				x: cx + dx,
-				y: cy + dy - 100,
+				y: cy + dy - 80,
 				z: photoFrameSize / Math.pow(2, dz)
 			});
 		}
@@ -127,6 +141,11 @@ class PlayState extends FlxState
 				spinWheel(true);
 			case FlxKey.RIGHT:
 				spinWheel(false);
+
+			case FlxKey.DOWN:
+				isolatePhoto();
+			case FlxKey.UP:
+				deisolatePhoto();
 		}
 	}
 
@@ -159,20 +178,42 @@ class PlayState extends FlxState
 						lastItem = carousel[0];
 				}
 
+				sprite.z = lastItem.z;
 				sprite.x = lastItem.x - sprite.width * 0.5;
 				sprite.y = lastItem.y - sprite.height * 0.5;
-				sprite.z = lastItem.z;
 			}
 
 			sprite.transitionTween = FlxTween.tween(sprite, {
-				x: item.x - sprite.width * 0.5, 
-				y: item.y - sprite.height * 0.5,
+				x: item.x - item.z * 0.5, 
+				y: item.y - item.z * 0.5,
 				z: item.z
 			}, 0.4, {
 				ease: FlxEase.quadOut,
 				onUpdate: (tween) -> photos.members.sort((s1, s2) -> Std.int(s1.z - s2.z)),
 				onComplete: (tween) -> sprite.transitionTween = null
 			});
+		}
+	}
+
+	function isolatePhoto():Void
+	{
+		var sprite = carousel[0].sprite;
+
+		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (carousel[0].z + 100) * 0.5, y: 40, z: carousel[0].z + 100}, 0.8, {ease: FlxEase.sineIn});
+
+		for(i in 1...photoCount)
+		{
+			var item = carousel[i];
+			FlxTween.tween(item.sprite, {y: item.y - item.z * 0.5 - FlxG.height}, 0.8, {ease: FlxEase.backIn, startDelay: i / 100});
+		}
+	}
+
+	function deisolatePhoto():Void
+	{
+		for(i in 0...photoCount)
+		{
+			var item = carousel[i];
+			FlxTween.tween(item.sprite, {x: item.x - item.z * 0.5, y: item.y - item.z * 0.5, z: item.z}, 0.8, {ease: FlxEase.backOut, startDelay: i / 100});
 		}
 	}
 

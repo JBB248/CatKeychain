@@ -17,7 +17,7 @@ import openfl.net.URLRequest;
 
 class CatGenerator
 {
-    public var onCatGenerated(get, null):FlxTypedSignal<BitmapData->Void>;
+    public var onCatGenerated(get, null):FlxTypedSignal<CatResponseData->Void>;
 
     var loader:URLLoader;
     public var catLoader:CatLoader;
@@ -68,9 +68,9 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var response:CatResponseData = Json.parse(event.target.data);
+        var response:Array<CatResponseData> = Json.parse(event.target.data);
 
-        catLoader.pushRequests([for(object in response) object.url]);
+        catLoader.pushRequests(response);
 
         if(requestCount > 0)
             getDataFromServer();
@@ -78,7 +78,7 @@ class CatGenerator
             busy = false;
     }
 
-    @:noCompletion function get_onCatGenerated():FlxTypedSignal<BitmapData->Void>
+    @:noCompletion function get_onCatGenerated():FlxTypedSignal<CatResponseData->Void>
     {
         return onCatGenerated ??= new FlxTypedSignal();
     }
@@ -89,7 +89,9 @@ class CatLoader
     public var progress:Float = 0.0;
 
     var loader:URLLoader;
-    var requests:Array<String> = [];
+    var requests:Array<CatResponseData> = [];
+    var focus:CatResponseData = null;
+
     var busy:Bool = false;
 
     var generator:CatGenerator;
@@ -104,14 +106,15 @@ class CatLoader
         loader.addEventListener(Event.COMPLETE, dispatchCat);
     }
 
-    public function pushRequests(newRequests:Array<String>):Void
+    public function pushRequests(newRequests:Array<CatResponseData>):Void
     {
         requests = requests.concat(newRequests);
 
         if(!busy)
         {
             busy = true;
-            loader.load(new URLRequest(requests.shift()));
+            focus = requests.shift();
+            loader.load(new URLRequest(focus.url));
         }
     }
 
@@ -122,22 +125,30 @@ class CatLoader
 
     function dispatchCat(event:Event):Void
     {
-        generator.onCatGenerated.dispatch(BitmapData.fromBytes(event.target.data));
+        focus.image = BitmapData.fromBytes(event.target.data);
+        generator.onCatGenerated.dispatch(focus);
 
         if(requests.length > 0)
-            loader.load(new URLRequest(requests.shift()));
+        {
+            focus = requests.shift();
+            loader.load(new URLRequest(focus.url));
+        }
         else
+        {
+            focus = null;
             busy = false;
+        }
     }
 }
 
-typedef CatResponseData = Array<{
+typedef CatResponseData = {
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;
+    var image:BitmapData;
     var width:Int;
     var height:Int;
-}>;
+}
 
 typedef CatBreedData = {
     var weight: {
