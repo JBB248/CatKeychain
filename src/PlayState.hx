@@ -1,13 +1,13 @@
 package;
 
 import CatGenerator;
+import PhotoCarousel;
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
-import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -47,7 +47,7 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(0, 0, 15, 15), 0xFFD4608E);
 		graphic.bitmap.fillRect(new Rectangle(15, 15, 15, 15), 0xFFD4608E);
 
-		carousel = new PhotoCarousel(photoCount);
+		carousel = new PhotoCarousel(photoCount, 250, 80);
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
@@ -88,7 +88,7 @@ class PlayState extends FlxState
 		sprite.x = item.x - sprite.size * 0.5;
 		sprite.y = item.y - sprite.size * 0.5;
 
-		carousel.spin(true);
+		carousel.spin(COUNTER_CLOCKWISE);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -101,9 +101,9 @@ class PlayState extends FlxState
 		switch(event.keyCode)
 		{
 			case FlxKey.LEFT:
-				carousel.spin(true);
+				carousel.spin(COUNTER_CLOCKWISE);
 			case FlxKey.RIGHT:
-				carousel.spin(false);
+				carousel.spin(CLOCKWISE);
 
 			case FlxKey.DOWN:
 				isolatePhoto();
@@ -114,15 +114,17 @@ class PlayState extends FlxState
 
 	function isolatePhoto():Void
 	{
-		var item = carousel.positions[0];
-		var sprite = carousel.positions[0].sprite;
-
-		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (item.size + 100) * 0.5, y: 40, size: item.size + 100}, 0.8, {ease: FlxEase.sineIn});
-
-		for(i in 1...carousel.length)
+		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
-			FlxTween.tween(item.sprite, {y: item.y - item.size * 0.5 - FlxG.height}, 0.8, {ease: FlxEase.backIn, startDelay: i / 100});
+			if(i == 0)
+				FlxTween.tween(item.sprite, 
+					{x: FlxG.width * 0.5 - (item.size + 100) * 0.5, y: 40, size: item.size + 100}, 0.8, 
+					{ease: FlxEase.backInOut});
+			else
+				FlxTween.tween(item.sprite, 
+					{y: item.y - item.size * 0.5 - FlxG.height}, 0.8, 
+					{ease: FlxEase.backIn, startDelay: i / 100});
 		}
 	}
 
@@ -131,10 +133,20 @@ class PlayState extends FlxState
 		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
-			FlxTween.tween(item.sprite, {x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, {ease: FlxEase.backOut, startDelay: i / 100});
+			FlxTween.tween(item.sprite, 
+				{x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, 
+				{ease: FlxEase.backInOut, startDelay: i / 100});
 		}
 	}
 
+	override public function destroy():Void
+	{
+		super.destroy();
+
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+	}
+
+	@:access(CatGenerator)
 	@:noCompletion function get_progress():Float
 	{
 		return carousel.length / photoCount + (generator.catLoader.progress < 1 ? generator.catLoader.progress / photoCount : 0);

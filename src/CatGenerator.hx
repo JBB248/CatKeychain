@@ -5,8 +5,6 @@ import burst.sys.BurstDotEnv;
 import flixel.FlxG;
 import flixel.util.FlxSignal;
 
-import haxe.Json;
-
 import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.events.HTTPStatusEvent;
@@ -15,19 +13,27 @@ import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 
+/**
+ * Generates photos of cats by sending a request to [The Cat API](https://thecatapi.com/).
+ * 
+ * Photos can be requests using `requestCat`.
+ * 
+ * _Note:_ Gifs do not function well in openfl, so only jpegs are generated.
+ */
 class CatGenerator
 {
-    public var onCatGenerated(get, null):FlxTypedSignal<CatResponseData->Void>;
+    public var onCatGenerated:FlxTypedSignal<CatResponseData->Void>;
 
+    var catLoader:CatLoader;
     var loader:URLLoader;
-    public var catLoader:CatLoader;
 
     var busy:Bool = false;
     var requestCount:Int = 0;
-    var links:Array<String> = [];
 
     public function new()
     {
+        onCatGenerated = new FlxTypedSignal();
+
         loader = new URLLoader();
         loader.dataFormat = URLLoaderDataFormat.TEXT;
         loader.addEventListener(Event.COMPLETE, onComplete);
@@ -36,19 +42,26 @@ class CatGenerator
         catLoader = new CatLoader(this);
     }
 
+    /**
+     * Adds `count` to `requestCount` immediately and begins
+     * downloading process immediately if not busy.
+     * 
+     * When the photo is generated, `onCatGenerated` will be dispatched with
+     * the photo alongside other data such as breed information, if it exists.
+     */
     public function requestCat(count:Int = 1):Void
     {
         requestCount += count;
 
         if(!busy)
-            getDataFromServer();
+            getDataFromAPI();
     }
 
-    function getDataFromServer():Void
+    function getDataFromAPI():Void
     {
         busy = true;
 
-        var limit = Std.int(Math.min(100, requestCount));
+        var limit = Std.int(Math.min(100, requestCount)); // Requests cap at 100 items per call
         requestCount -= limit;
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
@@ -60,7 +73,9 @@ class CatGenerator
 
     function onStatusRecieved(event:HTTPStatusEvent):Void
     {
-        if(event.status == 200) return;
+        if(event.status == 200) return; // Success
+
+        // To-do: Handle other HTTP codes
         
         FlxG.log.warn('HTTP Error code: ${event.status}');
         busy = false;
@@ -68,33 +83,41 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var response:Array<CatResponseData> = Json.parse(event.target.data);
+        var response:Array<CatResponseData> = haxe.Json.parse(event.target.data);
 
         catLoader.pushRequests(response);
 
         if(requestCount > 0)
-            getDataFromServer();
+            getDataFromAPI();
         else
             busy = false;
     }
 
-    @:noCompletion function get_onCatGenerated():FlxTypedSignal<CatResponseData->Void>
+    public function destroy():Void
     {
-        return onCatGenerated ??= new FlxTypedSignal();
+        onCatGenerated.destroy();
+        catLoader.destroy();
+
+        onCatGenerated = null;
+        loader = null;
+        catLoader = null;
     }
 }
 
+/**
+ * Loads images of cats into `CatResponseData` using their url
+ */
 class CatLoader
 {
     public var progress:Float = 0.0;
+    public var requests:Array<CatResponseData> = [];
+
+    var generator:CatGenerator;
 
     var loader:URLLoader;
-    var requests:Array<CatResponseData> = [];
     var focus:CatResponseData = null;
 
     var busy:Bool = false;
-
-    var generator:CatGenerator;
 
     public function new(generator:CatGenerator)
     {
@@ -106,6 +129,9 @@ class CatLoader
         loader.addEventListener(Event.COMPLETE, dispatchCat);
     }
 
+    /**
+     * Appends a request to `requests` and begins image loading if not busy
+     */
     public function pushRequests(newRequests:Array<CatResponseData>):Void
     {
         requests = requests.concat(newRequests);
@@ -138,6 +164,14 @@ class CatLoader
             focus = null;
             busy = false;
         }
+    }
+
+    public function destroy():Void
+    {
+        loader = null;
+        requests = null;
+        focus = null;
+        generator = null;
     }
 }
 
