@@ -26,7 +26,7 @@ typedef CarouselItem = {
 	var sprite:CarouselSprite;
 	var x:Float;
 	var y:Float;
-	var z:Float;
+	var size:Float;
 }
 
 class PlayState extends FlxState
@@ -102,7 +102,7 @@ class PlayState extends FlxState
 		item.sprite = sprite;
 		sprite.x = item.x - sprite.width * 0.5;
 		sprite.y = item.y - sprite.height * 0.5;
-		sprite.z = item.z;
+		sprite.size = item.size;
 
 		spinWheel(true);
 	}
@@ -123,7 +123,7 @@ class PlayState extends FlxState
 				sprite: null, 
 				x: cx + dx,
 				y: cy + dy - 80,
-				z: photoFrameSize / Math.pow(2, dz)
+				size: photoFrameSize / Math.pow(2, dz)
 			});
 		}
 	}
@@ -178,18 +178,18 @@ class PlayState extends FlxState
 						lastItem = carousel[0];
 				}
 
-				sprite.z = lastItem.z;
-				sprite.x = lastItem.x - sprite.width * 0.5;
-				sprite.y = lastItem.y - sprite.height * 0.5;
+				sprite.size = lastItem.size;
+				sprite.x = lastItem.x - sprite.size * 0.5;
+				sprite.y = lastItem.y - sprite.size * 0.5;
 			}
 
 			sprite.transitionTween = FlxTween.tween(sprite, {
-				x: item.x - item.z * 0.5, 
-				y: item.y - item.z * 0.5,
-				z: item.z
+				x: item.x - item.size * 0.5, 
+				y: item.y - item.size * 0.5,
+				size: item.size
 			}, 0.4, {
 				ease: FlxEase.quadOut,
-				onUpdate: (tween) -> photos.members.sort((s1, s2) -> Std.int(s1.z - s2.z)),
+				onUpdate: (tween) -> photos.members.sort((s1, s2) -> Std.int(s1.size - s2.size)),
 				onComplete: (tween) -> sprite.transitionTween = null
 			});
 		}
@@ -199,12 +199,12 @@ class PlayState extends FlxState
 	{
 		var sprite = carousel[0].sprite;
 
-		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (carousel[0].z + 100) * 0.5, y: 40, z: carousel[0].z + 100}, 0.8, {ease: FlxEase.sineIn});
+		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (carousel[0].size + 100) * 0.5, y: 40, size: carousel[0].size + 100}, 0.8, {ease: FlxEase.sineIn});
 
 		for(i in 1...photoCount)
 		{
 			var item = carousel[i];
-			FlxTween.tween(item.sprite, {y: item.y - item.z * 0.5 - FlxG.height}, 0.8, {ease: FlxEase.backIn, startDelay: i / 100});
+			FlxTween.tween(item.sprite, {y: item.y - item.size * 0.5 - FlxG.height}, 0.8, {ease: FlxEase.backIn, startDelay: i / 100});
 		}
 	}
 
@@ -213,7 +213,7 @@ class PlayState extends FlxState
 		for(i in 0...photoCount)
 		{
 			var item = carousel[i];
-			FlxTween.tween(item.sprite, {x: item.x - item.z * 0.5, y: item.y - item.z * 0.5, z: item.z}, 0.8, {ease: FlxEase.backOut, startDelay: i / 100});
+			FlxTween.tween(item.sprite, {x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, {ease: FlxEase.backOut, startDelay: i / 100});
 		}
 	}
 
