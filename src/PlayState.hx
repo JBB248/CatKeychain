@@ -18,6 +18,7 @@ import flixel.ui.FlxButton;
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
 import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 
 import sys.io.File;
@@ -61,6 +62,7 @@ class PlayState extends FlxState
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 
 		/*********************** Encryption ***********************/
 
@@ -105,11 +107,19 @@ class PlayState extends FlxState
 			case FlxKey.RIGHT:
 				carousel.spin(CLOCKWISE);
 
-			case FlxKey.DOWN:
+			case FlxKey.ENTER | FlxKey.UP:
 				isolatePhoto();
-			case FlxKey.UP:
+			case FlxKey.DOWN:
 				deisolatePhoto();
 		}
+	}
+
+	function mouseWheel(event:MouseEvent):Void
+	{
+		if(event.delta > 0)
+			carousel.spin(COUNTER_CLOCKWISE);
+		else
+			carousel.spin(CLOCKWISE);
 	}
 
 	function isolatePhoto():Void
