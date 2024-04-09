@@ -22,13 +22,6 @@ import openfl.geom.Rectangle;
 
 import sys.io.File;
 
-typedef CarouselItem = {
-	var sprite:CarouselSprite;
-	var x:Float;
-	var y:Float;
-	var size:Float;
-}
-
 class PlayState extends FlxState
 {
 	public var text:FlxText;
@@ -37,13 +30,9 @@ class PlayState extends FlxState
 	public var progressBar:FlxBar;
 	public var progress(get, never):Float;
 
-	public var photos:FlxTypedGroup<CarouselSprite>;
-	public var carousel:Array<CarouselItem> = [];
-	public var photoCount:Int = 15;
-
-	var photoFrameSize:Float = 115.0;
-
+	public var carousel:PhotoCarousel;
 	public var generator:CatGenerator;
+	public var photoCount:Int = 15;
 
 	var pixels:BitmapData;
 
@@ -58,19 +47,16 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(0, 0, 15, 15), 0xFFD4608E);
 		graphic.bitmap.fillRect(new Rectangle(15, 15, 15, 15), 0xFFD4608E);
 
-		var backdrop = new FlxBackdrop(graphic);
+		carousel = new PhotoCarousel(photoCount);
 
-		fillCarousel();
-
-		photos = new FlxTypedGroup(photoCount);
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
 
 		text = new FlxText(40, FlxG.height * 0.5 + 100);
 
-		add(backdrop);
-		add(photos);
+		add(new FlxBackdrop(graphic));
+		add(carousel);
 		add(text);
 		add(progressBar);
 
@@ -92,40 +78,17 @@ class PlayState extends FlxState
 		var sprite = new CarouselSprite();
 		sprite.antialiasing = true;
 		sprite.loadGraphic(data.image);
-		photos.add(sprite);
+		carousel.add(sprite);
 
-		trace(data.breeds);
+		// text.text = Std.string(data.breeds);
 
-		text.text = Std.string(data.breeds);
-
-		var item = carousel[0];
+		var item = carousel.positions[0];
 		item.sprite = sprite;
-		sprite.x = item.x - sprite.width * 0.5;
-		sprite.y = item.y - sprite.height * 0.5;
 		sprite.size = item.size;
+		sprite.x = item.x - sprite.size * 0.5;
+		sprite.y = item.y - sprite.size * 0.5;
 
-		spinWheel(true);
-	}
-
-	function fillCarousel():Void
-	{
-		var cx = FlxG.width / 2;
-		var cy = FlxG.height / 2;
-
-		for(i in 0...photoCount)
-		{
-			var theta = 2 * i * Math.PI / photoCount;
-			var dx = 250 * Math.sin(theta);
-			var dy = 80 * Math.cos(theta);
-			var dz = -Math.cos(theta);
-
-			carousel.push({
-				sprite: null, 
-				x: cx + dx,
-				y: cy + dy - 80,
-				size: photoFrameSize / Math.pow(2, dz)
-			});
-		}
+		carousel.spin(true);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -138,9 +101,9 @@ class PlayState extends FlxState
 		switch(event.keyCode)
 		{
 			case FlxKey.LEFT:
-				spinWheel(true);
+				carousel.spin(true);
 			case FlxKey.RIGHT:
-				spinWheel(false);
+				carousel.spin(false);
 
 			case FlxKey.DOWN:
 				isolatePhoto();
@@ -149,76 +112,31 @@ class PlayState extends FlxState
 		}
 	}
 
-	function spinWheel(CCW:Bool)
-	{
-		var shifted = [for(obj in carousel) obj.sprite];
-		shifted = shifted.concat(shifted.splice(0, (CCW ? shifted.length - 1 : 1)));
-
-		for(i in 0...carousel.length)
-		{
-			if(shifted[i] == null) continue;
-
-			var sprite = carousel[i].sprite = shifted[i];
-			var item = carousel[i];
-
-			if(sprite.transitionTween != null)
-			{
-				sprite.transitionTween.cancel();
-				var lastItem = null;
-				if(CCW)
-				{
-					lastItem = carousel[i - 1];
-					if(lastItem == null)
-						lastItem = carousel[carousel.length - 1];
-				}
-				else
-				{
-					lastItem = carousel[i + 1];
-					if(lastItem == null)
-						lastItem = carousel[0];
-				}
-
-				sprite.size = lastItem.size;
-				sprite.x = lastItem.x - sprite.size * 0.5;
-				sprite.y = lastItem.y - sprite.size * 0.5;
-			}
-
-			sprite.transitionTween = FlxTween.tween(sprite, {
-				x: item.x - item.size * 0.5, 
-				y: item.y - item.size * 0.5,
-				size: item.size
-			}, 0.4, {
-				ease: FlxEase.quadOut,
-				onUpdate: (tween) -> photos.members.sort((s1, s2) -> Std.int(s1.size - s2.size)),
-				onComplete: (tween) -> sprite.transitionTween = null
-			});
-		}
-	}
-
 	function isolatePhoto():Void
 	{
-		var sprite = carousel[0].sprite;
+		var item = carousel.positions[0];
+		var sprite = carousel.positions[0].sprite;
 
-		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (carousel[0].size + 100) * 0.5, y: 40, size: carousel[0].size + 100}, 0.8, {ease: FlxEase.sineIn});
+		FlxTween.tween(sprite, {x: FlxG.width * 0.5 - (item.size + 100) * 0.5, y: 40, size: item.size + 100}, 0.8, {ease: FlxEase.sineIn});
 
-		for(i in 1...photoCount)
+		for(i in 1...carousel.length)
 		{
-			var item = carousel[i];
+			var item = carousel.positions[i];
 			FlxTween.tween(item.sprite, {y: item.y - item.size * 0.5 - FlxG.height}, 0.8, {ease: FlxEase.backIn, startDelay: i / 100});
 		}
 	}
 
 	function deisolatePhoto():Void
 	{
-		for(i in 0...photoCount)
+		for(i in 0...carousel.length)
 		{
-			var item = carousel[i];
+			var item = carousel.positions[i];
 			FlxTween.tween(item.sprite, {x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, {ease: FlxEase.backOut, startDelay: i / 100});
 		}
 	}
 
 	@:noCompletion function get_progress():Float
 	{
-		return photos.length / photoCount + (generator.catLoader.progress < 1 ? generator.catLoader.progress / photoCount : 0);
+		return carousel.length / photoCount + (generator.catLoader.progress < 1 ? generator.catLoader.progress / photoCount : 0);
 	}
 }
