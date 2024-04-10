@@ -103,9 +103,9 @@ class PlayState extends FlxState
 		switch(event.keyCode)
 		{
 			case FlxKey.LEFT:
-				carousel.spin(COUNTER_CLOCKWISE);
+				spinCarousel(COUNTER_CLOCKWISE);
 			case FlxKey.RIGHT:
-				carousel.spin(CLOCKWISE);
+				spinCarousel(CLOCKWISE);
 
 			case FlxKey.ENTER | FlxKey.UP:
 				isolatePhoto();
@@ -117,9 +117,16 @@ class PlayState extends FlxState
 	function mouseWheel(event:MouseEvent):Void
 	{
 		if(event.delta > 0)
-			carousel.spin(COUNTER_CLOCKWISE);
+			spinCarousel(COUNTER_CLOCKWISE);
 		else
-			carousel.spin(CLOCKWISE);
+			spinCarousel(CLOCKWISE);
+	}
+
+	function spinCarousel(direction:WheelDirection):Void
+	{
+		if(carousel.length != photoCount) return;
+
+		carousel.spin(direction);
 	}
 
 	function isolatePhoto():Void
@@ -127,6 +134,10 @@ class PlayState extends FlxState
 		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
+			if(item.sprite.transitionTween != null)
+				item.sprite.transitionTween.cancel();
+
+			item.sprite.transitionTween = 
 			if(i == 0)
 				FlxTween.tween(item.sprite, 
 					{x: FlxG.width * 0.5 - (item.size + 100) * 0.5, y: 40, size: item.size + 100}, 0.8, 
@@ -143,7 +154,10 @@ class PlayState extends FlxState
 		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
-			FlxTween.tween(item.sprite, 
+			if(item.sprite.transitionTween != null)
+				item.sprite.transitionTween.cancel();
+
+			item.sprite.transitionTween = FlxTween.tween(item.sprite, 
 				{x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, 
 				{ease: FlxEase.backInOut, startDelay: i / 100});
 		}

@@ -20,6 +20,8 @@ class CarouselSprite extends FlxSprite
      */
     public var transitionTween:FlxTween;
 
+	public var spinning:Bool = false;
+
 	override public function destroy():Void
 	{
 		transitionTween = null;
@@ -50,7 +52,7 @@ class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
      */
     public var positions:Array<CarouselItem> = [];
 
-	//To-do: Make the carousel resize itself
+	//To-do: Make the carousel resizable
 
 	/**
 	 * The width of the ellipse created by the carousel
@@ -109,33 +111,41 @@ class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
 			if(sprite.transitionTween != null)
 			{
 				sprite.transitionTween.cancel();
-				var lastItem = null;
-				if(direction == COUNTER_CLOCKWISE)
-				{
-					lastItem = positions[i - 1];
-					if(lastItem == null)
-						lastItem = positions[length - 1];
-				}
-				else
-				{
-					lastItem = positions[i + 1];
-					if(lastItem == null)
-						lastItem = positions[0];
-				}
 
-				sprite.size = lastItem.size;
-				sprite.x = lastItem.x - sprite.size * 0.5;
-				sprite.y = lastItem.y - sprite.size * 0.5;
+				if(sprite.spinning) // Immedately move to intended position
+				{
+					var lastItem = null;
+					if(direction == COUNTER_CLOCKWISE)
+					{
+						lastItem = positions[i - 1];
+						if(lastItem == null)
+							lastItem = positions[length - 1];
+					}
+					else
+					{
+						lastItem = positions[i + 1];
+						if(lastItem == null)
+							lastItem = positions[0];
+					}
+
+					sprite.size = lastItem.size;
+					sprite.x = lastItem.x - sprite.size * 0.5;
+					sprite.y = lastItem.y - sprite.size * 0.5;
+				}
 			}
 
+			sprite.spinning = true;
 			sprite.transitionTween = FlxTween.tween(sprite, {
 				x: item.x - item.size * 0.5, 
 				y: item.y - item.size * 0.5,
 				size: item.size
 			}, 0.4, {
 				ease: FlxEase.quadOut,
-				onUpdate: (tween) -> members.sort((s1, s2) -> Std.int(s1.size - s2.size)),
-				onComplete: (tween) -> sprite.transitionTween = null
+				onUpdate: (_) -> members.sort((s1, s2) -> Std.int(s1.size - s2.size)),
+				onComplete: (_) -> {
+					sprite.transitionTween = null;
+					sprite.spinning = false;
+				}
 			});
 		}
 	}
