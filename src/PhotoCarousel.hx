@@ -5,8 +5,9 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxSignal;
 
-class CarouselSprite extends FlxSprite
+class CarouselPhoto extends FlxSprite
 {
     /**
      * Simplified version of `setGraphicSize` that automatically
@@ -21,6 +22,8 @@ class CarouselSprite extends FlxSprite
     public var transitionTween:FlxTween;
 
 	public var spinning:Bool = false;
+
+	public var meta:Dynamic;
 
 	override public function destroy():Void
 	{
@@ -37,13 +40,13 @@ class CarouselSprite extends FlxSprite
 }
 
 typedef CarouselItem = {
-	var sprite:CarouselSprite;
+	var sprite:CarouselPhoto;
 	var x:Float;
 	var y:Float;
 	var size:Float;
 }
 
-class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
+class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 {
     public static inline var PHOTO_SIZE:Int = 115;
 
@@ -63,6 +66,8 @@ class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
 	  * The height of the ellipse created by the carousel
 	  */
 	public var radiusY(default, null):Float;
+
+	public var frontPhotoChanged:FlxTypedSignal<CarouselPhoto->Void>;
 
     public function new(size:Int, radiusX:Float, radiusY:Float)
     {
@@ -84,10 +89,12 @@ class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
 			positions.push({
 				sprite: null, 
 				x: cx + dx,
-				y: cy + dy - 80,
+				y: cy + dy - 100,
 				size: PHOTO_SIZE / Math.pow(2, dz)
 			});
 		}
+
+		frontPhotoChanged = new FlxTypedSignal();
     }
 
 	/**
@@ -148,6 +155,8 @@ class PhotoCarousel extends FlxTypedGroup<CarouselSprite>
 				}
 			});
 		}
+
+		frontPhotoChanged.dispatch(positions[0].sprite);
 	}
 
 	override public function destroy():Void

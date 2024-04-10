@@ -66,6 +66,7 @@ class CatGenerator
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
             + "?limit=" + limit
+            + "&has_breeds=1"
             + "&mime_types=jpg"
             + "&api_key=" + BurstDotEnv.get("CAT_API_KEY")
         ));
