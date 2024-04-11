@@ -10,6 +10,7 @@ import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.text.FlxTypeText;
 import flixel.input.keyboard.FlxKey;
+import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
@@ -25,7 +26,10 @@ import sys.io.File;
 
 class PlayState extends FlxState
 {
+	public static inline var TILE_SIZE:Int = 16;
+
 	public var text:FlxTypeText;
+	public var infoText:FlxText;
 	public var button:FlxTypedButton<FlxSprite>;
 
 	public var progressBar:FlxBar;
@@ -33,7 +37,7 @@ class PlayState extends FlxState
 
 	public var carousel:PhotoCarousel;
 	public var generator:CatGenerator;
-	public var photoCount:Int = 15;
+	public var photoCount:Int = 16;
 
 	public var isolated:Bool = false;
 
@@ -41,30 +45,35 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
-		progressBar = new FlxBar(0, 0, null, 16 * 15, 15, this, "progress", 0, 1);
+		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFFFFFFF, 0xFF0F99EE);
 		progressBar.filledCallback = () -> FlxTween.tween(progressBar, {alpha: 0}, 0.8);
 		// progressBar.screenCenter();
 		// progressBar.visible = false;
 
-		var graphic = FlxG.bitmap.create(30, 30, 0xFFFFB6CC);
-		graphic.bitmap.fillRect(new Rectangle(0, 0, 15, 15), 0xFFD4608E);
-		graphic.bitmap.fillRect(new Rectangle(15, 15, 15, 15), 0xFFD4608E);
+		var graphic = FlxG.bitmap.create(32, 32, 0xFFFFB6CC);
+		graphic.bitmap.fillRect(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
+		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 
-		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 100, 250, 80);
+		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
 		carousel.frontPhotoChanged.add(updateDescription);
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
 
-		var textBackdrop = new FlxSprite(30, 15 * 24).makeGraphic(FlxG.width - 60, 15 * 8, 0xFFD4608E);
+		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFFD4608E);
 		text = new FlxTypeText(textBackdrop.x, textBackdrop.y, Std.int(textBackdrop.width), "Testing... Cat, neko, gato");
+		infoText = new FlxText(0, 0, 0, "Select photo: UP | Deselect photo: DOWN | Spin carousel: LEFT, RIGHT, or mousewheel");
+		infoText.alignment = CENTER;
+		infoText.screenCenter(X);
+		infoText.y = FlxG.height - infoText.height;
 
 		add(new FlxBackdrop(graphic));
+		add(carousel);
 		add(textBackdrop);
 		add(text);
-		add(carousel);
+		add(infoText);
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -133,6 +142,9 @@ class PlayState extends FlxState
 	{
 		if(carousel.length != photoCount) return;
 
+		if(isolated)
+			isolated = false;
+
 		carousel.spin(direction);
 	}
 
@@ -146,7 +158,7 @@ class PlayState extends FlxState
 		else
 			text.resetText("No description available :/");
 
-		text.start(0.01, true, false, [FlxKey.SPACE, FlxKey.ENTER]);
+		text.start(0.01, true, false, [SPACE]);
 	}
 
 	function isolatePhoto():Void
@@ -164,7 +176,7 @@ class PlayState extends FlxState
 			item.sprite.transitionTween = 
 			if(i == 0)
 				FlxTween.tween(item.sprite, 
-					{x: FlxG.width * 0.5 - 15 * 10, y: 30, size: 15 * 20}, 0.8, 
+					{x: FlxG.width * 0.5 - TILE_SIZE * 9, y: 32, size: TILE_SIZE * 18}, 0.8, 
 					{ease: FlxEase.backInOut});
 			else
 				FlxTween.tween(item.sprite, 
