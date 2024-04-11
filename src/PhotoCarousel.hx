@@ -55,6 +55,10 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
      */
     public var positions:Array<CarouselItem> = [];
 
+	public var centerX:Float = 0;
+
+	public var centerY:Float = 0;
+
 	//To-do: Make the carousel resizable
 
 	/**
@@ -69,15 +73,14 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 
 	public var frontPhotoChanged:FlxTypedSignal<CarouselPhoto->Void>;
 
-    public function new(size:Int, radiusX:Float, radiusY:Float)
+    public function new(size:Int, centerX:Float, centerY:Float, radiusX:Float, radiusY:Float)
     {
         super(size);
 
+		this.centerX = centerX;
+		this.centerY = centerY;
 		this.radiusX = radiusX;
 		this.radiusY = radiusY;
-
-        var cx = FlxG.width / 2;
-		var cy = FlxG.height / 2;
 
 		for(i in 0...size)
 		{
@@ -88,8 +91,8 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 
 			positions.push({
 				sprite: null, 
-				x: cx + dx,
-				y: cy + dy - 100,
+				x: dx,
+				y: dy,
 				size: PHOTO_SIZE / Math.pow(2, dz)
 			});
 		}
@@ -136,15 +139,15 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 					}
 
 					sprite.size = lastItem.size;
-					sprite.x = lastItem.x - sprite.size * 0.5;
-					sprite.y = lastItem.y - sprite.size * 0.5;
+					sprite.x = centerX + lastItem.x - sprite.size * 0.5;
+					sprite.y = centerY + lastItem.y - sprite.size * 0.5;
 				}
 			}
 
 			sprite.spinning = true;
 			sprite.transitionTween = FlxTween.tween(sprite, {
-				x: item.x - item.size * 0.5, 
-				y: item.y - item.size * 0.5,
+				x: centerX + item.x - item.size * 0.5, 
+				y: centerY + item.y - item.size * 0.5,
 				size: item.size
 			}, 0.4, {
 				ease: FlxEase.quadOut,

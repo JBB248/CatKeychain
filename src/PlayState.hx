@@ -51,7 +51,7 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(0, 0, 15, 15), 0xFFD4608E);
 		graphic.bitmap.fillRect(new Rectangle(15, 15, 15, 15), 0xFFD4608E);
 
-		carousel = new PhotoCarousel(photoCount, 250, 80);
+		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 100, 250, 80);
 		carousel.frontPhotoChanged.add(updateDescription);
 
 		generator = new CatGenerator();
@@ -168,7 +168,7 @@ class PlayState extends FlxState
 					{ease: FlxEase.backInOut});
 			else
 				FlxTween.tween(item.sprite, 
-					{y: item.y - item.size * 0.5 - FlxG.height}, 0.8, 
+					{y: carousel.centerY + item.y - item.size * 0.5 - FlxG.height}, 0.8, 
 					{ease: FlxEase.backIn, startDelay: i / 100});
 		}
 	}
@@ -185,9 +185,11 @@ class PlayState extends FlxState
 			if(item.sprite.transitionTween != null)
 				item.sprite.transitionTween.cancel();
 
-			item.sprite.transitionTween = FlxTween.tween(item.sprite, 
-				{x: item.x - item.size * 0.5, y: item.y - item.size * 0.5, size: item.size}, 0.8, 
-				{ease: FlxEase.backInOut, startDelay: i / 100});
+			item.sprite.transitionTween = FlxTween.tween(item.sprite, {
+					x: carousel.centerX + item.x - item.size * 0.5, 
+					y: carousel.centerY + item.y - item.size * 0.5, 
+					size: item.size
+				}, 0.8, {ease: FlxEase.backInOut, startDelay: i / 100});
 		}
 	}
 
