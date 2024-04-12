@@ -71,6 +71,7 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 	  */
 	public var radiusY(default, null):Float;
 
+	public var onSpin:FlxSignal;
 	public var frontPhotoChanged:FlxTypedSignal<CarouselPhoto->Void>;
 
     public function new(size:Int, centerX:Float, centerY:Float, radiusX:Float, radiusY:Float)
@@ -97,6 +98,7 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 			});
 		}
 
+		onSpin = new FlxSignal();
 		frontPhotoChanged = new FlxTypedSignal();
     }
 
@@ -155,11 +157,14 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 				onComplete: (_) -> {
 					sprite.transitionTween = null;
 					sprite.spinning = false;
+
+					if(i == 0)
+						frontPhotoChanged.dispatch(positions[0].sprite);
 				}
 			});
 		}
 
-		frontPhotoChanged.dispatch(positions[0].sprite);
+		onSpin.dispatch();
 	}
 
 	override public function destroy():Void

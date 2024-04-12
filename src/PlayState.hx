@@ -2,6 +2,7 @@ package;
 
 import CatGenerator;
 import PhotoCarousel;
+
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
@@ -56,7 +57,6 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 
 		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
-		carousel.frontPhotoChanged.add(updateDescription);
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
@@ -77,7 +77,9 @@ class PlayState extends FlxState
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+		// To-do: Fix mouse wheel responsiveness
+		// FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 
 		/*********************** Encryption ***********************/
 
@@ -128,6 +130,15 @@ class PlayState extends FlxState
 		}
 	}
 
+	function keyReleased(event:KeyboardEvent):Void
+	{
+		switch(event.keyCode)
+		{
+			case FlxKey.LEFT | FlxKey.RIGHT:
+				updateDescription();
+		}
+	}
+
 	function mouseWheel(event:MouseEvent):Void
 	{
 		if(isolated) return;
@@ -145,13 +156,17 @@ class PlayState extends FlxState
 		if(isolated)
 			isolated = false;
 
+		text.erase();
+		text.skip();
+
 		carousel.spin(direction);
 	}
 
-	function updateDescription(photo:CarouselPhoto):Void
+	function updateDescription():Void
 	{
 		if(carousel.length != photoCount) return;
 
+		var photo = carousel.positions[0].sprite;
 		var meta:CatResponseData = cast photo.meta;
 		if(meta.breeds.length > 0)
 			text.resetText(meta.breeds[0].description);
