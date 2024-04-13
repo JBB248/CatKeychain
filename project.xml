@@ -25,6 +25,7 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export"/>
+	<set name="BUILD_DIR" value="export/debug" if="debug"/>
 
 	<source path="src"/>
 
@@ -78,4 +79,9 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+
+	<icon path="kitten.png"/>
+	<icon path="kitten-16.png" size="16"/>
+	<icon path="kitten-32.png" size="32"/>
+	<icon path="kitten-64.png" size="64"/>
 </project>
