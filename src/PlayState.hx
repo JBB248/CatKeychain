@@ -1,15 +1,19 @@
 package;
 
+import flixel.util.FlxColor;
 import CatGenerator;
 import PhotoCarousel;
-
 import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.text.FlxTypeText;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.transition.FlxTransitionSprite;
+import flixel.addons.transition.TransitionData;
+import flixel.graphics.FlxGraphic;
+import flixel.math.FlxPoint;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -24,8 +28,10 @@ import openfl.geom.Rectangle;
 
 import sys.io.File;
 
-class PlayState extends FlxState
+class PlayState extends FlxTransitionableState
 {
+	static var initialized:Bool = false;
+
 	public static inline var TILE_SIZE:Int = 16;
 
 	public var infoText:FlxTypeText;
@@ -43,8 +49,35 @@ class PlayState extends FlxState
 
 	var pixels:BitmapData;
 
+	public function new()
+	{
+		if(!initialized)
+		{
+			var diamond = FlxGraphic.fromClass(GraphicTransTileDiamond);
+			diamond.persist = true;
+			diamond.destroyOnNoUse = false;
+
+			var tileData:TransitionTileData = {
+				asset: diamond,
+				width: 32,
+				height: 32
+			};
+
+			var transitionData = new TransitionData(TILES, FlxColor.WHITE, 1.2, FlxPoint.get(1, -1), tileData);
+
+			FlxTransitionableState.defaultTransIn = transitionData;
+			FlxTransitionableState.defaultTransOut = transitionData;
+
+			initialized = true;
+		}
+
+		super();
+	}
+
 	override public function create():Void
 	{
+		super.create();
+
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFFFFFFF, 0xFF0F99EE);
 		progressBar.filledCallback = () -> FlxTween.tween(progressBar, {alpha: 0}, 0.8);
@@ -60,7 +93,7 @@ class PlayState extends FlxState
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
-		generator.requestCat(photoCount);
+		
 
 		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFFD4608E);
 		infoText = new FlxTypeText(textBackdrop.x + 4, textBackdrop.y + 4, Std.int(textBackdrop.width) - 8, "Neko");
@@ -69,6 +102,9 @@ class PlayState extends FlxState
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
+
+		trace(hasTransIn);
+		trace(hasTransOut);
 
 		add(new FlxBackdrop(graphic));
 		add(carousel);
@@ -89,6 +125,13 @@ class PlayState extends FlxState
 
 		encrypted = BitmapData.fromFile("data/Test.png");
 		var message = BurstEncryptor.decrypt(encrypted);
+	}
+
+	override public function finishTransIn():Void
+	{
+		super.finishTransIn();
+
+		generator.requestCat(photoCount);
 	}
 
 	function catGenerated(data:CatResponseData):Void
@@ -131,6 +174,9 @@ class PlayState extends FlxState
 				isolatePhoto();
 			case FlxKey.DOWN:
 				deisolatePhoto();
+
+			case FlxKey.SPACE:
+				FlxG.switchState(AltState.new);
 		}
 	}
 

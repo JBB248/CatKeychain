@@ -104,12 +104,13 @@ class CatGenerator
 
     public function destroy():Void
     {
-        onCatGenerated.destroy();
         catLoader.destroy();
+        if(busy) loader.close();
+        onCatGenerated.destroy();
 
-        onCatGenerated = null;
-        loader = null;
         catLoader = null;
+        loader = null;
+        onCatGenerated = null;
     }
 }
 
