@@ -56,7 +56,7 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 
 		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
-		// carousel.frontPhotoChanged.add((_) -> updateDescription());
+		carousel.frontPhotoChanged.add((_) -> updateDescription());
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
@@ -78,9 +78,7 @@ class PlayState extends FlxState
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
-		// To-do: Fix mouse wheel responsiveness
-		// FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
+		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 
 		/*********************** Encryption ***********************/
 
@@ -133,15 +131,6 @@ class PlayState extends FlxState
 				isolatePhoto();
 			case FlxKey.DOWN:
 				deisolatePhoto();
-		}
-	}
-
-	function keyReleased(event:KeyboardEvent):Void
-	{
-		switch(event.keyCode)
-		{
-			case FlxKey.LEFT | FlxKey.RIGHT:
-				updateDescription();
 		}
 	}
 
@@ -250,7 +239,6 @@ class PlayState extends FlxState
 		mintTextFormat = null;
 
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
 	}
 
 	@:access(CatGenerator)
