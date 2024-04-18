@@ -15,7 +15,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.ui.FlxButton;
 
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
@@ -29,9 +28,9 @@ class PlayState extends FlxState
 {
 	public static inline var TILE_SIZE:Int = 16;
 
-	public var text:FlxTypeText;
-	public var infoText:FlxText;
-	public var button:FlxTypedButton<FlxSprite>;
+	public var infoText:FlxTypeText;
+	public var ctrlText:FlxText;
+	public var mintTextFormat:FlxTextFormatMarkerPair = new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF60D4A6), "@");
 
 	public var progressBar:FlxBar;
 	public var progress(get, never):Float;
@@ -57,23 +56,25 @@ class PlayState extends FlxState
 		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 
 		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
+		// carousel.frontPhotoChanged.add((_) -> updateDescription());
 
 		generator = new CatGenerator();
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
 
 		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFFD4608E);
-		text = new FlxTypeText(textBackdrop.x, textBackdrop.y, Std.int(textBackdrop.width), "Testing... Cat, neko, gato");
-		infoText = new FlxText(0, 0, 0, "Select photo: UP | Deselect photo: DOWN | Spin carousel: LEFT, RIGHT, or mousewheel");
-		infoText.alignment = CENTER;
-		infoText.screenCenter(X);
-		infoText.y = FlxG.height - infoText.height;
+		infoText = new FlxTypeText(textBackdrop.x + 4, textBackdrop.y + 4, Std.int(textBackdrop.width) - 8, "Neko");
+		ctrlText = new FlxText();
+		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@", [mintTextFormat]);
+		ctrlText.alignment = CENTER;
+		ctrlText.screenCenter(X);
+		ctrlText.y = FlxG.height - ctrlText.height;
 
 		add(new FlxBackdrop(graphic));
 		add(carousel);
 		add(textBackdrop);
-		add(text);
 		add(infoText);
+		add(ctrlText);
 		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
@@ -107,6 +108,11 @@ class PlayState extends FlxState
 		sprite.y = item.y - sprite.size * 0.5;
 
 		carousel.spin(COUNTER_CLOCKWISE);
+
+		if(carousel.length == photoCount)
+		{
+			updateDescription();
+		}
 	}
 
 	override public function update(elapsed:Float):Void
@@ -156,8 +162,8 @@ class PlayState extends FlxState
 		if(isolated)
 			isolated = false;
 
-		text.erase();
-		text.skip();
+		infoText.erase();
+		infoText.skip();
 
 		carousel.spin(direction);
 	}
@@ -169,11 +175,25 @@ class PlayState extends FlxState
 		var photo = carousel.positions[0].sprite;
 		var meta:CatResponseData = cast photo.meta;
 		if(meta.breeds.length > 0)
-			text.resetText(meta.breeds[0].description);
-		else
-			text.resetText("No description available :/");
+		{
+			var cat = meta.breeds[0].name;
+			var origin = meta.breeds[0].origin;
+			var temperament = meta.breeds[0].temperament;
+			var description = meta.breeds[0].description;
 
-		text.start(0.01, true, false, [SPACE]);
+			var displayText = '@Cat name:@ ${cat}\n\n' 
+				+ '@Origin:@ ${origin}\n\n'
+				+ '@Temperament:@ ${temperament}\n\n'
+				+ '@Description:@ ${description}';
+
+			infoText.applyMarkup(displayText, [mintTextFormat]);
+		}
+		else
+		{
+			infoText.resetText("No description available :/");
+		}
+
+		infoText.start(0.01, true, false, [SPACE]);
 	}
 
 	function isolatePhoto():Void
@@ -224,7 +244,13 @@ class PlayState extends FlxState
 	{
 		super.destroy();
 
+		generator.destroy();
+
+		generator = null;
+		mintTextFormat = null;
+
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
 	}
 
 	@:access(CatGenerator)
