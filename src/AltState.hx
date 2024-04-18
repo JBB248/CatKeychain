@@ -13,9 +13,6 @@ class AltState extends FlxTransitionableState
     override public function create():Void
     {
         super.create();
-        
-        trace(hasTransIn);
-		trace(hasTransOut);
     }
 
     override public function update(elapsed:Float):Void

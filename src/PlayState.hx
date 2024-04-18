@@ -47,6 +47,8 @@ class PlayState extends FlxTransitionableState
 
 	public var isolated:Bool = false;
 
+	var photoCache:Array<CarouselPhoto> = [];
+
 	var pixels:BitmapData;
 
 	public function new()
@@ -80,7 +82,7 @@ class PlayState extends FlxTransitionableState
 
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFFFFFFF, 0xFF60D4A6);
-		progressBar.filledCallback = () -> FlxTween.tween(progressBar, {alpha: 0}, 0.8);
+		progressBar.filledCallback = allCatsGenerated;
 		// progressBar.screenCenter();
 		// progressBar.visible = false;
 
@@ -133,34 +135,38 @@ class PlayState extends FlxTransitionableState
 
 	function catGenerated(data:CatResponseData):Void
 	{
-		var sprite = new CarouselPhoto();
-		sprite.antialiasing = true;
-		sprite.meta = data;		
-		sprite.loadGraphic(data.image);
-		carousel.positions[carousel.length].sprite = sprite;
-		sprite.size = carousel.positions[carousel.length].size;
-		sprite.x = -sprite.width;
-		sprite.y = -sprite.height;
+		var photo = new CarouselPhoto();
+		photo.antialiasing = true;
+		photo.meta = data;		
+		photo.loadGraphic(data.image);
+		photoCache.push(photo);
 
-		carousel.add(sprite);
+		if(photoCache.length == photoCount)
+			allCatsGenerated();
+	}
 
-		if(carousel.length == photoCount)
+	function allCatsGenerated():Void
+	{
+		for(i in 0...photoCount)
 		{
-			carousel.members.sort((O1, O2) -> Std.int(O1.size - O2.size));
+			var photo = photoCache.shift();
+			var point = carousel.positions[i];
+			point.sprite = photo;
+			photo.size = point.size;
+			photo.x = -photo.width;
+			photo.y = -photo.height;
 
-			for(i in 0...photoCount)
-			{
-				var point = carousel.positions[i];
+			FlxTween.tween(photo, {
+				x: carousel.centerX + point.x - point.size * 0.5, 
+				y: carousel.centerY + point.y - point.size * 0.5
+			}, 0.3, {startDelay: i / 20, ease: FlxEase.backOut});
 
-				FlxTween.tween(point.sprite, {
-					x: carousel.centerX + point.x - point.size * 0.5, 
-					y: carousel.centerY + point.y - point.size * 0.5,
-					size: point.size
-				}, 0.3, {startDelay: i / 20, ease: FlxEase.backOut});
-			}
-
-			updateDescription();
+			carousel.add(photo);
 		}
+
+		carousel.members.sort((O1, O2) -> Std.int(O1.size - O2.size));
+		FlxTween.tween(progressBar, {alpha: 0}, 0.8);
+		updateDescription();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -297,6 +303,6 @@ class PlayState extends FlxTransitionableState
 	@:access(CatGenerator)
 	@:noCompletion function get_progress():Float
 	{
-		return carousel.length / photoCount + (generator.catLoader.progress < 1 ? generator.catLoader.progress / photoCount : 0);
+		return photoCache.length / photoCount + (generator.catLoader.progress < 1 ? generator.catLoader.progress / photoCount : 0);
 	}
 }
