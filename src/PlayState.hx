@@ -1,6 +1,5 @@
 package;
 
-import flixel.util.FlxColor;
 import CatGenerator;
 import PhotoCarousel;
 import burst.BurstEncryptor;
@@ -19,6 +18,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
+import flixel.util.FlxColor;
 
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
@@ -79,7 +79,7 @@ class PlayState extends FlxTransitionableState
 		super.create();
 
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
-		progressBar.createFilledBar(0xFFFFFFFF, 0xFF0F99EE);
+		progressBar.createFilledBar(0xFFFFFFFF, 0xFF60D4A6);
 		progressBar.filledCallback = () -> FlxTween.tween(progressBar, {alpha: 0}, 0.8);
 		// progressBar.screenCenter();
 		// progressBar.visible = false;
@@ -102,9 +102,6 @@ class PlayState extends FlxTransitionableState
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
-
-		trace(hasTransIn);
-		trace(hasTransOut);
 
 		add(new FlxBackdrop(graphic));
 		add(carousel);
@@ -140,18 +137,28 @@ class PlayState extends FlxTransitionableState
 		sprite.antialiasing = true;
 		sprite.meta = data;		
 		sprite.loadGraphic(data.image);
+		carousel.positions[carousel.length].sprite = sprite;
+		sprite.size = carousel.positions[carousel.length].size;
+		sprite.x = -sprite.width;
+		sprite.y = -sprite.height;
+
 		carousel.add(sprite);
-
-		var item = carousel.positions[0];
-		item.sprite = sprite;
-		sprite.size = item.size;
-		sprite.x = item.x - sprite.size * 0.5;
-		sprite.y = item.y - sprite.size * 0.5;
-
-		carousel.spin(COUNTER_CLOCKWISE);
 
 		if(carousel.length == photoCount)
 		{
+			carousel.members.sort((O1, O2) -> Std.int(O1.size - O2.size));
+
+			for(i in 0...photoCount)
+			{
+				var point = carousel.positions[i];
+
+				FlxTween.tween(point.sprite, {
+					x: carousel.centerX + point.x - point.size * 0.5, 
+					y: carousel.centerY + point.y - point.size * 0.5,
+					size: point.size
+				}, 0.3, {startDelay: i / 20, ease: FlxEase.backOut});
+			}
+
 			updateDescription();
 		}
 	}
