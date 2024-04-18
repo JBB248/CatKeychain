@@ -13,6 +13,8 @@ import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 
+import sys.io.File;
+
 /**
  * Generates photos of cats by sending a request to [The Cat API](https://thecatapi.com/).
  * 
@@ -51,10 +53,16 @@ class CatGenerator
      */
     public function requestCat(count:Int = 1):Void
     {
+        #if debug
+        var response:Array<CatResponseData> = haxe.Json.parse(File.getContent("data/test-data.json"));
+
+        catLoader.pushRequests(response);
+        #else
         requestCount += count;
 
         if(!busy)
             getDataFromAPI();
+        #end
     }
 
     function getDataFromAPI():Void

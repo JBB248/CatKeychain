@@ -30,6 +30,7 @@
 	<source path="src"/>
 
 	<assets path="data"/>
+	<assets path="debug" rename="data" if="debug"/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
