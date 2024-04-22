@@ -294,8 +294,6 @@ class PlayState extends FlxTransitionableState
 	{
 		super.destroy();
 
-		// To-do: Figure out why photos aren't being destroyed and clogging memory
-
 		generator.destroy();
 
 		generator = null;

@@ -26,6 +26,8 @@ class CarouselPhoto extends FlxSprite
 
 	override public function destroy():Void
 	{
+		super.destroy();
+		
 		transitionTween = null;
 	}
 
@@ -174,8 +176,8 @@ class PhotoCarousel extends FlxTypedGroup<CarouselPhoto>
 	}
 }
 
-enum WheelDirection 
+enum abstract WheelDirection(String) from String
 {
-	CLOCKWISE;
-	COUNTER_CLOCKWISE;
+	var CLOCKWISE = "clockwise";
+	var COUNTER_CLOCKWISE = "counter-clockwise";
 }
