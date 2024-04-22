@@ -2,7 +2,7 @@ package;
 
 import CatGenerator;
 import PhotoCarousel;
-import burst.BurstEncryptor;
+// import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -21,16 +21,16 @@ import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 
 import openfl.display.BitmapData;
-import openfl.display.PNGEncoderOptions;
+// import openfl.display.PNGEncoderOptions;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 
-import sys.io.File;
+// import sys.io.File;
 
 class PlayState extends FlxTransitionableState
 {
-	static var initialized:Bool = false;
+	static var initialized:Bool = false; // Move this to a MenuState or somn
 
 	public static inline var TILE_SIZE:Int = 16;
 
@@ -55,7 +55,7 @@ class PlayState extends FlxTransitionableState
 	{
 		if(!initialized)
 		{
-			var diamond = FlxGraphic.fromClass(GraphicTransTileDiamond);
+			var diamond = FlxGraphic.fromClass(GraphicTransTileSquare);
 			diamond.persist = true;
 			diamond.destroyOnNoUse = false;
 
@@ -65,7 +65,7 @@ class PlayState extends FlxTransitionableState
 				height: 32
 			};
 
-			var transitionData = new TransitionData(TILES, FlxColor.WHITE, 1.2, FlxPoint.get(1, -1), tileData);
+			var transitionData = new TransitionData(TILES, FlxColor.WHITE, 0.8, FlxPoint.get(1, 0), tileData);
 
 			FlxTransitionableState.defaultTransIn = transitionData;
 			FlxTransitionableState.defaultTransOut = transitionData;
@@ -78,25 +78,41 @@ class PlayState extends FlxTransitionableState
 
 	override public function create():Void
 	{
-		super.create();
+		bgColor = 0xFFFFFFFF;
 
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
-		progressBar.createFilledBar(0xFFFFFFFF, 0xFF60D4A6);
+		progressBar.createFilledBar(0xFFFFFFFF, 0xFF000000);
 		progressBar.filledCallback = allCatsGenerated;
-		// progressBar.screenCenter();
-		// progressBar.visible = false;
+		progressBar.screenCenter();
+
+		generator = new CatGenerator();
+		generator.onCatGenerated.add(catGenerated);
+		generator.requestCat(photoCount);
+
+		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
+
+		add(progressBar);
+
+		/*********************** Encryption ***********************/
+		/*
+			pixels = BitmapData.fromFile("data/Ball.png");
+
+			var encrypted = BurstEncryptor.encrypt(pixels, "Ball attack");
+			File.saveBytes("data/Test.png", encrypted.encode(encrypted.rect, new PNGEncoderOptions()));
+
+			encrypted = BitmapData.fromFile("data/Test.png");
+			var message = BurstEncryptor.decrypt(encrypted);
+		*/
+	}
+
+	function renderUI():Void
+	{
+		carousel.frontPhotoChanged.add((_) -> updateDescription());
 
 		var graphic = FlxG.bitmap.create(32, 32, 0xFFFFB6CC);
 		graphic.bitmap.fillRect(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
-
-		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
-		carousel.frontPhotoChanged.add((_) -> updateDescription());
-
-		generator = new CatGenerator();
-		generator.onCatGenerated.add(catGenerated);
 		
-
 		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFFD4608E);
 		infoText = new FlxTypeText(textBackdrop.x + 4, textBackdrop.y + 4, Std.int(textBackdrop.width) - 8, "Neko");
 		ctrlText = new FlxText();
@@ -110,27 +126,11 @@ class PlayState extends FlxTransitionableState
 		add(textBackdrop);
 		add(infoText);
 		add(ctrlText);
-		add(progressBar);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
 
-		/*********************** Encryption ***********************/
-
-		pixels = BitmapData.fromFile("data/Ball.png");
-
-		var encrypted = BurstEncryptor.encrypt(pixels, "Ball attack");
-		File.saveBytes("data/Test.png", encrypted.encode(encrypted.rect, new PNGEncoderOptions()));
-
-		encrypted = BitmapData.fromFile("data/Test.png");
-		var message = BurstEncryptor.decrypt(encrypted);
-	}
-
-	override public function finishTransIn():Void
-	{
-		super.finishTransIn();
-
-		generator.requestCat(photoCount);
+		transitionIn();
 	}
 
 	function catGenerated(data:CatResponseData):Void
@@ -147,6 +147,8 @@ class PlayState extends FlxTransitionableState
 
 	function allCatsGenerated():Void
 	{
+		renderUI();
+
 		for(i in 0...photoCount)
 		{
 			var photo = photoCache.shift();
@@ -159,7 +161,7 @@ class PlayState extends FlxTransitionableState
 			FlxTween.tween(photo, {
 				x: carousel.centerX + point.x - point.size * 0.5, 
 				y: carousel.centerY + point.y - point.size * 0.5
-			}, 0.3, {startDelay: i / 20, ease: FlxEase.backOut});
+			}, 0.3, {startDelay: 0.8 + i / 20, ease: FlxEase.backOut});
 
 			carousel.add(photo);
 		}
@@ -291,6 +293,8 @@ class PlayState extends FlxTransitionableState
 	override public function destroy():Void
 	{
 		super.destroy();
+
+		// To-do: Figure out why photos aren't being destroyed and clogging memory
 
 		generator.destroy();
 

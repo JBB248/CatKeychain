@@ -12,6 +12,8 @@ class AltState extends FlxTransitionableState
 
     override public function create():Void
     {
+        bgColor = 0xFF000000;
+
         super.create();
     }
 
