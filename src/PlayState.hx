@@ -51,8 +51,6 @@ class PlayState extends FlxTransitionableState
 
 	override public function create():Void
 	{
-		bgColor = 0xFFFFFFFF;
-
 		progressBar = new FlxBar(0, 0, null, Assets.TILE_SIZE * 16, Assets.TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFFFFFFF, 0xFF000000);
 		progressBar.filledCallback = allCatsGenerated;

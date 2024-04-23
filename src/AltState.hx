@@ -31,5 +31,7 @@ class AltState extends FlxTransitionableState
 
         if(FlxG.keys.justPressed.SPACE)
             FlxG.switchState(PlayState.new);
+        else if(FlxG.keys.justPressed.ESCAPE)
+            FlxG.switchState(MainMenuState.new);
     }
 }

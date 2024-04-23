@@ -6,9 +6,12 @@ import flixel.graphics.FlxGraphic;
 
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
+import openfl.media.Sound;
 import openfl.utils.ByteArray;
 
 @:bitmap("build-assets/default-photo.png") class DefaultPhotoGraphic extends BitmapData { }
+
+@:sound("build-assets/spring-smw.ogg") class SpringSound extends Sound { }
 
 @:bitmap("build-assets/spin-cat.png") class SpinningCatGraphic extends BitmapData { }
 @:file("build-assets/spin-cat.json") class SpinningCatData extends ByteArrayData { }
