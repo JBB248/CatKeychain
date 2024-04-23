@@ -54,7 +54,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if debug
-        var response:Array<CatResponseData> = haxe.Json.parse(File.getContent("data/test-data.json"));
+        var response:Array<CatResponseData> = haxe.Json.parse(File.getContent("test-data.json"));
 
         catLoader.pushRequests(response);
         #else

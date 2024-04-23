@@ -29,13 +29,12 @@
 
 	<source path="src"/>
 
-	<assets path="data"/>
-	<assets path="debug" rename="data" if="debug"/>
+	<assets path="debug" if="debug" rename=""/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel"/>
-	<haxelib name="flixel-addons"/>
+	<haxelib name="flixel" version="5.6.2"/>
+	<haxelib name="flixel-addons" version="3.2.2"/>
 
 	<!--In case you want to use the ui package-->
 	<!-- <haxelib name="flixel-ui"/> -->
@@ -81,8 +80,8 @@
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 
-	<icon path="kitten.png"/>
-	<icon path="kitten-16.png" size="16"/>
-	<icon path="kitten-32.png" size="32"/>
-	<icon path="kitten-64.png" size="64"/>
+	<icon path="build-assets/kitten.png"/>
+	<icon path="build-assets/kitten-16.png" size="16"/>
+	<icon path="build-assets/kitten-32.png" size="32"/>
+	<icon path="build-assets/kitten-64.png" size="64"/>
 </project>
