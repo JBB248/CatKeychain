@@ -2,12 +2,9 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.FlxGraphic;
-
-import openfl.display.BitmapData;
-
-@:bitmap("build-assets/default-photo.png") class DefaultPhotoGraphic extends BitmapData { }
 
 class AltState extends FlxTransitionableState
 {
@@ -18,14 +15,13 @@ class AltState extends FlxTransitionableState
 
     override public function create():Void
     {
-        bgColor = 0xFF000000;
-
         super.create();
 
         var cat = new FlxSprite();
-        cat.loadGraphic(FlxGraphic.fromClass(DefaultPhotoGraphic));
+        cat.loadGraphic(FlxGraphic.fromClass(Assets.DefaultPhotoGraphic));
         cat.screenCenter();
 
+        add(new FlxBackdrop(Assets.backdropTile));
         add(cat);
     }
 

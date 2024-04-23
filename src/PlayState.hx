@@ -9,16 +9,11 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.FlxTransitionSprite;
-import flixel.addons.transition.TransitionData;
-import flixel.graphics.FlxGraphic;
-import flixel.math.FlxPoint;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.util.FlxColor;
 
 import openfl.display.BitmapData;
 // import openfl.display.PNGEncoderOptions;
@@ -31,8 +26,6 @@ import openfl.geom.Rectangle;
 class PlayState extends FlxTransitionableState
 {
 	static var initialized:Bool = false; // Move this to a MenuState or somn
-
-	public static inline var TILE_SIZE:Int = 16;
 
 	public var infoText:FlxTypeText;
 	public var ctrlText:FlxText;
@@ -53,26 +46,6 @@ class PlayState extends FlxTransitionableState
 
 	public function new()
 	{
-		if(!initialized)
-		{
-			var diamond = FlxGraphic.fromClass(GraphicTransTileSquare);
-			diamond.persist = true;
-			diamond.destroyOnNoUse = false;
-
-			var tileData:TransitionTileData = {
-				asset: diamond,
-				width: 32,
-				height: 32
-			};
-
-			var transitionData = new TransitionData(TILES, FlxColor.WHITE, 0.8, FlxPoint.get(1, 0), tileData);
-
-			FlxTransitionableState.defaultTransIn = transitionData;
-			FlxTransitionableState.defaultTransOut = transitionData;
-
-			initialized = true;
-		}
-
 		super();
 	}
 
@@ -80,7 +53,7 @@ class PlayState extends FlxTransitionableState
 	{
 		bgColor = 0xFFFFFFFF;
 
-		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
+		progressBar = new FlxBar(0, 0, null, Assets.TILE_SIZE * 16, Assets.TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(0xFFFFFFFF, 0xFF000000);
 		progressBar.filledCallback = allCatsGenerated;
 		progressBar.screenCenter();
@@ -108,12 +81,8 @@ class PlayState extends FlxTransitionableState
 	function renderUI():Void
 	{
 		carousel.frontPhotoChanged.add((_) -> updateDescription());
-
-		var graphic = FlxG.bitmap.create(32, 32, 0xFFFFB6CC);
-		graphic.bitmap.fillRect(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
-		graphic.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFFD4608E);
 		
-		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFFD4608E);
+		var textBackdrop = new FlxSprite(30, Assets.TILE_SIZE * 22).makeGraphic(FlxG.width - 60, Assets.TILE_SIZE * 8, 0xFFD4608E);
 		infoText = new FlxTypeText(textBackdrop.x + 4, textBackdrop.y + 4, Std.int(textBackdrop.width) - 8, "Neko");
 		ctrlText = new FlxText();
 		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@", [mintTextFormat]);
@@ -121,7 +90,7 @@ class PlayState extends FlxTransitionableState
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		add(new FlxBackdrop(graphic));
+		add(new FlxBackdrop(Assets.backdropTile));
 		add(carousel);
 		add(textBackdrop);
 		add(infoText);
@@ -261,7 +230,7 @@ class PlayState extends FlxTransitionableState
 			item.sprite.transitionTween = 
 			if(i == 0)
 				FlxTween.tween(item.sprite, 
-					{x: FlxG.width * 0.5 - TILE_SIZE * 9, y: 32, size: TILE_SIZE * 18}, 0.8, 
+					{x: FlxG.width * 0.5 - Assets.TILE_SIZE * 9, y: 32, size: Assets.TILE_SIZE * 18}, 0.8, 
 					{ease: FlxEase.backInOut});
 			else
 				FlxTween.tween(item.sprite, 
