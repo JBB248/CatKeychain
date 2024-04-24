@@ -1,12 +1,10 @@
 package;
 
-import burst.sys.BurstDotEnv;
-
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.transition.FlxTransitionSprite;
 import flixel.addons.transition.TransitionData;
-import flixel.addons.ui.FlxButtonPlus;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxPoint;
@@ -32,14 +30,14 @@ class MainMenuState extends FlxTransitionableState
         if(!initialized)
         {
             FlxG.autoPause = false;
-                
-            BurstDotEnv.init();
-            Assets.init();
-
             FlxG.cameras.bgColor = 0xFFFFFFFF;
 
+            var transitionTile = FlxGraphic.fromClass(GraphicTransTileSquare);
+            transitionTile.persist = true;
+            transitionTile.destroyOnNoUse = false;
+
             var tileData:TransitionTileData = {
-                asset: Assets.transitionTile,
+                asset: transitionTile,
                 width: 32,
                 height: 32
             };
@@ -57,7 +55,7 @@ class MainMenuState extends FlxTransitionableState
         super.create();
 
         spinningCat = new FlxSprite();
-        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(FlxGraphic.fromClass(Assets.SpinningCatGraphic), new Assets.SpinningCatData().toString()));
+        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(AssetPaths.getEmbeddedImage("spin-cat.png"), AssetPaths.getEmbeddedData("spin-cat.json", "images")));
         spinningCat.animation.addByPrefix("spin", "spin");
         spinningCat.animation.play("spin");
         spinningCat.setGraphicSize(catSize);
@@ -65,7 +63,7 @@ class MainMenuState extends FlxTransitionableState
         spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
         spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
 
-        springSFX = new FlxSound().loadEmbedded(new Assets.BoingSFX());
+        springSFX = AssetPaths.getEmbeddedSound("boing.ogg");
         
         var titleText = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
         titleText.color = 0xFF000000;

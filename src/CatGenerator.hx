@@ -1,7 +1,5 @@
 package;
 
-import burst.sys.BurstDotEnv;
-
 import flixel.FlxG;
 import flixel.util.FlxSignal;
 
@@ -76,7 +74,7 @@ class CatGenerator
             + "?limit=" + limit
             + "&has_breeds=1"
             + "&mime_types=jpg"
-            + "&api_key=" + BurstDotEnv.get("CAT_API_KEY")
+            + "&api_key=" + Sys.getEnv("CAT_API_KEY")
         ));
     }
 

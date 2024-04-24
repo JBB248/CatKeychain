@@ -18,10 +18,9 @@ class AltState extends FlxTransitionableState
         super.create();
 
         var cat = new FlxSprite();
-        cat.loadGraphic(FlxGraphic.fromClass(Assets.DefaultPhotoGraphic));
+        cat.loadGraphic(AssetPaths.getEmbeddedImage("default-photo.png"));
         cat.screenCenter();
 
-        add(new FlxBackdrop(Assets.backdropTile));
         add(cat);
     }
 
@@ -29,9 +28,7 @@ class AltState extends FlxTransitionableState
     {
         super.update(elapsed);
 
-        if(FlxG.keys.justPressed.SPACE)
-            FlxG.switchState(PlayState.new);
-        else if(FlxG.keys.justPressed.ESCAPE)
+        if(FlxG.keys.justPressed.ESCAPE)
             FlxG.switchState(MainMenuState.new);
     }
 }
