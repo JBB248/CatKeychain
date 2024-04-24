@@ -15,6 +15,8 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.ui.FlxButton;
 
+import openfl.geom.Rectangle;
+
 class MainMenuState extends FlxTransitionableState
 {
     static var initialized:Bool = false;
@@ -63,14 +65,19 @@ class MainMenuState extends FlxTransitionableState
         spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
         spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
 
-        springSFX = new FlxSound().loadEmbedded(new Assets.SpringSound());
+        springSFX = new FlxSound().loadEmbedded(new Assets.BoingSFX());
         
         var titleText = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
         titleText.color = 0xFF000000;
 
-        var galleryButton = new FlxButton(22, titleText.y +  titleText.height + 15, "Gallery", () -> FlxG.switchState(AltState.new));
-        var browseButton = new FlxButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse", () -> FlxG.switchState(PlayState.new));
-        var creditsButton = new FlxButton(browseButton.x + browseButton.width + 10, galleryButton.y, "Credits", () -> {/* Play SFX */});
+        var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery");
+        galleryButton.onUp.callback = () -> FlxG.switchState(AltState.new);
+
+        var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI");
+        browseButton.onUp.callback = () -> FlxG.switchState(PlayState.new);
+
+        var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits");
+        creditsButton.onUp.callback = () -> {/* Play SFX */};
 
         add(spinningCat);
         add(titleText);
@@ -106,5 +113,46 @@ class MainMenuState extends FlxTransitionableState
             spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
             spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
         }
+    }
+}
+
+class MenuButton extends FlxButton
+{
+    public function new(x:Float, y:Float, text:String)
+    {
+        super(x, y, text);
+
+        var newGraphic = FlxG.bitmap.create(80, 80, 0xFFFFFFFF, true);
+
+        newGraphic.bitmap.fillRect(new Rectangle(0, 20, 80, 20), 0xFF000000);
+        newGraphic.bitmap.fillRect(new Rectangle(2, 22, 76, 16), 0xFFFFFFFF);
+        newGraphic.bitmap.fillRect(new Rectangle(0, 40, 80, 40), 0xFF000000);
+
+        loadGraphic(newGraphic, true, 80, 20);
+        label.color = 0xFF000000;
+
+        allowSwiping = false;
+    }
+
+    override public function onDownHandler():Void
+    {
+        label.color = 0xFFFFFFFF;
+        
+        super.onDownHandler();
+    }
+
+    override public function onUpHandler():Void
+    {
+        label.color = 0xFF000000;
+
+        super.onUpHandler();
+    }
+
+    override public function onOutHandler():Void
+    {
+        if(status == PRESSED)
+            label.color = 0xFF000000;
+
+        super.onOutHandler();
     }
 }
