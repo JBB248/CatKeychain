@@ -69,10 +69,10 @@ class MainMenuState extends FlxTransitionableState
         titleText.color = 0xFF000000;
 
         var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery");
-        galleryButton.onUp.callback = () -> FlxG.switchState(AltState.new);
+        galleryButton.onUp.callback = () -> FlxG.switchState(GalleryState.new);
 
         var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI");
-        browseButton.onUp.callback = () -> FlxG.switchState(PlayState.new);
+        browseButton.onUp.callback = () -> FlxG.switchState(BrowseState.new);
 
         var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits");
         creditsButton.onUp.callback = () -> {/* Play SFX */};
