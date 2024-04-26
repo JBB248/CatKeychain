@@ -1,14 +1,19 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 
+import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 
 class GalleryState extends FlxTransitionableState
 {
+    public var target:FlxObject;
+
     public function new() 
     {
         super();
@@ -66,20 +71,47 @@ class GalleryState extends FlxTransitionableState
                 }
             }
 
+            target = new FlxObject(0, 0, FlxG.width, FlxG.height);
+
+            FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height / 3 * matrix.length);
+            FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height / 3 * matrix.length);
+            FlxG.camera.follow(target, NO_DEAD_ZONE, 0.5);
+
             FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onScroll);
+            FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
         }
     }
 
     function onScroll(event:MouseEvent):Void
     {
-        
+        target.y += event.delta * 30;
+        if(target.y < FlxG.worldBounds.y)
+            target.y = 0;
+        else if(target.y + target.height > FlxG.worldBounds.height)
+            target.y = FlxG.worldBounds.height - target.height;
+    }
+
+    function onKeyReleased(event:KeyboardEvent):Void
+    {
+        switch(event.keyCode)
+        {
+            case FlxKey.F:
+                if(event.controlKey)
+                    findPhoto();
+            case FlxKey.ESCAPE:
+                FlxG.switchState(MainMenuState.new);
+        }
+    }
+
+    function findPhoto():Void
+    {
+
     }
 
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
 
-        if(FlxG.keys.justPressed.ESCAPE)
-            FlxG.switchState(MainMenuState.new);
+        FlxG.collide(target, null);
     }
 }
