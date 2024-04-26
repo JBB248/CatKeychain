@@ -4,15 +4,20 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.group.FlxContainer.FlxTypedContainer;
 import flixel.input.keyboard.FlxKey;
+import flixel.input.mouse.FlxMouseEvent;
 import flixel.math.FlxMath;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 
 class GalleryState extends FlxTransitionableState
 {
-    public var target:FlxObject;
+    public var camTarget:FlxObject;
+
+    public var gallery:FlxTypedContainer<GalleryPhoto>;
 
     public function new() 
     {
@@ -23,9 +28,9 @@ class GalleryState extends FlxTransitionableState
     {
         super.create();
 
-        var gallery = AssetPaths.getGallery();
+        var savedGallery = AssetPaths.getGallery();
 
-        if(gallery.length <  1)
+        if(savedGallery.length <  1)
         {
             var cat = new FlxSprite();
             cat.loadGraphic(AssetPaths.getEmbeddedImage("default-photo.png"));
@@ -35,24 +40,23 @@ class GalleryState extends FlxTransitionableState
         }
         else
         {
+            gallery = new FlxTypedContainer();
+
             var matrix = [[]];
             var row = 0;
             var width = 0.0;
-            for(photo in gallery)
+            for(graphic in savedGallery)
             {
-                var sprite = new FlxSprite().loadGraphic(photo);
-                sprite.setGraphicSize(0, FlxG.height / 3);
-                sprite.updateHitbox();
-
-                if(sprite.width + width > FlxG.width)
+                var photo = new GalleryPhoto(0, 0, graphic, this);
+                if(photo.width + width > FlxG.width)
                 {
                     matrix.push([]);
                     row++;
                     width = 0;
                 }
 
-                width += sprite.width;
-                matrix[matrix.length - 1].push(sprite);
+                width += photo.width;
+                matrix[matrix.length - 1].push(photo);
             }
 
             for(j => row in matrix)
@@ -67,15 +71,16 @@ class GalleryState extends FlxTransitionableState
                         photo.x = dx;
 
                     photo.y = FlxG.height / 3 * j;
+                    photo.updateCenter();
                     add(photo);
                 }
             }
 
-            target = new FlxObject(0, 0, FlxG.width, FlxG.height);
+            camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
 
-            FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height / 3 * matrix.length);
-            FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height / 3 * matrix.length);
-            FlxG.camera.follow(target, NO_DEAD_ZONE, 0.5);
+            FlxG.camera.setScrollBounds(0, FlxG.width, 0, GalleryPhoto.photoHeight * matrix.length);
+            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.photoHeight * matrix.length);
+            FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
 
             FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onScroll);
             FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
@@ -84,11 +89,11 @@ class GalleryState extends FlxTransitionableState
 
     function onScroll(event:MouseEvent):Void
     {
-        target.y += event.delta * 30;
-        if(target.y < FlxG.worldBounds.y)
-            target.y = 0;
-        else if(target.y + target.height > FlxG.worldBounds.height)
-            target.y = FlxG.worldBounds.height - target.height;
+        camTarget.y -= event.delta * 30;
+        if(camTarget.y < FlxG.worldBounds.y)
+            camTarget.y = 0;
+        else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
+            camTarget.y = FlxG.worldBounds.height - camTarget.height;
     }
 
     function onKeyReleased(event:KeyboardEvent):Void
@@ -111,7 +116,68 @@ class GalleryState extends FlxTransitionableState
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
+    }
+}
 
-        FlxG.collide(target, null);
+
+class GalleryPhoto extends FlxSprite
+{
+    public static inline var photoHeight:Float = 160;
+
+    public var gallery:GalleryState;
+
+    public var centerX:Float;
+    public var centerY:Float;
+
+    public function new(x:Float = 0, y:Float = 0, graphic:FlxGraphicAsset, gallery:GalleryState)
+    {
+        super(x, y, graphic);
+
+        this.gallery = gallery;
+
+        centerX = x + width * 0.5;
+        centerY = y + height * 0.5;
+
+        setGraphicSize(0, photoHeight);
+        updateHitbox();
+
+        FlxMouseEvent.add(this, onDown, onUp, onOver, onOut, false, true, false);
+    }
+
+    public function updateCenter():Void
+    {
+        centerX = x + width * 0.5;
+        centerY = y + height * 0.5;
+    }
+
+    function onDown(_):Void
+    {
+
+    }
+
+    function onUp(_):Void
+    {
+
+    }
+
+    function onOver(_):Void
+    {
+        setGraphicSize(0, photoHeight * 1.5);
+        updateHitbox();
+
+        x = centerX - width * 0.5;
+        y = centerY - height * 0.5;
+
+        gallery.remove(this, true);
+        gallery.add(this);
+    }
+
+    function onOut(_):Void
+    {
+        setGraphicSize(0, photoHeight);
+        updateHitbox();
+
+        x = centerX - width * 0.5;
+        y = centerY - height * 0.5;
     }
 }
