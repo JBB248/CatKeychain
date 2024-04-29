@@ -174,6 +174,8 @@ class GallerySubState extends FlxSubState
 {
     public var parent:GalleryState;
 
+    public var orientation:Orientation = HORIZONTAL;
+
     public var photo:GalleryPhoto;
     public var photoPosition:{
         var x:Float;
@@ -206,6 +208,8 @@ class GallerySubState extends FlxSubState
         photo.isolate();
         add(photo);
 
+        orientation = photo.frameWidth > photo.frameHeight ? VERTICAL : HORIZONTAL;
+
         return this;
     }
 
@@ -219,6 +223,12 @@ class GallerySubState extends FlxSubState
             close();
         }
     }
+}
+
+enum Orientation
+{
+    HORIZONTAL;
+    VERTICAL;
 }
 
 class GalleryPhoto extends FlxSprite
@@ -267,17 +277,33 @@ class GalleryPhoto extends FlxSprite
 
     public function isolate():Void
     {
-        var scale = (FlxG.width * 0.5 - 40) / frameWidth;
-
         if(tween != null && !tween.finished)
             tween.cancel();
 
-        tween = FlxTween.tween(this, {
-            x: 20,
-            y: FlxG.height * 0.5 - (frameHeight * scale * 0.5) + gallery.camTarget.y,
-            "scale.x": scale,
-            "scale.y": scale
-        }, 1.0, {
+        var values:Dynamic;
+
+        if(frameWidth > frameHeight)
+        {
+            var scale = (FlxG.height * 0.6 - 20) / frameHeight;
+            values = {
+                x: FlxG.width * 0.5 - (frameWidth * scale * 0.5),
+                y: 20 + gallery.camTarget.y,
+                "scale.x": scale,
+                "scale.y": scale
+            };
+        }
+        else
+        {
+            var scale = (FlxG.width * 0.5 - 40) / frameWidth;
+            values = {
+                x: 20,
+                y: FlxG.height * 0.5 - (frameHeight * scale * 0.5) + gallery.camTarget.y,
+                "scale.x": scale,
+                "scale.y": scale
+            };
+        }
+
+        tween = FlxTween.tween(this, values, 1.0, {
             ease: FlxEase.quartOut,
             onUpdate: (_) -> {
                 updateHitbox();
