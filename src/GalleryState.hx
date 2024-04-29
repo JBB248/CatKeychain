@@ -88,6 +88,13 @@ class GalleryState extends FlxTransitionableState
         }
     }
 
+    override public function finishTransIn():Void
+    {
+        gallery.forEach((photo) -> photo.activateListeners());
+
+        super.finishTransIn();
+    }
+
     public function isolatePhoto(photo:GalleryPhoto):Void
     {
         openSubState(viewSubState.reset(photo));
@@ -176,7 +183,7 @@ class GallerySubState extends FlxSubState
 
     public function new(parent:GalleryState)
     {
-        super(0x88000000);
+        super(0xBB000000);
 
         this.parent = parent;
         this.photoPosition = {x: 0, y:0, scale: 1};
@@ -239,7 +246,10 @@ class GalleryPhoto extends FlxSprite
 
         setGraphicSize(0, photoHeight);
         updateHitbox();
+    }
 
+    public function activateListeners():Void
+    {
         FlxMouseEvent.add(this, null, onUp, onOver, onOut, false, true, false);
     }
 
@@ -264,7 +274,7 @@ class GalleryPhoto extends FlxSprite
 
         tween = FlxTween.tween(this, {
             x: 20,
-            y: gallery.camTarget.y + 20,
+            y: FlxG.height * 0.5 - (frameHeight * scale * 0.5) + gallery.camTarget.y,
             "scale.x": scale,
             "scale.y": scale
         }, 1.0, {
