@@ -4,15 +4,17 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
+import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup;
 import flixel.input.mouse.FlxMouseEvent;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxDestroyUtil;
+
+import lime.tools.Orientation;
 
 class GalleryState extends FlxTransitionableState
 {
@@ -82,8 +84,8 @@ class GalleryState extends FlxTransitionableState
                 }
             }
 
-            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.photoHeight * matrix.length);
-            FlxG.camera.setScrollBounds(0, FlxG.width, 0, GalleryPhoto.photoHeight * matrix.length);
+            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
+            FlxG.camera.setScrollBounds(0, FlxG.width, 0, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
         }
     }
@@ -155,7 +157,7 @@ class GalleryState extends FlxTransitionableState
         if(value != null)
         {
             // Enlarge new focus to make it stand out
-            value.setGraphicSize(0, GalleryPhoto.photoHeight * 1.25);
+            value.setGraphicSize(0, GalleryPhoto.PHOTO_ROW_HEIGHT * 1.25);
             value.updateHitbox();
 
             value.x = value.center.x - value.width * 0.5;
@@ -174,7 +176,7 @@ class GallerySubState extends FlxSubState
 {
     public var parent:GalleryState;
 
-    public var orientation:Orientation = HORIZONTAL;
+    public var orientation:Orientation = LANDSCAPE;
 
     public var photo:GalleryPhoto;
     public var photoPosition:{
@@ -182,6 +184,9 @@ class GallerySubState extends FlxSubState
         var y:Float;
         var scale:Float;
     };
+
+    public var textBox:FlxSprite;
+    public var description:FlxTypeText;
 
     public function new(parent:GalleryState)
     {
@@ -193,11 +198,21 @@ class GallerySubState extends FlxSubState
 
     override public function create():Void
     {
-        // Add ui stuff here
+        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF888888);
+        description = new FlxTypeText(0, 0, Std.int(textBox.width), "Neko");
+
+        add(textBox);
+        add(description);
     }
 
     public function reset(newPhoto:GalleryPhoto):GallerySubState
     {
+        if(!_created) // reset gets called before create
+        {
+            _created = true;
+            create();
+        }
+
         if(photo != null)
             remove(photo);
 
@@ -208,7 +223,29 @@ class GallerySubState extends FlxSubState
         photo.isolate();
         add(photo);
 
-        orientation = photo.frameWidth > photo.frameHeight ? VERTICAL : HORIZONTAL;
+        orientation = photo.frameWidth > photo.frameHeight ? LANDSCAPE : PORTRAIT;
+
+        if(orientation == LANDSCAPE)
+        {
+            var height = photo.frameHeight * (GalleryPhoto.LANDSCAPE_WIDTH / photo.frameWidth);
+            textBox.x = 15;
+            textBox.y = parent.camTarget.y + height + 30;
+            textBox.setGraphicSize(FlxG.width - 30, FlxG.height - height - 15);
+        }
+        else
+        {
+            var width = photo.frameWidth * (GalleryPhoto.PORTRAIT_HEIGHT / photo.frameHeight);
+            textBox.x = width + 30;
+            textBox.y = parent.camTarget.y + 15;
+            textBox.setGraphicSize(FlxG.width - width - 30, FlxG.height - 30);
+        }
+        
+        textBox.updateHitbox();
+
+        description.x = textBox.x + 4;
+        description.y = textBox.y + 4;
+        description.fieldWidth = textBox.width;
+        description.resetText("Wowza");
 
         return this;
     }
@@ -225,15 +262,12 @@ class GallerySubState extends FlxSubState
     }
 }
 
-enum Orientation
-{
-    HORIZONTAL;
-    VERTICAL;
-}
-
 class GalleryPhoto extends FlxSprite
 {
-    public static inline var photoHeight:Float = 160;
+    public static inline var PHOTO_ROW_HEIGHT:Float = 160;
+
+    public static inline var LANDSCAPE_WIDTH:Float = 440; // FlxG.width * 0.6875; Can't use FlxG for static variables
+    public static inline var PORTRAIT_HEIGHT:Float = 408; // FlxG.height * 0.8;
 
     public var gallery:GalleryState;
 
@@ -254,7 +288,7 @@ class GalleryPhoto extends FlxSprite
         this.gallery = gallery;
         this.portrait = {x: 0, y: 0, scale: 1};
 
-        setGraphicSize(0, photoHeight);
+        setGraphicSize(0, PHOTO_ROW_HEIGHT);
         updateHitbox();
     }
 
@@ -269,7 +303,7 @@ class GalleryPhoto extends FlxSprite
 
         portrait.x = x;
         portrait.y = y;
-        portrait.scale = photoHeight / frameHeight;
+        portrait.scale = PHOTO_ROW_HEIGHT / frameHeight;
 
         center.x = x + width * 0.5;
         center.y = y + height * 0.5;
@@ -282,28 +316,28 @@ class GalleryPhoto extends FlxSprite
 
         var values:Dynamic;
 
-        if(frameWidth > frameHeight)
+        if(frameWidth > frameHeight) // Landscape
         {
-            var scale = (FlxG.height * 0.6 - 20) / frameHeight;
+            var scale = LANDSCAPE_WIDTH / frameWidth;
             values = {
                 x: FlxG.width * 0.5 - (frameWidth * scale * 0.5),
-                y: 20 + gallery.camTarget.y,
+                y: gallery.camTarget.y + 15,
                 "scale.x": scale,
                 "scale.y": scale
             };
         }
         else
         {
-            var scale = (FlxG.width * 0.5 - 40) / frameWidth;
+            var scale = GalleryPhoto.PORTRAIT_HEIGHT / frameHeight;
             values = {
-                x: 20,
-                y: FlxG.height * 0.5 - (frameHeight * scale * 0.5) + gallery.camTarget.y,
+                x: 15,
+                y: gallery.camTarget.y + FlxG.height * 0.5 - (frameHeight * scale * 0.5),
                 "scale.x": scale,
                 "scale.y": scale
             };
         }
 
-        tween = FlxTween.tween(this, values, 1.0, {
+        tween = FlxTween.tween(this, values, 0.6, {
             ease: FlxEase.quartOut,
             onUpdate: (_) -> {
                 updateHitbox();
