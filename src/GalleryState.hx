@@ -8,7 +8,10 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup;
 import flixel.input.mouse.FlxMouseEvent;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxDestroyUtil;
 
 class GalleryState extends FlxTransitionableState
@@ -42,7 +45,7 @@ class GalleryState extends FlxTransitionableState
         else
         {
             camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
-            viewSubState = new GallerySubState();
+            viewSubState = new GallerySubState(this);
             destroySubStates = false;
 
             gallery = new FlxTypedGroup(); // FlxContainer has a child/parent relationship that bothers the substate
@@ -53,7 +56,7 @@ class GalleryState extends FlxTransitionableState
             var width = 0.0;
             for(graphic in savedGallery)
             {
-                var photo = new GalleryPhoto(0, 0, graphic, this);
+                var photo = new GalleryPhoto(graphic, this);
                 if(photo.width + width > FlxG.width)
                 {
                     matrix.push([]);
@@ -72,12 +75,9 @@ class GalleryState extends FlxTransitionableState
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.x = last.x + last.width;
+                        photo.setPortraitPosition(last.x + last.width, FlxG.height / 3 * j);
                     else
-                        photo.x = dx;
-
-                    photo.y = FlxG.height / 3 * j;
-                    photo.updateCenter();
+                        photo.setPortraitPosition(dx, FlxG.height / 3 * j);
                     gallery.add(photo);
                 }
             }
@@ -122,9 +122,9 @@ class GalleryState extends FlxTransitionableState
 
     override public function closeSubState():Void
     {
-        super.closeSubState();
-
         focus = null; // Make sure the photo resets, even if it's still being targeted
+
+        super.closeSubState();
     }
 
     override public function destroy():Void
@@ -136,14 +136,13 @@ class GalleryState extends FlxTransitionableState
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto
     {
-        if(focus != null)
+        if(focus != null && subState == null)
         {
             // Restore old focus to original size
-            focus.setGraphicSize(0, GalleryPhoto.photoHeight);
+            focus.x = focus.portrait.x;
+            focus.y = focus.portrait.y;
+            focus.scale.set(focus.portrait.scale, focus.portrait.scale);
             focus.updateHitbox();
-
-            focus.x = focus.centerX - focus.width * 0.5;
-            focus.y = focus.centerY - focus.height * 0.5;
         }
 
         if(value != null)
@@ -152,8 +151,8 @@ class GalleryState extends FlxTransitionableState
             value.setGraphicSize(0, GalleryPhoto.photoHeight * 1.25);
             value.updateHitbox();
 
-            value.x = value.centerX - value.width * 0.5;
-            value.y = value.centerY - value.height * 0.5;
+            value.x = value.center.x - value.width * 0.5;
+            value.y = value.center.y - value.height * 0.5;
 
             // Move new focus to top of draw stack
             final members = gallery.members;
@@ -166,11 +165,21 @@ class GalleryState extends FlxTransitionableState
 
 class GallerySubState extends FlxSubState
 {
-    public var photo:GalleryPhoto;
+    public var parent:GalleryState;
 
-    public function new()
+    public var photo:GalleryPhoto;
+    public var photoPosition:{
+        var x:Float;
+        var y:Float;
+        var scale:Float;
+    };
+
+    public function new(parent:GalleryState)
     {
         super(0x88000000);
+
+        this.parent = parent;
+        this.photoPosition = {x: 0, y:0, scale: 1};
     }
 
     override public function create():Void
@@ -184,6 +193,10 @@ class GallerySubState extends FlxSubState
             remove(photo);
 
         photo = newPhoto;
+        photoPosition.x = photo.x;
+        photoPosition.y = photo.y;
+        photoPosition.scale = photo.scale.x / 1.2;
+        photo.isolate();
         add(photo);
 
         return this;
@@ -194,7 +207,10 @@ class GallerySubState extends FlxSubState
         super.update(elapsed);
 
         if(FlxG.keys.justReleased.ESCAPE)
+        {
+            photo.deisolate();
             close();
+        }
     }
 }
 
@@ -204,17 +220,22 @@ class GalleryPhoto extends FlxSprite
 
     public var gallery:GalleryState;
 
-    public var centerX:Float;
-    public var centerY:Float;
+    public var portrait:{
+        var x:Float;
+        var y:Float;
+        var scale:Float;
+    };
 
-    public function new(x:Float = 0, y:Float = 0, graphic:FlxGraphicAsset, gallery:GalleryState)
+    public var center:FlxPoint = FlxPoint.get();
+
+    var tween:FlxTween;
+
+    public function new(graphic:FlxGraphicAsset, gallery:GalleryState)
     {
-        super(x, y, graphic);
+        super(graphic);
 
         this.gallery = gallery;
-
-        centerX = x + width * 0.5;
-        centerY = y + height * 0.5;
+        this.portrait = {x: 0, y: 0, scale: 1};
 
         setGraphicSize(0, photoHeight);
         updateHitbox();
@@ -222,10 +243,54 @@ class GalleryPhoto extends FlxSprite
         FlxMouseEvent.add(this, null, onUp, onOver, onOut, false, true, false);
     }
 
-    public function updateCenter():Void
+    public function setPortraitPosition(x:Float, y:Float):Void
     {
-        centerX = x + width * 0.5;
-        centerY = y + height * 0.5;
+        setPosition(x, y);
+
+        portrait.x = x;
+        portrait.y = y;
+        portrait.scale = photoHeight / frameHeight;
+
+        center.x = x + width * 0.5;
+        center.y = y + height * 0.5;
+    }
+
+    public function isolate():Void
+    {
+        var scale = (FlxG.width * 0.5 - 40) / frameWidth;
+
+        if(tween != null && !tween.finished)
+            tween.cancel();
+
+        tween = FlxTween.tween(this, {
+            x: 20,
+            y: gallery.camTarget.y + 20,
+            "scale.x": scale,
+            "scale.y": scale
+        }, 1.0, {
+            ease: FlxEase.quartOut,
+            onUpdate: (_) -> {
+                updateHitbox();
+            }
+        });
+    }
+
+    public function deisolate():Void
+    {
+        if(tween != null && !tween.finished)
+            tween.cancel();
+
+        tween = FlxTween.tween(this, {
+            x: portrait.x,
+            y: portrait.y,
+            "scale.x": portrait.scale,
+            "scale.y": portrait.scale
+        }, 0.4, {
+            ease: FlxEase.quartOut,
+            onUpdate: (_) -> {
+                updateHitbox();
+            }
+        });
     }
 
     function onUp(_):Void
@@ -237,15 +302,23 @@ class GalleryPhoto extends FlxSprite
 
     function onOver(_):Void
     {
-        if(gallery.subState != null) return;
+        if(gallery.subState != null || (tween != null && !tween.finished)) return;
 
         gallery.focus = this; // Look at me!
     }
 
     function onOut(_):Void
     {
-        if(gallery.subState != null) return;
+        if(gallery.subState != null || (tween != null && !tween.finished)) return;
 
         gallery.focus = null; // Hovering over whitespace
+    }
+
+    override public function destroy():Void
+    {
+        super.destroy();
+
+        portrait = null;
+        center = FlxDestroyUtil.put(center);
     }
 }
