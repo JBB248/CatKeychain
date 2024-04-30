@@ -55,7 +55,7 @@ class GalleryViewSubState extends FlxSubState
     {
         textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF888888);
         textBox.cameras = [viewCam];
-        description = new FlxTypeText(0, 0, Std.int(textBox.width), "Neko");
+        description = new FlxTypeText(0, 0, Std.int(textBox.width) - 8, "Neko");
         description.cameras = [viewCam];
 
         add(textBox);
@@ -88,6 +88,8 @@ class GalleryViewSubState extends FlxSubState
             textBox.x = 15;
             textBox.y = height + 30;
             textBox.setGraphicSize(FlxG.width - 30, FlxG.height - height - 15);
+
+            description.alignment = LEFT;
         }
         else
         {
@@ -95,6 +97,8 @@ class GalleryViewSubState extends FlxSubState
             textBox.x = width + 30;
             textBox.y = 15;
             textBox.setGraphicSize(FlxG.width - width - 30, FlxG.height - 30);
+
+            description.alignment = CENTER;
         }
         
         textBox.updateHitbox();
@@ -137,7 +141,6 @@ class GalleryViewSubState extends FlxSubState
     {
         super.destroy();
 
-        FlxG.cameras.remove(viewCam);
         viewCam = FlxDestroyUtil.destroy(viewCam);
 
         parent = null;

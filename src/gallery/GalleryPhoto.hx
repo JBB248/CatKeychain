@@ -70,6 +70,7 @@ class GalleryPhoto extends FlxSprite
 
         if(frameWidth > frameHeight) // Landscape
         {
+            y -= gallery.camTarget.y;
             var scale = LANDSCAPE_WIDTH / frameWidth;
             values = {
                 x: FlxG.width * 0.5 - (frameWidth * scale * 0.5),
@@ -80,7 +81,8 @@ class GalleryPhoto extends FlxSprite
         }
         else
         {
-            var scale = GalleryPhoto.PORTRAIT_HEIGHT / frameHeight;
+            y -= gallery.camTarget.y;
+            var scale = PORTRAIT_HEIGHT / frameHeight;
             values = {
                 x: 15,
                 y: FlxG.height * 0.5 - (frameHeight * scale * 0.5),
@@ -102,6 +104,7 @@ class GalleryPhoto extends FlxSprite
         if(tween != null && !tween.finished)
             tween.cancel();
 
+        y = gallery.camTarget.y + 15;
         tween = FlxTween.tween(this, {
             x: portrait.x,
             y: portrait.y,
