@@ -53,7 +53,8 @@ class GalleryViewSubState extends FlxSubState
 
     override public function create():Void
     {
-        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF888888);
+        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF2C2E39);
+        textBox.alpha = 0.6;
         textBox.cameras = [viewCam];
         description = new FlxTypeText(0, 0, Std.int(textBox.width) - 8, "Neko");
         description.cameras = [viewCam];
@@ -98,7 +99,7 @@ class GalleryViewSubState extends FlxSubState
             textBox.y = 15;
             textBox.setGraphicSize(FlxG.width - width - 30, FlxG.height - 30);
 
-            description.alignment = CENTER;
+            description.alignment = RIGHT;
         }
         
         textBox.updateHitbox();
@@ -114,7 +115,7 @@ class GalleryViewSubState extends FlxSubState
 
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
-        description.fieldWidth = textBox.width;
+        description.fieldWidth = textBox.width - 8;
         description.applyMarkup(displayText, [mintTextFormat]);
         description.start(0.01, true, false, [SPACE]);
     }

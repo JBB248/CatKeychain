@@ -83,8 +83,11 @@ class GalleryState extends FlxTransitionableState
 
     override public function finishTransIn():Void
     {
-        gallery.forEach((photo) -> photo.activateListeners());
-
+        if(gallery != null)
+        {
+            gallery.forEach((photo) -> photo.activateListeners());
+        }
+        
         super.finishTransIn();
     }
 
@@ -112,12 +115,15 @@ class GalleryState extends FlxTransitionableState
             FlxG.switchState(MainMenuState.new);
         }
 
-        // Update scroll
-        camTarget.y -= FlxG.mouse.wheel * 40;
-        if(camTarget.y < FlxG.worldBounds.y)
-            camTarget.y = 0;
-        else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
-            camTarget.y = FlxG.worldBounds.height - camTarget.height;
+        if(camTarget != null)
+        {
+            // Update scroll
+            camTarget.y -= FlxG.mouse.wheel * 40;
+            if(camTarget.y < FlxG.worldBounds.y)
+                camTarget.y = 0;
+            else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
+                camTarget.y = FlxG.worldBounds.height - camTarget.height;
+        }
     }
 
     override public function closeSubState():Void

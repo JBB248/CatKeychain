@@ -38,8 +38,9 @@ class AssetPaths
 
     public static function getGallery():Array<{graphic:FlxGraphic, data:CatData}>
     {
-        var dirs = FileSystem.readDirectory("gallery");
+        if(!FileSystem.exists("gallery")) return [];
 
+        var dirs = FileSystem.readDirectory("gallery");
         return [for(id in dirs) {graphic: getGalleryPhoto(id), data: getGalleryData(id)}];
     }
 
