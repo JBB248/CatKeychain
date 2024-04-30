@@ -56,9 +56,9 @@ class GalleryState extends FlxTransitionableState
             var matrix = [[]];
             var row = 0;
             var width = 0.0;
-            for(graphic in savedGallery)
+            for(item in savedGallery)
             {
-                var photo = new GalleryPhoto(graphic, this);
+                var photo = new GalleryPhoto(item.graphic, this);
                 if(photo.width + width > FlxG.width)
                 {
                     matrix.push([]);
@@ -246,6 +246,7 @@ class GallerySubState extends FlxSubState
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width;
         description.resetText("Wowza");
+        description.start(0.01, true, false, [SPACE]);
 
         return this;
     }

@@ -1,8 +1,12 @@
 package;
 
+import CatGenerator;
+
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.sound.FlxSound;
+
+import haxe.Json;
 
 import openfl.Assets;
 import openfl.display.BitmapData;
@@ -32,15 +36,20 @@ class AssetPaths
         return '${embedded ? "embedded" : "assets"}/${library}/${path}';
     }
 
-    public static function getGallery():Array<FlxGraphic>
+    public static function getGallery():Array<{graphic:FlxGraphic, data:CatResponseData}>
     {
-        var dir = FileSystem.readDirectory("gallery");
+        var dirs = FileSystem.readDirectory("gallery");
 
-        return [for(file in dir) getGalleryImage(file)];
+        return [for(id in dirs) {graphic: getGalleryPhoto(id), data: getGalleryData(id)}];
     }
 
-    public static function getGalleryImage(id:String):FlxGraphic
+    public static inline function getGalleryPhoto(id:String):FlxGraphic
     {
-        return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}')));
+        return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}/photo.jpg')));
+    }
+
+    public static inline function getGalleryData(id:String):CatResponseData
+    {
+        return (cast Json.parse(File.getContent('gallery/${id}/data.json')));
     }
 }

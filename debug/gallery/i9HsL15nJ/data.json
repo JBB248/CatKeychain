@@ -1,0 +1,50 @@
+{
+    "breeds": [
+        {
+            "weight": {
+                "imperial": "7 - 13",
+                "metric": "3 - 6"
+            },
+            "id": "manx",
+            "name": "Manx",
+            "cfa_url": "http://cfa.org/Breeds/BreedsKthruR/Manx.aspx",
+            "vetstreet_url": "http://www.vetstreet.com/cats/manx",
+            "vcahospitals_url": "https://vcahospitals.com/know-your-pet/cat-breeds/manx",
+            "temperament": "Easy Going, Intelligent, Loyal, Playful, Social",
+            "origin": "Isle of Man",
+            "country_codes": "IM",
+            "country_code": "IM",
+            "description": "The Manx is a placid, sweet cat that is gentle and playful. She never seems to get too upset about anything. She is a loving companion and adores being with people.",
+            "life_span": "12 - 14",
+            "indoor": 0,
+            "lap": 1,
+            "alt_names": "Manks, Stubbin, Rumpy",
+            "adaptability": 5,
+            "affection_level": 5,
+            "child_friendly": 4,
+            "dog_friendly": 5,
+            "energy_level": 5,
+            "grooming": 1,
+            "health_issues": 3,
+            "intelligence": 5,
+            "shedding_level": 5,
+            "social_needs": 5,
+            "stranger_friendly": 3,
+            "vocalisation": 3,
+            "experimental": 0,
+            "hairless": 0,
+            "natural": 1,
+            "rare": 0,
+            "rex": 0,
+            "suppressed_tail": 1,
+            "short_legs": 0,
+            "wikipedia_url": "https://en.wikipedia.org/wiki/Manx_(cat)",
+            "hypoallergenic": 0,
+            "reference_image_id": "fhYh2PDcC"
+        }
+    ],
+    "id": "i9HsL15nJ",
+    "url": "https://cdn2.thecatapi.com/images/i9HsL15nJ.jpg",
+    "width": 3024,
+    "height": 4032
+}
