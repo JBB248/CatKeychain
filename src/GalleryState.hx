@@ -1,5 +1,7 @@
 package;
 
+import CatGenerator;
+
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -10,6 +12,7 @@ import flixel.group.FlxGroup;
 import flixel.input.mouse.FlxMouseEvent;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
+import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxDestroyUtil;
@@ -18,6 +21,9 @@ import lime.tools.Orientation;
 
 class GalleryState extends FlxTransitionableState
 {
+    // To-do: this is a duplicate. Maybe make a utility class
+    public var mintTextFormat:FlxTextFormatMarkerPair = new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF60D4A6), "@");
+
     public var camTarget:FlxObject;
 
     public var gallery:FlxTypedGroup<GalleryPhoto>;
@@ -58,7 +64,7 @@ class GalleryState extends FlxTransitionableState
             var width = 0.0;
             for(item in savedGallery)
             {
-                var photo = new GalleryPhoto(item.graphic, this);
+                var photo = new GalleryPhoto(item.graphic, item.data, this);
                 if(photo.width + width > FlxG.width)
                 {
                     matrix.push([]);
@@ -77,9 +83,9 @@ class GalleryState extends FlxTransitionableState
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.setPortraitPosition(last.x + last.width, FlxG.height / 3 * j);
+                        photo.updatePortrait(last.x + last.width, FlxG.height / 3 * j);
                     else
-                        photo.setPortraitPosition(dx, FlxG.height / 3 * j);
+                        photo.updatePortrait(dx, FlxG.height / 3 * j);
                     gallery.add(photo);
                 }
             }
@@ -242,10 +248,19 @@ class GallerySubState extends FlxSubState
         
         textBox.updateHitbox();
 
+        var cat = photo.data.breeds[0].name;
+        var origin = photo.data.breeds[0].origin;
+        var temperament = photo.data.breeds[0].temperament;
+        var desc = photo.data.breeds[0].description;
+        var displayText = '@Cat name:@ ${cat}\n\n' 
+				+ '@Origin:@ ${origin}\n\n'
+				+ '@Temperament:@ ${temperament}\n\n'
+				+ '@Description:@ ${desc}';
+
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width;
-        description.resetText("Wowza");
+        description.applyMarkup(displayText, [parent.mintTextFormat]);
         description.start(0.01, true, false, [SPACE]);
 
         return this;
@@ -272,6 +287,8 @@ class GalleryPhoto extends FlxSprite
 
     public var gallery:GalleryState;
 
+    public var data:CatData;
+
     public var portrait:{
         var x:Float;
         var y:Float;
@@ -282,10 +299,11 @@ class GalleryPhoto extends FlxSprite
 
     var tween:FlxTween;
 
-    public function new(graphic:FlxGraphicAsset, gallery:GalleryState)
+    public function new(graphic:FlxGraphicAsset, data:CatData, gallery:GalleryState)
     {
         super(graphic);
 
+        this.data = data;
         this.gallery = gallery;
         this.portrait = {x: 0, y: 0, scale: 1};
 
@@ -298,7 +316,7 @@ class GalleryPhoto extends FlxSprite
         FlxMouseEvent.add(this, null, onUp, onOver, onOut, false, true, false);
     }
 
-    public function setPortraitPosition(x:Float, y:Float):Void
+    public function updatePortrait(x:Float, y:Float):Void
     {
         setPosition(x, y);
 

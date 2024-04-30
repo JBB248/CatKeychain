@@ -104,7 +104,7 @@ class BrowseState extends FlxTransitionableState
 		transitionIn();
 	}
 
-	function catGenerated(data:CatResponseData):Void
+	function catGenerated(data:CatData):Void
 	{
 		var photo = new CarouselPhoto();
 		photo.antialiasing = true;
@@ -194,7 +194,7 @@ class BrowseState extends FlxTransitionableState
 		if(carousel.length != photoCount) return;
 
 		var photo = carousel.positions[0].sprite;
-		var meta:CatResponseData = cast photo.meta;
+		var meta:CatData = cast photo.meta;
 		if(meta.breeds.length > 0)
 		{
 			var cat = meta.breeds[0].name;

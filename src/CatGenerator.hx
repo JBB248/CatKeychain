@@ -22,7 +22,7 @@ import sys.io.File;
  */
 class CatGenerator
 {
-    public var onCatGenerated:FlxTypedSignal<CatResponseData->Void>;
+    public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
     var catLoader:CatLoader;
     var loader:URLLoader;
@@ -52,7 +52,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if debug
-        var response:Array<CatResponseData> = haxe.Json.parse(File.getContent("test-data.json"));
+        var response:Array<CatData> = haxe.Json.parse(File.getContent("test-data.json"));
 
         catLoader.pushRequests(response);
         #else
@@ -90,7 +90,7 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var response:Array<CatResponseData> = haxe.Json.parse(event.target.data);
+        var response:Array<CatData> = haxe.Json.parse(event.target.data);
 
         catLoader.pushRequests(response);
 
@@ -118,12 +118,12 @@ class CatGenerator
 class CatLoader
 {
     public var progress:Float = 0.0;
-    public var requests:Array<CatResponseData> = [];
+    public var requests:Array<CatData> = [];
 
     var generator:CatGenerator;
 
     var loader:URLLoader;
-    var focus:CatResponseData = null;
+    var focus:CatData = null;
 
     var busy:Bool = false;
 
@@ -140,7 +140,7 @@ class CatLoader
     /**
      * Appends a request to `requests` and begins image loading if not busy
      */
-    public function pushRequests(newRequests:Array<CatResponseData>):Void
+    public function pushRequests(newRequests:Array<CatData>):Void
     {
         requests = requests.concat(newRequests);
 
@@ -183,7 +183,7 @@ class CatLoader
     }
 }
 
-typedef CatResponseData = {
+typedef CatData = {
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;

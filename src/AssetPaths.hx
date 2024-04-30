@@ -36,7 +36,7 @@ class AssetPaths
         return '${embedded ? "embedded" : "assets"}/${library}/${path}';
     }
 
-    public static function getGallery():Array<{graphic:FlxGraphic, data:CatResponseData}>
+    public static function getGallery():Array<{graphic:FlxGraphic, data:CatData}>
     {
         var dirs = FileSystem.readDirectory("gallery");
 
@@ -48,7 +48,7 @@ class AssetPaths
         return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}/photo.jpg')));
     }
 
-    public static inline function getGalleryData(id:String):CatResponseData
+    public static inline function getGalleryData(id:String):CatData
     {
         return (cast Json.parse(File.getContent('gallery/${id}/data.json')));
     }
