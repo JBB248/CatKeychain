@@ -30,6 +30,7 @@ class GalleryViewSubState extends FlxSubState
     };
 
     public var textBox:FlxSprite;
+    public var testText:FlxText;
     public var description:FlxTypeText;
 
     public var viewCam:FlxCamera;
@@ -56,8 +57,12 @@ class GalleryViewSubState extends FlxSubState
         textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF2C2E39);
         textBox.alpha = 0.6;
         textBox.cameras = [viewCam];
-        description = new FlxTypeText(0, 0, Std.int(textBox.width) - 8, "Neko");
+        testText = new FlxText(0, 0, 1);
+        description = new FlxTypeText(0, 0, 1, "Neko");
         description.cameras = [viewCam];
+
+        FlxG.watch.add(description, "height");
+        FlxG.watch.add(testText, "height");
 
         add(textBox);
         add(description);
@@ -83,36 +88,39 @@ class GalleryViewSubState extends FlxSubState
 
         orientation = photo.frameWidth > photo.frameHeight ? LANDSCAPE : PORTRAIT;
 
-        if(orientation == LANDSCAPE)
-        {
-            var height = photo.frameHeight * (GalleryPhoto.LANDSCAPE_WIDTH / photo.frameWidth);
-            textBox.x = 15;
-            textBox.y = height + 30;
-            textBox.setGraphicSize(FlxG.width - 30, FlxG.height - height - 15);
-
-            description.alignment = LEFT;
-        }
-        else
-        {
-            var width = photo.frameWidth * (GalleryPhoto.PORTRAIT_HEIGHT / photo.frameHeight);
-            textBox.x = width + 30;
-            textBox.y = 15;
-            textBox.setGraphicSize(FlxG.width - width - 30, FlxG.height - 30);
-
-            description.alignment = RIGHT;
-        }
-        
-        textBox.updateHitbox();
-
-        var cat = photo.data.breeds[0].name;
+        var name = photo.data.breeds[0].name;
         var origin = photo.data.breeds[0].origin;
         var temperament = photo.data.breeds[0].temperament;
         var desc = photo.data.breeds[0].description;
-        var displayText = '@Cat name:@ ${cat}\n\n' 
+        var displayText = '@Cat name:@ ${name}\n\n' 
 				+ '@Origin:@ ${origin}\n\n'
 				+ '@Temperament:@ ${temperament}\n\n'
 				+ '@Description:@ ${desc}';
 
+        if(orientation == LANDSCAPE)
+        {
+            var scaledHeight = photo.frameHeight * (GalleryPhoto.LANDSCAPE_WIDTH / photo.frameWidth);
+            var boxHeight = FlxG.height - scaledHeight - 15;
+            textBox.x = 15;
+            textBox.y = scaledHeight + 30;
+            textBox.setGraphicSize(FlxG.width - 30, boxHeight);
+            textBox.updateHitbox();
+        }
+        else
+        {
+            var scaledWidth = photo.frameWidth * (GalleryPhoto.PORTRAIT_HEIGHT / photo.frameHeight);
+            var boxWidth = FlxG.width - scaledWidth - 30;
+
+            testText.fieldWidth = boxWidth - 8;
+            testText.applyMarkup(displayText, [mintTextFormat]);
+
+            textBox.setGraphicSize(boxWidth, testText.height + 8);
+            textBox.updateHitbox();
+
+            textBox.x = scaledWidth + 30;
+            textBox.y = 15;
+        }
+        
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width - 8;
@@ -149,5 +157,6 @@ class GalleryViewSubState extends FlxSubState
         photo = null;
         photoPosition = null;
         filters = null;
+        testText = FlxDestroyUtil.destroy(testText);
     }
 }
