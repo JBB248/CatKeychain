@@ -25,5 +25,6 @@ Html5 definitely doesn't work :sweat_smile:
 If you have any questions, leave them in the discussions tab
 
 ## Credits
-- All photos are sourced from [TheCatAPI](https://thecatapi.com/)
+- Downloadable photos are sourced from [TheCatAPI](https://thecatapi.com/)
+- Spinning cat sourced from [r/Catloaf](https://www.reddit.com/r/Catloaf/comments/yrvghr/found_it_the_very_rare_3d_360_degrees_catloaf/)
 - Powered by [HaxeFlixel](https://haxeflixel.com)
