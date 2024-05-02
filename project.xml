@@ -76,6 +76,11 @@
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug"/>
 
+	<define name="USE_API"/>
+	<define name="USE_TEST_DATA" if="debug" unless="USE_API"/>
+
+	<include path="enviroment.xml" if="USE_API"/>
+
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
@@ -84,6 +89,4 @@
 	<icon path="assets/build/kitten-16.png" size="16"/>
 	<icon path="assets/build/kitten-32.png" size="32"/>
 	<icon path="assets/build/kitten-64.png" size="64"/>
-
-	<include path="enviroment.xml"/>
 </project>

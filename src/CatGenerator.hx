@@ -11,7 +11,6 @@ import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 
-import sys.io.File;
 
 /**
  * Generates photos of cats by sending a request to [The Cat API](https://thecatapi.com/).
@@ -43,21 +42,19 @@ class CatGenerator
     }
 
     /**
-     * Adds `count` to `requestCount` immediately and begins
-     * downloading process immediately if not busy.
+     * Adds `count` to `requestCount` and begins
+     * download immediately if not busy.
      * 
      * When the photo is generated, `onCatGenerated` will be dispatched with
      * the photo alongside other data such as breed information, if it exists.
      */
     public function requestCat(count:Int = 1):Void
     {
-        #if debug
-        var response:Array<CatData> = haxe.Json.parse(File.getContent("test-data.json"));
-
+        #if USE_TEST_DATA
+        var response:Array<CatData> = haxe.Json.parse(sys.io.File.getContent("test-data.json"));
         catLoader.pushRequests(response);
         #else
         requestCount += count;
-
         if(!busy)
             getDataFromAPI();
         #end
@@ -67,14 +64,25 @@ class CatGenerator
     {
         busy = true;
 
-        var limit = Std.int(Math.min(100, requestCount)); // Requests cap at 100 items per call
+        var limit = 1;
+        if(requestCount > 1)
+        {
+            #if USE_API
+            limit = Std.int(Math.min(100, requestCount)); // Requests can be in batches of up to 100 items with api key
+            #else
+            limit = 10; // Requests can either be single or batches of ten without api key
+            #end
+        }
         requestCount -= limit;
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
             + "?limit=" + limit
+            #if USE_API 
+            // Without this, only ten photos will appear at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
             + "&mime_types=jpg"
-            + "&api_key=" + Sys.getEnv("CAT_API_KEY")
+            + "&api_key=" + Sys.getEnv("CAT_API_KEY") 
+            #end
         ));
     }
 
@@ -147,8 +155,7 @@ class CatLoader
         if(!busy)
         {
             busy = true;
-            focus = requests.shift();
-            loader.load(new URLRequest(focus.url));
+            checkRequests();
         }
     }
 
@@ -162,10 +169,29 @@ class CatLoader
         focus.image = BitmapData.fromBytes(event.target.data);
         generator.onCatGenerated.dispatch(focus);
 
+        checkForNewRequest();
+    }
+
+    function checkRequests():Void
+    {
+        focus = requests.shift();
+        if(StringTools.endsWith(focus.url, ".jpg"))
+        {
+            loader.load(new URLRequest(focus.url));
+        }
+        else
+        {
+            focus.image = AssetPaths.getEmbeddedImage("default-photo.png").bitmap;
+            generator.onCatGenerated.dispatch(focus);
+            checkForNewRequest();
+        }
+    }
+
+    function checkForNewRequest():Void
+    {
         if(requests.length > 0)
         {
-            focus = requests.shift();
-            loader.load(new URLRequest(focus.url));
+            checkRequests();
         }
         else
         {

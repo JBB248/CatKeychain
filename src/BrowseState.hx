@@ -195,7 +195,7 @@ class BrowseState extends FlxTransitionableState
 
 		var photo = carousel.positions[0].sprite;
 		var meta:CatData = cast photo.meta;
-		if(meta.breeds.length > 0)
+		if(meta.breeds != null && meta.breeds.length > 0)
 		{
 			var cat = meta.breeds[0].name;
 			var origin = meta.breeds[0].origin;
@@ -209,9 +209,13 @@ class BrowseState extends FlxTransitionableState
 
 			infoText.applyMarkup(displayText, [mintTextFormat]);
 		}
-		else
+		else if(StringTools.endsWith(meta.url, ".jpg"))
 		{
 			infoText.resetText("No description available :/");
+		}
+		else
+		{
+			infoText.resetText("Failed to load image :O");
 		}
 
 		infoText.start(0.01, true, false, [SPACE]);
