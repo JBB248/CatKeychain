@@ -11,7 +11,6 @@ import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 
-
 /**
  * Generates photos of cats by sending a request to [The Cat API](https://thecatapi.com/).
  * 
@@ -50,13 +49,11 @@ class CatGenerator
      */
     public function requestCat(count:Int = 1):Void
     {
-        #if USE_TEST_DATA
-        var response:Array<CatData> = haxe.Json.parse(sys.io.File.getContent("test-data.json"));
-        catLoader.pushRequests(response);
+        #if (debug && !USE_API)
+        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")));
         #else
         requestCount += count;
-        if(!busy)
-            getDataFromAPI();
+        if(!busy) getDataFromAPI();
         #end
     }
 
@@ -78,7 +75,7 @@ class CatGenerator
             "https://api.thecatapi.com/v1/images/search"
             + "?limit=" + limit
             #if USE_API 
-            // Without this, only ten photos will appear at a time, data isn't guaranteed, and non-jpegs may be retrieved
+            // Without an api key, only ten photos can be requested at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
             + "&mime_types=jpg"
             + "&api_key=" + Sys.getEnv("CAT_API_KEY") 
