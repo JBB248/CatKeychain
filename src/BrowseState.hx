@@ -2,7 +2,6 @@ package;
 
 import CatGenerator;
 import PhotoCarousel;
-// import burst.BurstEncryptor;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -16,12 +15,9 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 
 import openfl.display.BitmapData;
-// import openfl.display.PNGEncoderOptions;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
-
-// import sys.io.File;
 
 class BrowseState extends FlxTransitionableState
 {
@@ -63,17 +59,6 @@ class BrowseState extends FlxTransitionableState
 		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
 
 		add(progressBar);
-
-		/*********************** Encryption ***********************/
-		/*
-			pixels = BitmapData.fromFile("data/Ball.png");
-
-			var encrypted = BurstEncryptor.encrypt(pixels, "Ball attack");
-			File.saveBytes("data/Test.png", encrypted.encode(encrypted.rect, new PNGEncoderOptions()));
-
-			encrypted = BitmapData.fromFile("data/Test.png");
-			var message = BurstEncryptor.decrypt(encrypted);
-		*/
 	}
 
 	function renderUI():Void
