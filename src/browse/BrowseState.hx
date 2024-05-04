@@ -36,6 +36,8 @@ class BrowseState extends FlxTransitionableState
 	public var generator:CatGenerator;
 	public var photoCount:Int = 16;
 
+	public var downloadBox:FlxSprite;
+
 	public var isolated:Bool = false;
 
 	var photoCache:Array<CarouselPhoto> = [];
@@ -147,13 +149,16 @@ class BrowseState extends FlxTransitionableState
 			case FlxKey.RIGHT:
 				spinCarousel(CLOCKWISE);
 
-			case FlxKey.ENTER | FlxKey.UP:
+			case FlxKey.ENTER:
 				isolatePhoto();
-			case FlxKey.DOWN:
-				deisolatePhoto();
 
 			case FlxKey.ESCAPE:
-				FlxG.switchState(MainMenuState.new);
+			{
+				if(isolated)
+					deisolatePhoto();
+				else
+					FlxG.switchState(MainMenuState.new);
+			}
 		}
 	}
 

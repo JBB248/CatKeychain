@@ -11,6 +11,9 @@ class CarouselPhoto extends FlxSprite
      */
     public var size(default, set):Float = 0.0;
 
+    public var scaledWidth:Float = 1.0;
+    public var scaledHeight:Float = 1.0;
+
     /**
      * Used to ensure that only one tween from the carousel is 
 	 * ever affecting this sprite
@@ -21,6 +24,11 @@ class CarouselPhoto extends FlxSprite
 
 	public var meta:Dynamic;
 
+    public inline function calculateScale(size:Float):Float
+    {
+        return frameWidth > frameHeight ? size / frameWidth : size / frameHeight;
+    }
+
 	override public function destroy():Void
 	{
 		super.destroy();
@@ -30,7 +38,13 @@ class CarouselPhoto extends FlxSprite
 
     @:noCompletion function set_size(value:Float):Float
     {
-        scale.set(value / frameWidth, value / frameHeight);
+        var newScale = 1.0;
+        if(frameWidth > frameHeight)
+            newScale = value / frameWidth;
+        else
+            newScale = value / frameHeight;
+
+        scale.set(newScale, newScale);
         updateHitbox();
 
         return size = value;

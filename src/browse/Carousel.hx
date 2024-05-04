@@ -106,20 +106,32 @@ class Carousel extends FlxTypedGroup<CarouselPhoto>
 							lastItem = positions[0];
 					}
 
-					sprite.size = lastItem.size;
-					sprite.x = centerX + lastItem.x - sprite.size * 0.5;
-					sprite.y = centerY + lastItem.y - sprite.size * 0.5;
+					var scale = sprite.calculateScale(lastItem.size);
+					sprite.scaledWidth = sprite.frameWidth * scale;
+					sprite.scaledHeight = sprite.frameHeight * scale;
+
+					sprite.x = centerX + lastItem.x - sprite.scaledWidth * 0.5;
+					sprite.y = centerY + lastItem.y - sprite.scaledHeight * 0.5;
+					sprite.scale.set(scale, scale);
 				}
 			}
 
+			var scale = sprite.calculateScale(item.size);
+			sprite.scaledWidth = sprite.frameWidth * scale;
+			sprite.scaledHeight = sprite.frameHeight * scale;
+
 			sprite.spinning = true;
 			sprite.transitionTween = FlxTween.tween(sprite, {
-				x: centerX + item.x - item.size * 0.5, 
-				y: centerY + item.y - item.size * 0.5,
-				size: item.size
+				x: centerX + item.x - sprite.scaledWidth * 0.5, 
+				y: centerY + item.y - sprite.scaledHeight * 0.5,
+				"scale.x": scale,
+				"scale.y": scale
 			}, 0.4, {
 				ease: FlxEase.quadOut,
-				onUpdate: (_) -> members.sort((s1, s2) -> Std.int(s1.size - s2.size)),
+				onUpdate: (_) -> {
+					sprite.updateHitbox();
+					members.sort((s1, s2) -> Std.int(Math.max(s1.width, s1.height) - Math.max(s2.width, s2.height)));
+				},
 				onComplete: (_) -> {
 					sprite.transitionTween = null;
 					sprite.spinning = false;
