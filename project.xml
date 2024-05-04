@@ -4,7 +4,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Burst Encryption" file="BurstEncrypt" main="Main" version="0.0.1" company="Burst Labs"/>
+	<app title="Cat Gallery" file="CatGallery" main="Main" version="0.2.0" company="Burst Labs"/>
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -25,17 +25,18 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export"/>
+	<set name="BUILD_DIR" value="export/debug" if="debug"/>
 
 	<source path="src"/>
 
-	<assets path="data"/>
+	<assets path="assets/embedded/images" rename="embedded/images" embed="true"/>
+	<assets path="assets/embedded/sounds" rename="embedded/sounds" embed="true"/>
+	<assets path="debug" if="debug" rename=""/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel"/>
-
-	<!--In case you want to use the addons package-->
-	<!-- <haxelib name="flixel-addons"/> -->
+	<haxelib name="flixel" version="5.8.0"/>
+	<haxelib name="flixel-addons" version="3.2.2"/>
 
 	<!--In case you want to use the ui package-->
 	<!-- <haxelib name="flixel-ui"/> -->
@@ -61,10 +62,10 @@
 	<!--<haxedef name="FLX_NO_GAMEPAD" />-->
 
 	<!--Disable the Flixel core sound tray-->
-	<haxedef name="FLX_NO_SOUND_TRAY"/>
+	<!-- <haxedef name="FLX_NO_SOUND_TRAY"/> -->
 
 	<!--Disable the Flixel sound management code-->
-	<haxedef name="FLX_NO_SOUND_SYSTEM"/>
+	<!-- <haxedef name="FLX_NO_SOUND_SYSTEM"/> -->
 
 	<!--Disable the Flixel core focus lost screen-->
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN"/>
@@ -78,4 +79,13 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+
+	<icon path="assets/build/kitten.png"/>
+	<icon path="assets/build/kitten-16.png" size="16"/>
+	<icon path="assets/build/kitten-32.png" size="32"/>
+	<icon path="assets/build/kitten-64.png" size="64"/>
+
+	<define name="USE_API"/>
+
+	<include path="env.xml" if="USE_API"/>
 </project>

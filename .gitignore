@@ -1,3 +1,6 @@
 # Unnecessary
 export/*
-*.java
+env.xml
+
+# Hidden code
+src/burst/*
