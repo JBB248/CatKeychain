@@ -87,5 +87,5 @@
 
 	<define name="USE_API"/>
 
-	<include path="enviroment.xml" if="USE_API"/>
+	<include path="env.xml" if="USE_API"/>
 </project>

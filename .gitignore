@@ -1,6 +1,6 @@
 # Unnecessary
 export/*
-enviroment.xml
+env.xml
 
 # Hidden code
 src/burst/*
