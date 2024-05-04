@@ -119,19 +119,24 @@ class BrowseState extends FlxTransitionableState
 			var photo = photoCache.shift();
 			var point = carousel.positions[i];
 			point.sprite = photo;
-			photo.size = point.size;
+			
+			var scale = photo.calculateScale(point.size);
 			photo.x = -photo.width;
 			photo.y = -photo.height;
+			photo.scaledWidth = photo.frameWidth * scale;
+			photo.scaledHeight = photo.frameHeight * scale;
+			photo.scale.set(scale, scale);
+			photo.updateHitbox();
 
 			FlxTween.tween(photo, {
-				x: carousel.centerX + point.x - point.size * 0.5, 
-				y: carousel.centerY + point.y - point.size * 0.5
+				x: carousel.centerX + point.x - photo.scaledWidth * 0.5, 
+				y: carousel.centerY + point.y - photo.scaledHeight * 0.5
 			}, 0.3, {startDelay: 0.8 + i / 20, ease: FlxEase.backOut});
 
 			carousel.add(photo);
 		}
 
-		carousel.members.sort((O1, O2) -> Std.int(O1.size - O2.size));
+		carousel.sortByDepth();
 		updateDescription();
 	}
 
@@ -226,17 +231,29 @@ class BrowseState extends FlxTransitionableState
 		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
-			if(item.sprite.transitionTween != null)
-				item.sprite.transitionTween.cancel();
+			var photo = item.sprite;
+			if(photo.transitionTween != null)
+				photo.transitionTween.cancel();
 
-			item.sprite.transitionTween = 
+			var scale = photo.calculateScale(TILE_SIZE * 18);
+			photo.scaledWidth = photo.frameWidth * scale;
+			photo.scaledHeight = photo.frameHeight * scale;
+
+			photo.transitionTween = 
 			if(i == 0)
-				FlxTween.tween(item.sprite, 
-					{x: FlxG.width * 0.5 - TILE_SIZE * 9, y: 32, size: TILE_SIZE * 18}, 0.8, 
-					{ease: FlxEase.backInOut});
+				FlxTween.tween(photo, 
+					{
+						x: FlxG.width * 0.5 - photo.scaledWidth * 0.5, 
+						y: 32, 
+						"scale.x": scale, 
+						"scale.y": scale
+					}, 0.8, {
+						onUpdate: (_) -> photo.updateHitbox(),
+						ease: FlxEase.backInOut
+					});
 			else
-				FlxTween.tween(item.sprite, 
-					{y: carousel.centerY + item.y - item.size * 0.5 - FlxG.height}, 0.8, 
+				FlxTween.tween(photo, 
+					{y: carousel.centerY + item.y - photo.scaledHeight * 0.5 - FlxG.height}, 0.8, 
 					{ease: FlxEase.backIn, startDelay: i / 100});
 		}
 	}
@@ -250,14 +267,23 @@ class BrowseState extends FlxTransitionableState
 		for(i in 0...carousel.length)
 		{
 			var item = carousel.positions[i];
-			if(item.sprite.transitionTween != null)
-				item.sprite.transitionTween.cancel();
+			var photo = item.sprite;
+			if(photo.transitionTween != null)
+				photo.transitionTween.cancel();
 
-			item.sprite.transitionTween = FlxTween.tween(item.sprite, {
-					x: carousel.centerX + item.x - item.size * 0.5, 
-					y: carousel.centerY + item.y - item.size * 0.5, 
-					size: item.size
-				}, 0.8, {ease: FlxEase.backInOut, startDelay: i / 100});
+			var scale = photo.calculateScale(item.size);
+			photo.scaledWidth = photo.frameWidth * scale;
+			photo.scaledHeight = photo.frameHeight * scale;
+
+			photo.transitionTween = FlxTween.tween(photo, {
+					x: carousel.centerX + item.x - photo.scaledWidth * 0.5, 
+					y: carousel.centerY + item.y - photo.scaledHeight * 0.5, 
+					"scale.x": scale,
+					"scale.y": scale
+				}, 0.8, {
+					onUpdate: (_) -> photo.updateHitbox(),
+					ease: FlxEase.backInOut, startDelay: i / 100
+				});
 		}
 	}
 

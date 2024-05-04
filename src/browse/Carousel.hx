@@ -130,7 +130,7 @@ class Carousel extends FlxTypedGroup<CarouselPhoto>
 				ease: FlxEase.quadOut,
 				onUpdate: (_) -> {
 					sprite.updateHitbox();
-					members.sort((s1, s2) -> Std.int(Math.max(s1.width, s1.height) - Math.max(s2.width, s2.height)));
+					sortByDepth();
 				},
 				onComplete: (_) -> {
 					sprite.transitionTween = null;
@@ -143,6 +143,11 @@ class Carousel extends FlxTypedGroup<CarouselPhoto>
 		}
 
 		onSpin.dispatch();
+	}
+
+	public function sortByDepth():Void
+	{
+		members.sort((s1, s2) -> Std.int(Math.max(s1.width, s1.height) - Math.max(s2.width, s2.height)));
 	}
 
 	override public function destroy():Void
