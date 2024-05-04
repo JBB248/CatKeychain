@@ -85,7 +85,7 @@
 	<icon path="assets/build/kitten-32.png" size="32"/>
 	<icon path="assets/build/kitten-64.png" size="64"/>
 
-	<define name="USE_API"/>
+	<!-- <define name="USE_API"/> -->
 
 	<include path="env.xml" if="USE_API"/>
 </project>

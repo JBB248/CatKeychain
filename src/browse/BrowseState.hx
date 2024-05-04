@@ -1,7 +1,8 @@
-package;
+package browse;
 
 import CatGenerator;
-import PhotoCarousel;
+
+import browse.Carousel;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -30,7 +31,7 @@ class BrowseState extends FlxTransitionableState
 	public var progressBar:FlxBar;
 	public var progress(get, never):Float;
 
-	public var carousel:PhotoCarousel;
+	public var carousel:Carousel;
 	public var generator:CatGenerator;
 	public var photoCount:Int = 16;
 
@@ -56,7 +57,7 @@ class BrowseState extends FlxTransitionableState
 		generator.onCatGenerated.add(catGenerated);
 		generator.requestCat(photoCount);
 
-		carousel = new PhotoCarousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
+		carousel = new Carousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
 
 		add(progressBar);
 	}

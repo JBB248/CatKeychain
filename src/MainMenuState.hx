@@ -72,7 +72,7 @@ class MainMenuState extends FlxTransitionableState
         galleryButton.onUp.callback = () -> FlxG.switchState(gallery.GalleryState.new);
 
         var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI");
-        browseButton.onUp.callback = () -> FlxG.switchState(BrowseState.new);
+        browseButton.onUp.callback = () -> FlxG.switchState(browse.BrowseState.new);
 
         var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits");
         creditsButton.onUp.callback = () -> {/* Play SFX */};
