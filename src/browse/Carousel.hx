@@ -107,8 +107,6 @@ class Carousel extends FlxTypedGroup<CarouselPhoto>
 					}
 
 					var scale = sprite.calculateScale(lastItem.size);
-					sprite.scaledWidth = sprite.frameWidth * scale;
-					sprite.scaledHeight = sprite.frameHeight * scale;
 
 					sprite.x = centerX + lastItem.x - sprite.scaledWidth * 0.5;
 					sprite.y = centerY + lastItem.y - sprite.scaledHeight * 0.5;

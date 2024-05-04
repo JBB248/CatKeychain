@@ -3,8 +3,12 @@ package browse;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 
+import lime.tools.Orientation;
+
 class CarouselPhoto extends FlxSprite
 {
+    public var orientation:Orientation = LANDSCAPE;
+
     public var scaledWidth:Float = 1.0;
     public var scaledHeight:Float = 1.0;
 
@@ -18,9 +22,17 @@ class CarouselPhoto extends FlxSprite
 
 	public var meta:Dynamic;
 
-    public inline function calculateScale(size:Float):Float
+    override public function graphicLoaded():Void
     {
-        return frameWidth > frameHeight ? size / frameWidth : size / frameHeight;
+        orientation = frameWidth > frameHeight ? LANDSCAPE : PORTRAIT;
+    }
+
+    public  function calculateScale(size:Float):Float
+    {
+        var scale = orientation == LANDSCAPE ? size / frameWidth : size / frameHeight;
+        scaledWidth = frameWidth * scale;
+		scaledHeight = frameHeight * scale;
+        return scale;
     }
 
 	override public function destroy():Void
