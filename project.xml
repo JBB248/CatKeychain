@@ -4,7 +4,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Cat Gallery" file="CatGallery" main="Main" version="0.0.1" company="Burst Labs"/>
+	<app title="Cat Gallery" file="CatGallery" main="Main" version="0.2.0" company="Burst Labs"/>
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -85,5 +85,7 @@
 	<icon path="assets/build/kitten-32.png" size="32"/>
 	<icon path="assets/build/kitten-64.png" size="64"/>
 
-	<include path="enviroment.xml"/>
+	<define name="USE_API"/>
+
+	<include path="env.xml" if="USE_API"/>
 </project>
