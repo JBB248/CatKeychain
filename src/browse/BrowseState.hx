@@ -1,12 +1,12 @@
 package browse;
 
+import AppUtil.*;
 import CatGenerator;
 
 import browse.Carousel;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxBackdrop;
 import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.input.keyboard.FlxKey;
@@ -14,6 +14,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
+import flixel.util.FlxColor;
 
 import openfl.display.BitmapData;
 import openfl.events.KeyboardEvent;
@@ -26,7 +27,7 @@ class BrowseState extends FlxTransitionableState
 
 	public var infoText:FlxTypeText;
 	public var ctrlText:FlxText;
-	public var mintTextFormat:FlxTextFormatMarkerPair = new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF60D4A6), "@");
+	public var textFormat:FlxTextFormatMarkerPair;
 
 	public var progressBar:FlxBar;
 	public var progress(get, never):Float;
@@ -49,7 +50,7 @@ class BrowseState extends FlxTransitionableState
 	override public function create():Void
 	{
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
-		progressBar.createFilledBar(0xFFFFFFFF, 0xFF000000);
+		progressBar.createFilledBar(FlxColor.WHITE, SOFT_BLACK);
 		progressBar.filledCallback = allCatsGenerated;
 		progressBar.screenCenter();
 
@@ -59,28 +60,33 @@ class BrowseState extends FlxTransitionableState
 
 		carousel = new Carousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
 
+		FlxG.camera.bgColor = SOFT_WHITE;
 		add(progressBar);
 	}
 
 	function renderUI():Void
 	{
-		var backdropTile = FlxG.bitmap.create(32, 32, 0xFFFFFFFF);
-		backdropTile.bitmap.fillRect(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), 0xFF888888);
-		backdropTile.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), 0xFF888888);
+		var backdropTile = FlxG.bitmap.create(32, 32, SOFT_NAVY);
+		backdropTile.bitmap.fillRect(new Rectangle(0, 0, TILE_SIZE, TILE_SIZE), SOFT_NAVY);
+		backdropTile.bitmap.fillRect(new Rectangle(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE), SOFT_NAVY);
 
 		carousel.frontPhotoChanged.add((_) -> updateDescription());
+
+		textFormat = AppUtil.getIceTextFormat();
 		
-		var textBackdrop = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, 0xFF888888);
-		infoText = new FlxTypeText(textBackdrop.x + 4, textBackdrop.y + 4, Std.int(textBackdrop.width) - 8, "Neko");
+		var textBox = new FlxSprite(30, TILE_SIZE * 22).makeGraphic(FlxG.width - 60, TILE_SIZE * 8, SOFT_NAVY);
+		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko");
 		ctrlText = new FlxText();
-		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@", [mintTextFormat]);
+		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@", [textFormat]);
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		add(new FlxBackdrop(backdropTile));
+		remove(progressBar);
+		FlxG.camera.bgColor = FlxColor.WHITE;
+
 		add(carousel);
-		add(textBackdrop);
+		add(textBox);
 		add(infoText);
 		add(ctrlText);
 
@@ -124,7 +130,6 @@ class BrowseState extends FlxTransitionableState
 		}
 
 		carousel.members.sort((O1, O2) -> Std.int(O1.size - O2.size));
-		FlxTween.tween(progressBar, {alpha: 0}, 0.8);
 		updateDescription();
 	}
 
@@ -193,7 +198,7 @@ class BrowseState extends FlxTransitionableState
 				+ '@Temperament:@ ${temperament}\n\n'
 				+ '@Description:@ ${description}';
 
-			infoText.applyMarkup(displayText, [mintTextFormat]);
+			infoText.applyMarkup(displayText, [textFormat]);
 		}
 		else if(StringTools.endsWith(meta.url, ".jpg"))
 		{
@@ -256,9 +261,7 @@ class BrowseState extends FlxTransitionableState
 		super.destroy();
 
 		generator.destroy();
-
 		generator = null;
-		mintTextFormat = null;
 
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 	}
