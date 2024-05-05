@@ -9,6 +9,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.group.FlxSpriteContainer;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -37,7 +38,9 @@ class BrowseState extends FlxTransitionableState
 	public var generator:CatGenerator;
 	public var photoCount:Int = 16;
 
-	public var downloadBox:FlxSprite;
+	public var downloadBox:FlxSpriteContainer;
+	public var downloadBackdrop:FlxSprite;
+	public var downloadText:FlxText;
 
 	public var isolated:Bool = false;
 
@@ -72,14 +75,19 @@ class BrowseState extends FlxTransitionableState
 		textFormat = AppUtil.getIceTextFormat();
 		
 		textBox = new FlxSprite(32, TILE_SIZE * 22).makeGraphic(FlxG.width - 64, TILE_SIZE * 8, SOFT_NAVY);
-		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko");
+		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko :3");
 		ctrlText = new FlxText();
 		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@", [textFormat]);
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		downloadBox = new FlxSprite(FlxG.width, 16).makeGraphic(TILE_SIZE * 16, TILE_SIZE * 20, SOFT_NAVY);
+		downloadBox = new FlxSpriteContainer(FlxG.width, 16);
+		downloadBackdrop = new FlxSprite().makeGraphic(TILE_SIZE * 16, TILE_SIZE * 20, SOFT_NAVY);
+		downloadText = new FlxText(4, 4, downloadBackdrop.width - 8, "Neko :3");
+
+		downloadBox.add(downloadBackdrop);
+		downloadBox.add(downloadText);
 
 		remove(progressBar);
 		FlxG.camera.bgColor = FlxColor.WHITE;
@@ -235,13 +243,13 @@ class BrowseState extends FlxTransitionableState
 			{
 				var scale = 1.0;
 				if(photo.orientation == LANDSCAPE)
-					scale = photo.calculateScale(textBox.width - downloadBox.width - 32);
+					scale = photo.calculateScale(textBox.width - downloadBackdrop.width - 32);
 				else
-					scale = photo.calculateScale(downloadBox.height);
+					scale = photo.calculateScale(downloadBackdrop.height);
 
 				photo.transitionTween = FlxTween.tween(photo, {
-					x: 32 + (textBox.width - downloadBox.width) * 0.5 - photo.scaledWidth * 0.5, 
-					y: downloadBox.y + downloadBox.height * 0.5 - photo.scaledHeight * 0.5, 
+					x: 32 + (textBox.width - downloadBackdrop.width) * 0.5 - photo.scaledWidth * 0.5, 
+					y: downloadBackdrop.y + downloadBackdrop.height * 0.5 - photo.scaledHeight * 0.5, 
 					"scale.x": scale, 
 					"scale.y": scale
 				}, 0.8, {
@@ -261,7 +269,7 @@ class BrowseState extends FlxTransitionableState
 		}
 
 		FlxTween.cancelTweensOf(downloadBox);
-		FlxTween.tween(downloadBox, {x: FlxG.width - downloadBox.width - 32}, 0.8, {ease: FlxEase.quartOut});
+		FlxTween.tween(downloadBox, {x: FlxG.width - downloadBackdrop.width - 32}, 0.8, {ease: FlxEase.quartOut});
 	}
 
 	function deisolatePhoto():Void
