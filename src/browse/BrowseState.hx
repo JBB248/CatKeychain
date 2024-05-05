@@ -240,7 +240,7 @@ class BrowseState extends FlxTransitionableState
 					scale = photo.calculateScale(downloadBox.height);
 
 				photo.transitionTween = FlxTween.tween(photo, {
-					x: 48, 
+					x: 32 + (textBox.width - downloadBox.width) * 0.5 - photo.scaledWidth * 0.5, 
 					y: downloadBox.y + downloadBox.height * 0.5 - photo.scaledHeight * 0.5, 
 					"scale.x": scale, 
 					"scale.y": scale
