@@ -98,8 +98,8 @@ class BrowseState extends FlxTransitionableState
 		add(ctrlText);
 		add(downloadBox);
 
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheel);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
+		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
 
 		transitionIn();
 	}
@@ -149,7 +149,7 @@ class BrowseState extends FlxTransitionableState
 		super.update(elapsed);
 	}
 
-	function keyPressed(event:KeyboardEvent):Void
+	function onKeyPressed(event:KeyboardEvent):Void
 	{
 		switch(event.keyCode)
 		{
@@ -171,7 +171,7 @@ class BrowseState extends FlxTransitionableState
 		}
 	}
 
-	function mouseWheel(event:MouseEvent):Void
+	function onMouseScroll(event:MouseEvent):Void
 	{
 		if(isolated) return;
 
@@ -309,7 +309,8 @@ class BrowseState extends FlxTransitionableState
 		generator.destroy();
 		generator = null;
 
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
+		FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
 	}
 
 	@:access(CatGenerator)
