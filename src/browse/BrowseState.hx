@@ -55,14 +55,14 @@ class BrowseState extends FlxTransitionableState
 		progressBar.filledCallback = allCatsGenerated;
 		progressBar.screenCenter();
 
-		generator = new CatGenerator();
-		generator.onCatGenerated.add(catGenerated);
-		generator.requestCat(photoCount);
-
 		carousel = new Carousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
 
 		FlxG.camera.bgColor = SOFT_WHITE;
 		add(progressBar);
+
+		generator = new CatGenerator();
+		generator.onCatGenerated.add(catGenerated);
+		generator.requestCat(photoCount);
 	}
 
 	function renderUI():Void

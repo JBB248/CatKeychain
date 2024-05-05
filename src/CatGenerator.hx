@@ -50,7 +50,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if (debug && !USE_API)
-        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")));
+        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -122,7 +122,7 @@ class CatGenerator
  */
 class CatLoader
 {
-    public var progress:Float = 0.0;
+    public var progress:Float = 1.0;
     public var requests:Array<CatData> = [];
 
     var generator:CatGenerator;
@@ -145,14 +145,25 @@ class CatLoader
     /**
      * Appends a request to `requests` and begins image loading if not busy
      */
-    public function pushRequests(newRequests:Array<CatData>):Void
+    public function pushRequests(newRequests:Array<CatData>, ?local:Bool = false):Void
     {
-        requests = requests.concat(newRequests);
-
-        if(!busy)
+        if(local)
         {
-            busy = true;
-            checkRequests();
+            for(request in newRequests)
+            {
+                request.image = AssetPaths.getGalleryPhoto(request.id).bitmap;
+                generator.onCatGenerated.dispatch(request);
+            }
+        }
+        else
+        {
+            requests = requests.concat(newRequests);
+
+            if(!busy)
+            {
+                busy = true;
+                checkRequests();
+            }
         }
     }
 
