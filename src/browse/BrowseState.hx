@@ -9,7 +9,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
@@ -38,12 +37,7 @@ class BrowseState extends FlxTransitionableState
 	public var generator:CatGenerator;
 	public var photoCount:Int = 16;
 
-	public var downloadBox:FlxSpriteContainer;
-	public var downloadBackdrop:FlxSprite;
-	public var downloadText:FlxText;
-	public var nameInput:FlxInputText;
-	public var notesInput:FlxInputText;
-	public var downloadButton:MenuButton;
+	public var downloadMenu:DownloadMenu;
 
 	public var isolated:Bool = false;
 
@@ -85,25 +79,9 @@ class BrowseState extends FlxTransitionableState
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		downloadBox = new FlxSpriteContainer(FlxG.width + 48, 16);
-		downloadBackdrop = new FlxSprite().makeGraphic(TILE_SIZE * 12, TILE_SIZE * 20, SOFT_NAVY);
-		downloadText = new FlxText(4, 4, 36, "Name:\n\nNote:");
-		nameInput = new FlxInputText(downloadText.x + downloadText.width + 2, downloadText.y, 145);
-		notesInput = new FlxInputText(nameInput.x, nameInput.y + nameInput.height + 4, 145);
-		notesInput.maxLength = 24;
-		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
-
-		downloadButton = new MenuButton(downloadText.x, note.y + note.height + 4, "Download", [NAVY, SOFT_WHITE, SOFT_NAVY]);
-		downloadButton.onUp.callback = () -> {
-			// Save photo
-		};
-
-		downloadBox.add(downloadBackdrop);
-		downloadBox.add(downloadText);
-		downloadBox.add(nameInput);
-		downloadBox.add(notesInput);
-		downloadBox.add(note);
-		downloadBox.add(downloadButton);
+		downloadMenu = new DownloadMenu();
+		downloadMenu.x = FlxG.width + 48;
+		downloadMenu.y = textBox.y - downloadMenu.height - 16;
 
 		remove(progressBar);
 		FlxG.camera.bgColor = FlxColor.WHITE;
@@ -112,7 +90,7 @@ class BrowseState extends FlxTransitionableState
 		add(textBox);
 		add(infoText);
 		add(ctrlText);
-		add(downloadBox);
+		add(downloadMenu);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
@@ -167,7 +145,7 @@ class BrowseState extends FlxTransitionableState
 
 	function onKeyPressed(event:KeyboardEvent):Void
 	{
-		if(nameInput.hasFocus || notesInput.hasFocus) return;
+		if(downloadMenu.hasFocus) return;
 
 		switch(event.keyCode)
 		{
@@ -263,14 +241,15 @@ class BrowseState extends FlxTransitionableState
 			if(i == 0)
 			{
 				var scale = 1.0;
+				var height = FlxG.height - textBox.height - 32;
 				if(photo.orientation == LANDSCAPE)
-					scale = photo.calculateScale(textBox.width - downloadBackdrop.width - 32);
+					scale = photo.calculateScale(textBox.width - downloadMenu.width - 32);
 				else
-					scale = photo.calculateScale(downloadBackdrop.height);
+					scale = photo.calculateScale(height);
 
 				photo.transitionTween = FlxTween.tween(photo, {
-					x: 32 + (textBox.width - downloadBackdrop.width) * 0.5 - photo.scaledWidth * 0.5, 
-					y: downloadBackdrop.y + downloadBackdrop.height * 0.5 - photo.scaledHeight * 0.5, 
+					x: 32 + (textBox.width - downloadMenu.width) * 0.5 - photo.scaledWidth * 0.5, 
+					y: 16 + height * 0.5 - photo.scaledHeight * 0.5, 
 					"scale.x": scale, 
 					"scale.y": scale
 				}, 0.8, {
@@ -294,8 +273,8 @@ class BrowseState extends FlxTransitionableState
 
 	function showDownloadMenu():Void
 	{
-		FlxTween.cancelTweensOf(downloadBox);
-		FlxTween.tween(downloadBox, {x: FlxG.width - downloadBackdrop.width - 32}, 0.8, {ease: FlxEase.quartOut});
+		FlxTween.cancelTweensOf(downloadMenu);
+		FlxTween.tween(downloadMenu, {x: FlxG.width - downloadMenu.width - 32}, 0.8, {ease: FlxEase.quartOut});
 	}
 
 	function deisolatePhoto():Void
@@ -329,8 +308,8 @@ class BrowseState extends FlxTransitionableState
 
 	function hideDownloadMenu():Void
 	{
-		FlxTween.cancelTweensOf(downloadBox);
-		FlxTween.tween(downloadBox, {x: FlxG.width + 48}, 0.8, {ease: FlxEase.quartOut});
+		FlxTween.cancelTweensOf(downloadMenu);
+		FlxTween.tween(downloadMenu, {x: FlxG.width + 48}, 0.8, {ease: FlxEase.quartOut});
 	}
 
 	override public function destroy():Void
