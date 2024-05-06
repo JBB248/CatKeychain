@@ -73,13 +73,15 @@ class MainMenuState extends FlxTransitionableState
         var titleText = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
         titleText.color = SOFT_BLACK;
 
-        var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery");
+        var buttonColors = [SOFT_WHITE, SOFT_BLACK, FlxColor.WHITE];
+
+        var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery", buttonColors);
         galleryButton.onUp.callback = () -> FlxG.switchState(gallery.GalleryState.new);
 
-        var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI");
+        var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI", buttonColors);
         browseButton.onUp.callback = () -> FlxG.switchState(browse.BrowseState.new);
 
-        var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits");
+        var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits", buttonColors);
         creditsButton.onUp.callback = () -> {/* Play SFX */};
 
         add(spinningCat);
@@ -121,32 +123,36 @@ class MainMenuState extends FlxTransitionableState
 
 class MenuButton extends FlxButton
 {
-    public function new(x:Float, y:Float, text:String)
+    public var colors:Array<FlxColor>;
+
+    public function new(x:Float, y:Float, text:String, colors:Array<FlxColor>)
     {
         super(x, y, text);
 
-        var newGraphic = FlxG.bitmap.create(80, 80, SOFT_WHITE, true);
+        this.colors = colors.copy();
 
-        newGraphic.bitmap.fillRect(new Rectangle(0, 20, 80, 20), SOFT_BLACK);
-        newGraphic.bitmap.fillRect(new Rectangle(2, 22, 76, 16), FlxColor.WHITE);
-        newGraphic.bitmap.fillRect(new Rectangle(0, 40, 80, 40), SOFT_BLACK);
+        var newGraphic = FlxG.bitmap.create(80, 80, colors[0], true);
+
+        newGraphic.bitmap.fillRect(new Rectangle(0, 20, 80, 20), colors[1]);
+        newGraphic.bitmap.fillRect(new Rectangle(2, 22, 76, 16), colors[2]);
+        newGraphic.bitmap.fillRect(new Rectangle(0, 40, 80, 40), colors[1]);
 
         loadGraphic(newGraphic, true, 80, 20);
-        label.color = SOFT_BLACK;
+        label.color = colors[1];
 
         allowSwiping = false;
     }
 
     override public function onDownHandler():Void
     {
-        label.color = SOFT_WHITE;
+        label.color = colors[0];
         
         super.onDownHandler();
     }
 
     override public function onUpHandler():Void
     {
-        label.color = SOFT_BLACK;
+        label.color = colors[1];
 
         super.onUpHandler();
     }
@@ -154,7 +160,7 @@ class MenuButton extends FlxButton
     override public function onOutHandler():Void
     {
         if(status == PRESSED)
-            label.color = SOFT_BLACK;
+            label.color = colors[1];
 
         super.onOutHandler();
     }

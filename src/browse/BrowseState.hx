@@ -2,20 +2,22 @@ package browse;
 
 import AppUtil.*;
 import CatGenerator;
+import MainMenuState;
 
 import browse.Carousel;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
-import flixel.addons.ui.FlxInputText;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 
 import openfl.events.KeyboardEvent;
@@ -42,6 +44,7 @@ class BrowseState extends FlxTransitionableState
 	public var downloadText:FlxText;
 	public var nameInput:FlxInputText;
 	public var notesInput:FlxInputText;
+	public var downloadButton:MenuButton;
 
 	public var isolated:Bool = false;
 
@@ -91,11 +94,17 @@ class BrowseState extends FlxTransitionableState
 		notesInput.maxLength = 24;
 		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
 
+		downloadButton = new MenuButton(downloadText.x, note.y + note.height + 4, "Download", [NAVY, SOFT_WHITE, SOFT_NAVY]);
+		downloadButton.onUp.callback = () -> {
+			// Save photo
+		};
+
 		downloadBox.add(downloadBackdrop);
 		downloadBox.add(downloadText);
 		downloadBox.add(nameInput);
 		downloadBox.add(notesInput);
 		downloadBox.add(note);
+		downloadBox.add(downloadButton);
 
 		remove(progressBar);
 		FlxG.camera.bgColor = FlxColor.WHITE;
