@@ -8,6 +8,7 @@ import browse.Carousel;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
+import flixel.addons.ui.FlxInputText;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxSpriteContainer;
 import flixel.input.keyboard.FlxKey;
@@ -17,10 +18,8 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 
-import openfl.display.BitmapData;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
-import openfl.geom.Rectangle;
 
 class BrowseState extends FlxTransitionableState
 {
@@ -41,6 +40,8 @@ class BrowseState extends FlxTransitionableState
 	public var downloadBox:FlxSpriteContainer;
 	public var downloadBackdrop:FlxSprite;
 	public var downloadText:FlxText;
+	public var nameInput:FlxInputText;
+	public var notesInput:FlxInputText;
 
 	public var isolated:Bool = false;
 
@@ -83,11 +84,18 @@ class BrowseState extends FlxTransitionableState
 		ctrlText.y = FlxG.height - ctrlText.height;
 
 		downloadBox = new FlxSpriteContainer(FlxG.width, 16);
-		downloadBackdrop = new FlxSprite().makeGraphic(TILE_SIZE * 16, TILE_SIZE * 20, SOFT_NAVY);
-		downloadText = new FlxText(4, 4, downloadBackdrop.width - 8, "Neko :3");
+		downloadBackdrop = new FlxSprite().makeGraphic(TILE_SIZE * 12, TILE_SIZE * 20, SOFT_NAVY);
+		downloadText = new FlxText(4, 4, 36, "Name:\n\nNote:");
+		nameInput = new FlxInputText(downloadText.x + downloadText.width + 2, downloadText.y, 145);
+		notesInput = new FlxInputText(nameInput.x, nameInput.y + nameInput.height + 4, 145);
+		notesInput.maxLength = 24;
+		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
 
 		downloadBox.add(downloadBackdrop);
 		downloadBox.add(downloadText);
+		downloadBox.add(nameInput);
+		downloadBox.add(notesInput);
+		downloadBox.add(note);
 
 		remove(progressBar);
 		FlxG.camera.bgColor = FlxColor.WHITE;
@@ -151,6 +159,8 @@ class BrowseState extends FlxTransitionableState
 
 	function onKeyPressed(event:KeyboardEvent):Void
 	{
+		if(nameInput.hasFocus || notesInput.hasFocus) return;
+
 		switch(event.keyCode)
 		{
 			case FlxKey.LEFT:
