@@ -3,7 +3,6 @@ package browse;
 import AppUtil.*;
 import CatGenerator;
 import MainMenuState;
-
 import browse.Carousel;
 
 import flixel.FlxG;
@@ -86,7 +85,7 @@ class BrowseState extends FlxTransitionableState
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		downloadBox = new FlxSpriteContainer(FlxG.width, 16);
+		downloadBox = new FlxSpriteContainer(FlxG.width + 48, 16);
 		downloadBackdrop = new FlxSprite().makeGraphic(TILE_SIZE * 12, TILE_SIZE * 20, SOFT_NAVY);
 		downloadText = new FlxText(4, 4, 36, "Name:\n\nNote:");
 		nameInput = new FlxInputText(downloadText.x + downloadText.width + 2, downloadText.y, 145);
@@ -205,7 +204,10 @@ class BrowseState extends FlxTransitionableState
 		if(carousel.length != photoCount) return;
 
 		if(isolated)
+		{
+			hideDownloadMenu();
 			isolated = false;
+		}
 
 		infoText.erase();
 		infoText.skip();
@@ -287,6 +289,11 @@ class BrowseState extends FlxTransitionableState
 			}
 		}
 
+		showDownloadMenu();
+	}
+
+	function showDownloadMenu():Void
+	{
 		FlxTween.cancelTweensOf(downloadBox);
 		FlxTween.tween(downloadBox, {x: FlxG.width - downloadBackdrop.width - 32}, 0.8, {ease: FlxEase.quartOut});
 	}
@@ -317,8 +324,13 @@ class BrowseState extends FlxTransitionableState
 				});
 		}
 
+		hideDownloadMenu();
+	}
+
+	function hideDownloadMenu():Void
+	{
 		FlxTween.cancelTweensOf(downloadBox);
-		FlxTween.tween(downloadBox, {x: FlxG.width}, 0.8, {ease: FlxEase.quartOut});
+		FlxTween.tween(downloadBox, {x: FlxG.width + 48}, 0.8, {ease: FlxEase.quartOut});
 	}
 
 	override public function destroy():Void
