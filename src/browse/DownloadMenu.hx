@@ -28,7 +28,7 @@ class DownloadMenu extends FlxSpriteContainer
 		notesInput.maxLength = 24;
 		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
 
-		button = new MenuButton(text.x, note.y + note.height + 4, "Download", [NAVY, SOFT_WHITE, SOFT_NAVY]);
+		button = new MenuButton(text.x, note.y + note.height + 4, "Save to gallery", [NAVY, SOFT_WHITE, SOFT_NAVY]);
 		button.onUp.callback = () -> {
 			// Save photo
 		};

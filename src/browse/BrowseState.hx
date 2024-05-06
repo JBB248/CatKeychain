@@ -2,20 +2,17 @@ package browse;
 
 import AppUtil.*;
 import CatGenerator;
-import MainMenuState;
-import browse.Carousel;
+import browse.Carousel.WheelDirection;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.group.FlxSpriteContainer;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 
 import openfl.events.KeyboardEvent;
