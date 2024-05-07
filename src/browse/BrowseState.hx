@@ -76,7 +76,7 @@ class BrowseState extends FlxTransitionableState
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
 
-		downloadMenu = new DownloadMenu();
+		downloadMenu = new DownloadMenu(this);
 		downloadMenu.x = FlxG.width + 48;
 		downloadMenu.y = textBox.y - downloadMenu.height - 16;
 
@@ -195,7 +195,7 @@ class BrowseState extends FlxTransitionableState
 		if(carousel.length != photoCount) return;
 
 		var photo = carousel.positions[0].sprite;
-		var meta:CatData = cast photo.meta;
+		var meta = photo.meta;
 		if(meta.breeds != null && meta.breeds.length > 0)
 		{
 			var cat = meta.breeds[0].name;

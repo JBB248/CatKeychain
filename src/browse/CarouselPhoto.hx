@@ -1,5 +1,7 @@
 package browse;
 
+import CatGenerator.CatData;
+
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 
@@ -20,7 +22,7 @@ class CarouselPhoto extends FlxSprite
 
 	public var spinning:Bool = false;
 
-	public var meta:Dynamic;
+	public var meta:CatData;
 
     override public function graphicLoaded():Void
     {

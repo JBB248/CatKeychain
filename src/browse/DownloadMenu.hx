@@ -8,6 +8,10 @@ import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
 import flixel.text.FlxText;
 
+import sys.io.File;
+
+import openfl.display.PNGEncoderOptions;
+
 class DownloadMenu extends FlxSpriteContainer
 {
     public var backdrop:FlxSprite;
@@ -18,8 +22,12 @@ class DownloadMenu extends FlxSpriteContainer
 
     public var hasFocus(get, never):Bool;
 
-    public function new(x:Float = 0, y:Float = 0)
+    var parent:BrowseState;
+
+    public function new(parent:BrowseState, x:Float = 0, y:Float = 0)
     {
+        this.parent = parent;
+
         super(x, y);
 
 		text = new FlxText(4, 4, 36, "Name:\n\nNote:");
@@ -29,9 +37,7 @@ class DownloadMenu extends FlxSpriteContainer
 		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
 
 		button = new MenuButton(text.x, note.y + note.height + 4, "Save to gallery", [NAVY, SOFT_WHITE, SOFT_NAVY]);
-		button.onUp.callback = () -> {
-			// Save photo
-		};
+		button.onUp.callback = downloadPhoto;
 
         backdrop = new FlxSprite().makeGraphic(192, Std.int(button.y + button.height + 4), SOFT_NAVY);
 
@@ -41,6 +47,14 @@ class DownloadMenu extends FlxSpriteContainer
 		add(notesInput);
 		add(note);
 		add(button);
+    }
+
+    function downloadPhoto():Void
+    {
+        var photo = parent.carousel.members[parent.carousel.length - 1];
+        var pixels = photo.graphic.bitmap;
+
+        File.saveBytes('gallery/${photo.meta.id}/photo.png', pixels.encode(pixels.rect, new PNGEncoderOptions()));
     }
 
     @:noCompletion function get_hasFocus():Bool
