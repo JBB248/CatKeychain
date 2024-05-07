@@ -10,8 +10,6 @@ import flixel.text.FlxText;
 
 import sys.io.File;
 
-import openfl.display.PNGEncoderOptions;
-
 class DownloadMenu extends FlxSpriteContainer
 {
     public var backdrop:FlxSprite;
@@ -49,12 +47,24 @@ class DownloadMenu extends FlxSpriteContainer
 		add(button);
     }
 
-    function downloadPhoto():Void
+    public function downloadPhoto():Void
     {
         var photo = parent.carousel.members[parent.carousel.length - 1];
         var pixels = photo.graphic.bitmap;
+        var data:Dynamic = {};
 
-        File.saveBytes('gallery/${photo.meta.id}/photo.png', pixels.encode(pixels.rect, new PNGEncoderOptions()));
+        data.breeds = photo.meta.breeds;
+        data.id = photo.meta.id;
+        data.url = photo.meta.url;
+        data.width = photo.meta.width;
+        data.height = photo.meta.height;
+        data.user_nickname = nameInput.text;
+        data.user_note = notesInput.text;
+
+        File.saveBytes('gallery/${data.id}/photo.png', pixels.encode(pixels.rect, new openfl.display.PNGEncoderOptions()));
+        File.saveContent('gallery/${data.id}/data.json', haxe.Json.stringify(data, null, "\t"));
+
+        // parent.celebrate();
     }
 
     @:noCompletion function get_hasFocus():Bool
@@ -62,12 +72,12 @@ class DownloadMenu extends FlxSpriteContainer
         return nameInput.hasFocus || notesInput.hasFocus;
     }
 
-    override public function get_width():Float
+    override public inline function get_width():Float
     {
         return backdrop.width;
     }
 
-    override public function get_height():Float
+    override public inline function get_height():Float
     {
         return backdrop.height;
     }
