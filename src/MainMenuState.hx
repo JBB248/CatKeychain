@@ -33,6 +33,10 @@ class MainMenuState extends FlxTransitionableState
 
         if(!initialized)
         {
+            #if burst
+            burst.Burst.init();
+            #end
+
             FlxG.autoPause = false;
 
             FlxG.sound.volumeDownKeys = null; // Prevent these from dinging while the user is typing
