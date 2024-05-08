@@ -15,4 +15,21 @@ class AppUtil
 	{
         return new FlxTextFormatMarkerPair(new FlxTextFormat(ICE), "@");
     }
+
+    public static function compareTo(a:String, b:String):Int
+    {
+        if(a == b)
+            return 0;
+
+        var min = Std.int(Math.min(a.length, b.length));
+        for(i in 0...min)
+        {
+            var ac = a.charCodeAt(i);
+            var bc = b.charCodeAt(i);
+            if(ac != bc)
+                return ac - bc;
+        }
+
+        return a.length - b.length;
+    }
 }

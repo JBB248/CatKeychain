@@ -221,9 +221,12 @@ typedef CatData = {
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;
-    var image:BitmapData;
     var width:Int;
     var height:Int;
+
+    var image:BitmapData;
+    var user_nickname:String;
+    var user_note:String;
 }
 
 typedef CatBreedData = {
