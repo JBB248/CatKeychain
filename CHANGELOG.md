@@ -4,7 +4,12 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.1] - 2024-05-07
+## [0.3.1] - 2024-05-08
+### Fixed
+- Crashes when first attempting to save photos because the "gallery" folder doesn't initially exist
+
+
+## [0.3.0] - 2024-05-07
 ### Added
 - Ability to download photos from [TheCatAPI](https://thecatapi.com/) along with a nickname and a note
 

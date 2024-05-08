@@ -1,5 +1,6 @@
 package browse;
 
+import sys.FileSystem;
 import AppUtil.*;
 import MainMenuState.MenuButton;
 
@@ -61,6 +62,7 @@ class DownloadMenu extends FlxSpriteContainer
         data.user_nickname = nameInput.text;
         data.user_note = notesInput.text;
 
+        FileSystem.createDirectory('gallery/${data.id}');
         File.saveBytes('gallery/${data.id}/photo.png', pixels.encode(pixels.rect, new openfl.display.PNGEncoderOptions()));
         File.saveContent('gallery/${data.id}/data.json', haxe.Json.stringify(data, null, "\t"));
 
