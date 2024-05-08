@@ -15,9 +15,6 @@ import openfl.filters.BlurFilter;
 
 class GalleryViewSubState extends FlxSubState
 {
-    // To-do: this is a duplicate. Maybe make a utility class
-    public var mintTextFormat:FlxTextFormatMarkerPair = new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF60D4A6), "@");
-
     public var parent:GalleryState;
 
     public var orientation:Orientation = LANDSCAPE;
@@ -32,6 +29,7 @@ class GalleryViewSubState extends FlxSubState
     public var textBox:FlxSprite;
     public var testText:FlxText;
     public var description:FlxTypeText;
+    public var textFormat:FlxTextFormatMarkerPair;
 
     public var viewCam:FlxCamera;
     public var filters:Array<BitmapFilter>;
@@ -54,15 +52,14 @@ class GalleryViewSubState extends FlxSubState
 
     override public function create():Void
     {
-        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF2C2E39);
-        textBox.alpha = 0.6;
+        textFormat = AppUtil.getIceTextFormat();
+
+        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, AppUtil.SOFT_BLACK);
+        textBox.alpha = 0.8;
         textBox.cameras = [viewCam];
         testText = new FlxText(0, 0, 1);
         description = new FlxTypeText(0, 0, 1, "Neko");
         description.cameras = [viewCam];
-
-        FlxG.watch.add(description, "height");
-        FlxG.watch.add(testText, "height");
 
         add(textBox);
         add(description);
@@ -112,7 +109,7 @@ class GalleryViewSubState extends FlxSubState
             var boxWidth = FlxG.width - scaledWidth - 30;
 
             testText.fieldWidth = boxWidth - 8;
-            testText.applyMarkup(displayText, [mintTextFormat]);
+            testText.applyMarkup(displayText, [textFormat]);
 
             textBox.setGraphicSize(boxWidth, testText.height + 8);
             textBox.updateHitbox();
@@ -124,7 +121,7 @@ class GalleryViewSubState extends FlxSubState
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width - 8;
-        description.applyMarkup(displayText, [mintTextFormat]);
+        description.applyMarkup(displayText, [textFormat]);
         description.start(0.01, true, false, [SPACE]);
     }
 

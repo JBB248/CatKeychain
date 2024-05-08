@@ -46,7 +46,7 @@ class AssetPaths
 
     public static inline function getGalleryPhoto(id:String):FlxGraphic
     {
-        return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}/photo.jpg')));
+        return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}/photo.png')));
     }
 
     public static inline function getGalleryData(id:String):CatData
