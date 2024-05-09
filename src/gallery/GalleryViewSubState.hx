@@ -88,9 +88,9 @@ class GalleryViewSubState extends FlxSubState
         var displayText = new StringBuf();
 
         if(photo.data.user_note != null && photo.data.user_nickname.length > 0)
-            displayText.add('@Nickname:@ ${photo.data.user_nickname}\n\n');
+            displayText.add('@Nickname:@ ${photo.data.user_nickname}' + (orientation == LANDSCAPE ? ", " : "\n\n"));
         else
-            displayText.add("@Nickname:@ none provided\n\n");
+            displayText.add("@Nickname:@ none provided" + (orientation == LANDSCAPE ? ", " : "\n\n"));
         
         if(photo.data.user_note != null && photo.data.user_note.length > 0)
             displayText.add('@Note:@ ${photo.data.user_note}\n\n\n');
@@ -99,7 +99,7 @@ class GalleryViewSubState extends FlxSubState
 
         if(photo.data.breeds != null && photo.data.breeds.length > 0)
         {
-            displayText.add('@Breed:@ ${photo.data.breeds[0].name}\n\n');
+            displayText.add('@Breed:@ ${photo.data.breeds[0].name}' + (orientation == LANDSCAPE ? ", " : "\n\n"));
             displayText.add('@Origin:@ ${photo.data.breeds[0].origin}\n\n');
             displayText.add('@Temperament:@ ${photo.data.breeds[0].temperament}\n\n');
             displayText.add('@Description:@ ${photo.data.breeds[0].description}\n\n');
