@@ -152,7 +152,7 @@ class GalleryViewSubState extends FlxSubState
     {
         super.update(elapsed);
 
-        if(FlxG.keys.justReleased.ESCAPE)
+        if((FlxG.mouse.justReleased && !FlxG.mouse.overlaps(photo) && !FlxG.mouse.overlaps(textBox)) || FlxG.keys.justReleased.ESCAPE)
             close();
     }
 
