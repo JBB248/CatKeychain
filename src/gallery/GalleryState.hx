@@ -1,5 +1,7 @@
 package gallery;
 
+import flixel.util.FlxColor;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -18,6 +20,7 @@ class GalleryState extends FlxTransitionableState
 
     public var searching:Bool = false;
     public var input:FlxInputText;
+    public var found:Int = 0;
 
     public var viewSubState:GalleryViewSubState;
 
@@ -42,12 +45,7 @@ class GalleryState extends FlxTransitionableState
         }
         else
         {
-            camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
-            viewSubState = new GalleryViewSubState(this);
-            destroySubStates = false;
-
             gallery = new FlxTypedGroup(); // FlxContainer has a child/parent relationship that bothers the substate
-            add(gallery);
 
             var matrix = [[]];
             var row = 0;
@@ -81,9 +79,18 @@ class GalleryState extends FlxTransitionableState
             }
 
             filteredByNickname = gallery.members.filter((photo) -> photo.data.user_nickname != null && photo.data.user_nickname.length > 0);
-            input = new FlxInputText(0, 0, 145);
+            input = new FlxInputText(5, 5, 145, null, 8, FlxColor.WHITE, AppUtil.SOFT_NAVY);
+            input.fieldBorderColor = AppUtil.NAVY;
+            input.fieldBorderThickness = 5;
             input.callback = findPhoto;
+            input.scrollFactor.y = 0;
             input.kill();
+
+            camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
+            viewSubState = new GalleryViewSubState(this);
+            destroySubStates = false;
+
+            add(gallery);
             add(input);
 
             FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
@@ -123,26 +130,29 @@ class GalleryState extends FlxTransitionableState
                 {
                     if(photo == focus) continue;
 
-                    deflatePhoto(photo);
+                    photo.alpha = 1.0;
+                    photo.highlighted = false;
                 }
             }
         }
         else
         {
-            if(keys.justReleased.F && keys.pressed.CONTROL)
-            {
-                searching = true;
-                input.revive();
-
-                findPhoto(input.text, "open");
-            }
-            else if(keys.justReleased.ESCAPE)
+            if(keys.justReleased.ESCAPE)
             {
                 FlxG.switchState(MainMenuState.new);
             }
+            if(gallery != null && keys.justReleased.F && keys.pressed.CONTROL)
+            {
+                searching = true;
+
+                input.revive();
+                input.hasFocus = true;
+
+                findPhoto(input.text, "open");
+            }
         }
 
-        if(camTarget != null)
+        if(gallery != null && camTarget != null)
         {
             // Update scroll
             camTarget.y -= FlxG.mouse.wheel * 40;
@@ -155,16 +165,27 @@ class GalleryState extends FlxTransitionableState
 
     function findPhoto(text:String, action:String):Void
     {
+        found = 0;
+        var count = 0;
         for(photo in filteredByNickname)
         {
             var fName = photo.data.user_nickname.substr(0, text.length).toLowerCase();
             var fText = text.toLowerCase();
 
             if(text.length > 0 && AppUtil.compareTo(fName, fText) == 0)
-                inflatePhoto(photo);
+            {
+                count++;
+                photo.highlighted = true;
+                photo.alpha = 1.0;
+            }
             else
-                deflatePhoto(photo);
+            {
+                photo.highlighted = false;
+                if(photo != focus)
+                    photo.alpha = 0.4;
+            }
         }
+        found = count;
     }
 
     function inflatePhoto(photo:GalleryPhoto):Void
@@ -176,9 +197,9 @@ class GalleryState extends FlxTransitionableState
         photo.x = photo.center.x - photo.width * 0.5;
         photo.y = photo.center.y - photo.height * 0.5;
 
-        // Move new focus to top of draw stack
+        // Move new focus to top of draw stack, but below highlighted photos
         final members = gallery.members;
-        members.push(members.splice(members.indexOf(photo), 1)[0]);
+        members.insert(members.length - (found + 1), members.splice(members.indexOf(photo), 1)[0]);
     }
 
     function deflatePhoto(photo:GalleryPhoto):Void
@@ -199,18 +220,32 @@ class GalleryState extends FlxTransitionableState
 
     override public function destroy():Void
     {
+        focus = null;
+        gallery = null;
+        input = null;
+        filteredByNickname = null;
+
         super.destroy();
 
+        camTarget = FlxDestroyUtil.destroy(camTarget);
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto
     {
-        if(focus != null && subState == null)
+        if(subState == null && focus != null)
+        {
+            if(!focus.highlighted && searching)
+                focus.alpha = 0.4;
             deflatePhoto(focus);
+        }
 
         if(value != null)
+        {
+            if(searching)
+                value.alpha = 1.0;
             inflatePhoto(value);
+        }
 
         return focus = value;
     }
