@@ -7,6 +7,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 
@@ -20,6 +21,8 @@ class GalleryState extends FlxTransitionableState
     public var gallery:FlxTypedGroup<GalleryPhoto>;
     public var filteredByNickname:Array<GalleryPhoto>;
     public var focus(default, set):GalleryPhoto;
+
+    public var textFormat:FlxTextFormatMarkerPair;
 
     public var searching:Bool = false;
     public var input:FlxInputText;
@@ -83,6 +86,8 @@ class GalleryState extends FlxTransitionableState
                 }
             }
 
+            textFormat = AppUtil.getIceTextFormat();
+
             filteredByNickname = gallery.members.filter((photo) -> photo.data.user_nickname != null && photo.data.user_nickname.length > 0);
             input = new FlxInputText(5, 5, 145, null, 8, FlxColor.WHITE, AppUtil.SOFT_NAVY);
             input.fieldBorderColor = AppUtil.NAVY;
@@ -91,14 +96,28 @@ class GalleryState extends FlxTransitionableState
             input.scrollFactor.y = 0;
             input.kill();
 
+            var ctrlText = new FlxText();
+            ctrlText.applyMarkup("View photo: @CLICK@ | Find photo: @CTRL+F@ | Traverse menu: @Scroll wheel@ | Exit: @ESCAPE@", [textFormat]);
+            ctrlText.alignment = CENTER;
+            ctrlText.screenCenter(X);
+            ctrlText.y = FlxG.height - ctrlText.height;
+            ctrlText.scrollFactor.y = 0;
+
+            var ctrlTextBD = new FlxSprite().makeGraphic(FlxG.width, Std.int(ctrlText.height), AppUtil.NAVY);
+            ctrlTextBD.screenCenter(X);
+            ctrlTextBD.y = FlxG.height - ctrlText.height;
+            ctrlTextBD.scrollFactor.y = 0;
+
             camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
             viewSubState = new GalleryViewSubState(this);
             destroySubStates = false;
 
             add(gallery);
             add(input);
+            add(ctrlTextBD);
+            add(ctrlText);
 
-            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2));
+            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2) + ctrlTextBD.height);
             FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
 

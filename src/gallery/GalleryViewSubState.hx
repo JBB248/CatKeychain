@@ -29,7 +29,6 @@ class GalleryViewSubState extends FlxSubState
     public var textBox:FlxSprite;
     public var testText:FlxText;
     public var description:FlxTypeText;
-    public var textFormat:FlxTextFormatMarkerPair;
 
     public var viewCam:FlxCamera;
     public var filters:Array<BitmapFilter>;
@@ -52,8 +51,6 @@ class GalleryViewSubState extends FlxSubState
 
     override public function create():Void
     {
-        textFormat = AppUtil.getIceTextFormat();
-
         textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, AppUtil.SOFT_BLACK);
         textBox.alpha = 0.8;
         textBox.cameras = [viewCam];
@@ -125,7 +122,7 @@ class GalleryViewSubState extends FlxSubState
             var boxWidth = FlxG.width - scaledWidth - 30;
 
             testText.fieldWidth = boxWidth - 8;
-            testText.applyMarkup(displayText.toString(), [textFormat]);
+            testText.applyMarkup(displayText.toString(), [parent.textFormat]);
 
             textBox.setGraphicSize(boxWidth, testText.height + 8);
             textBox.updateHitbox();
@@ -137,7 +134,7 @@ class GalleryViewSubState extends FlxSubState
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width - 8;
-        description.applyMarkup(displayText.toString(), [textFormat]);
+        description.applyMarkup(displayText.toString(), [parent.textFormat]);
         description.start(0.01, true, false, [SPACE]);
     }
 
