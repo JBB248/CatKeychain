@@ -26,7 +26,6 @@ class GalleryState extends FlxTransitionableState
 
     public var searching:Bool = false;
     public var input:FlxInputText;
-    public var found:Int = 0;
 
     public var viewSubState:GalleryViewSubState;
 
@@ -206,8 +205,6 @@ class GalleryState extends FlxTransitionableState
 
     function findPhoto(text:String, action:String):Void
     {
-        found = 0;
-        var count = 0;
         for(photo in filteredByNickname)
         {
             var fName = photo.data.user_nickname.substr(0, text.length).toLowerCase();
@@ -215,7 +212,6 @@ class GalleryState extends FlxTransitionableState
 
             if(text.length > 0 && AppUtil.compareTo(fName, fText) == 0)
             {
-                count++;
                 photo.highlighted = true;
                 photo.alpha = 1.0;
             }
@@ -226,7 +222,6 @@ class GalleryState extends FlxTransitionableState
                     photo.alpha = 0.4;
             }
         }
-        found = count;
     }
 
     function inflatePhoto(photo:GalleryPhoto):Void
@@ -240,7 +235,7 @@ class GalleryState extends FlxTransitionableState
 
         // Move new focus to top of draw stack, but below highlighted photos
         final members = gallery.members;
-        members.insert(members.length - (found + 1), members.splice(members.indexOf(photo), 1)[0]);
+        members.push(members.splice(members.indexOf(photo), 1)[0]);
     }
 
     function deflatePhoto(photo:GalleryPhoto):Void
