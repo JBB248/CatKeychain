@@ -85,18 +85,37 @@ class MainMenuState extends FlxTransitionableState
 
         var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery", buttonColors);
         galleryButton.onUp.callback = () -> FlxG.switchState(gallery.GalleryState.new);
+        var galleryText = new FlxText(galleryButton.x, galleryButton.y + galleryButton.height + 24, 0, "View your library of saved cat photos");
+        galleryText.color = AppUtil.SOFT_BLACK;
+        galleryText.kill();
+        galleryButton.onOver.callback = () -> galleryText.revive();
+        galleryButton.onOut.callback = () -> galleryText.kill();
 
         var browseButton = new MenuButton(galleryButton.x + galleryButton.width + 10, galleryButton.y, "Browse CatAPI", buttonColors);
         browseButton.onUp.callback = () -> FlxG.switchState(browse.BrowseState.new);
+        var browseText = new FlxText(galleryText.x, galleryText.y, 0, "Download photos from TheCatAPI to view in your gallery later");
+        browseText.color = AppUtil.SOFT_BLACK;
+        browseText.kill();
+        browseButton.onOver.callback = () -> browseText.revive();
+        browseButton.onOut.callback = () -> browseText.kill();
 
         var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits", buttonColors);
-        creditsButton.onUp.callback = () -> {/* Play SFX */};
+        creditsButton.onUp.callback = () -> catSpring();
+        var creditsText = new FlxText(galleryText.x, galleryText.y, 0, 
+            "- Downloadable photos sourced from TheCatAPI.com\n\n- Spinning cat sourced from r/Catloaf\n\n- Powered by HaxeFlixel");
+        creditsText.color = AppUtil.SOFT_BLACK;
+        creditsText.kill();
+        creditsButton.onOver.callback = () -> creditsText.revive();
+        creditsButton.onOut.callback = () -> creditsText.kill();
 
         add(spinningCat);
         add(titleText);
         add(galleryButton);
         add(browseButton);
         add(creditsButton);
+        add(galleryText);
+        add(browseText);
+        add(creditsText);
     }
 
     var catBounceElapsed:Float = 1.8;
@@ -109,10 +128,7 @@ class MainMenuState extends FlxTransitionableState
 
         if(FlxG.mouse.justPressed && FlxG.mouse.overlaps(spinningCat))
         {
-            springSFX.play(true);
-            catBounceElapsed = 0.0;
-            deltaX = FlxG.random.float(-0.2, 0.2);
-            ratioY = FlxG.random.floatNormal(spinningCat.frameHeight / spinningCat.frameWidth, 0.2);
+            catSpring();
         }
         if(catBounceElapsed < 1.8)
         {
@@ -126,6 +142,14 @@ class MainMenuState extends FlxTransitionableState
             spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
             spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
         }
+    }
+
+    function catSpring():Void
+    {
+        springSFX.play(true);
+        catBounceElapsed = 0.0;
+        deltaX = FlxG.random.float(-0.2, 0.2);
+        ratioY = FlxG.random.floatNormal(spinningCat.frameHeight / spinningCat.frameWidth, 0.2);
     }
 }
 
