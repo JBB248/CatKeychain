@@ -20,6 +20,18 @@ import openfl.net.URLRequest;
  */
 class CatGenerator
 {
+    public static var emptyData:CatData = {
+        breeds: null,
+        id: "",
+        url: null,
+        width: 0,
+        height: 0,
+
+        image: null,
+        user_nickname: null,
+        user_note: null
+    };
+
     public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
     var catLoader:CatLoader;
@@ -221,9 +233,12 @@ typedef CatData = {
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;
-    var image:BitmapData;
     var width:Int;
     var height:Int;
+
+    var image:BitmapData;
+    var user_nickname:String;
+    var user_note:String;
 }
 
 typedef CatBreedData = {

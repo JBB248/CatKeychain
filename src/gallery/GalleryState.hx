@@ -4,15 +4,28 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+
+import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
 
 class GalleryState extends FlxTransitionableState
 {
     public var camTarget:FlxObject;
 
     public var gallery:FlxTypedGroup<GalleryPhoto>;
+    public var filteredByNickname:Array<GalleryPhoto>;
     public var focus(default, set):GalleryPhoto;
+
+    public var textFormat:FlxTextFormatMarkerPair;
+
+    public var searching:Bool = false;
+    public var input:FlxInputText;
 
     public var viewSubState:GalleryViewSubState;
 
@@ -24,6 +37,8 @@ class GalleryState extends FlxTransitionableState
     override public function create():Void
     {
         super.create();
+
+        FlxG.cameras.bgColor = AppUtil.SOFT_WHITE;
 
         var savedGallery = AssetPaths.getGallery();
 
@@ -37,12 +52,7 @@ class GalleryState extends FlxTransitionableState
         }
         else
         {
-            camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
-            viewSubState = new GalleryViewSubState(this);
-            destroySubStates = false;
-
             gallery = new FlxTypedGroup(); // FlxContainer has a child/parent relationship that bothers the substate
-            add(gallery);
 
             var matrix = [[]];
             var row = 0;
@@ -50,7 +60,7 @@ class GalleryState extends FlxTransitionableState
             for(item in savedGallery)
             {
                 var photo = new GalleryPhoto(item.graphic, item.data, this);
-                if(photo.width + width > FlxG.width)
+                if(photo.width + width + 5 > FlxG.width)
                 {
                     matrix.push([]);
                     row++;
@@ -68,16 +78,50 @@ class GalleryState extends FlxTransitionableState
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.updatePortrait(last.x + last.width, FlxG.height / 3 * j);
+                        photo.updatePortrait(last.x + last.width + 5, last.y);
                     else
-                        photo.updatePortrait(dx, FlxG.height / 3 * j);
+                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * 5);
                     gallery.add(photo);
                 }
             }
 
-            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
-            FlxG.camera.setScrollBounds(0, FlxG.width, 0, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
+            textFormat = AppUtil.getIceTextFormat();
+
+            filteredByNickname = gallery.members.filter((photo) -> photo.data.user_nickname != null && photo.data.user_nickname.length > 0);
+            input = new FlxInputText(5, 5, 145, null, 8, FlxColor.WHITE, AppUtil.SOFT_NAVY);
+            input.fieldBorderColor = AppUtil.NAVY;
+            input.fieldBorderThickness = 5;
+            input.callback = findPhoto;
+            input.scrollFactor.y = 0;
+            input.kill();
+
+            var ctrlText = new FlxText();
+            ctrlText.applyMarkup("View photo: @CLICK@ | Find photo: @CTRL+F@ | Traverse menu: @Scroll wheel@ | Exit: @ESCAPE@", [textFormat]);
+            ctrlText.alignment = CENTER;
+            ctrlText.screenCenter(X);
+            ctrlText.y = FlxG.height - ctrlText.height;
+            ctrlText.scrollFactor.y = 0;
+
+            var ctrlTextBD = new FlxSprite().makeGraphic(FlxG.width, Std.int(ctrlText.height), AppUtil.NAVY);
+            ctrlTextBD.screenCenter(X);
+            ctrlTextBD.y = FlxG.height - ctrlText.height;
+            ctrlTextBD.scrollFactor.y = 0;
+
+            camTarget = new FlxObject(0, 0, FlxG.width, FlxG.height);
+            viewSubState = new GalleryViewSubState(this);
+            destroySubStates = false;
+
+            add(gallery);
+            add(input);
+            add(ctrlTextBD);
+            add(ctrlText);
+
+            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2) + ctrlTextBD.height);
+            FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
+
+            FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
+            FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
         }
     }
 
@@ -96,34 +140,111 @@ class GalleryState extends FlxTransitionableState
         openSubState(viewSubState.reset(photo));
     }
 
-    function findPhoto():Void
-    {
-
-    }
-
     override public function update(elapsed:Float):Void
     {
         super.update(elapsed);
 
-        final keys = FlxG.keys;
-        if(keys.justReleased.F && keys.pressed.CONTROL)
-        {
-            findPhoto();
-        }
-        else if(keys.justReleased.ESCAPE)
-        {
-            FlxG.switchState(MainMenuState.new);
-        }
+        if(gallery != null && FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
+            hideSearchBar();
+    }
 
-        if(camTarget != null)
+    function onKeyReleased(event:KeyboardEvent):Void
+    {
+        if(subState != null) return;
+
+        switch(event.keyCode)
         {
-            // Update scroll
-            camTarget.y -= FlxG.mouse.wheel * 40;
-            if(camTarget.y < FlxG.worldBounds.y)
-                camTarget.y = 0;
-            else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
-                camTarget.y = FlxG.worldBounds.height - camTarget.height;
+            case FlxKey.ESCAPE:
+                if(searching)
+                    hideSearchBar();
+                else
+                    FlxG.switchState(MainMenuState.new);
+
+            case FlxKey.F:
+                if(subState == null && gallery != null && !searching && #if mac event.commandKey #else event.controlKey #end)
+                    showSearchBar();
         }
+    }
+
+    function onMouseWheel(event:MouseEvent):Void
+    {
+        if(gallery == null || subState != null) return;
+
+        // Update scroll
+        camTarget.y -= event.delta * 40;
+        if(camTarget.y < FlxG.worldBounds.y)
+            camTarget.y = 0;
+        else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
+            camTarget.y = FlxG.worldBounds.height - camTarget.height;
+    }
+
+    function showSearchBar():Void
+    {
+        searching = true;
+
+        input.revive();
+        input.hasFocus = true;
+
+        findPhoto(input.text, "open");
+    }
+
+    function hideSearchBar():Void
+    {
+        searching = false;
+        input.hasFocus = false;
+        input.kill();
+
+        for(photo in gallery.members)
+        {
+            if(photo == focus) continue;
+
+            photo.alpha = 1.0;
+            photo.highlighted = false;
+        }
+    }
+
+    function findPhoto(text:String, action:String):Void
+    {
+        for(photo in filteredByNickname)
+        {
+            var fName = photo.data.user_nickname.substr(0, text.length).toLowerCase();
+            var fText = text.toLowerCase();
+
+            if(text.length > 0 && AppUtil.compareTo(fName, fText) == 0)
+            {
+                photo.highlighted = true;
+                photo.alpha = 1.0;
+            }
+            else
+            {
+                photo.highlighted = false;
+                if(photo != focus)
+                    photo.alpha = 0.4;
+            }
+        }
+    }
+
+    function inflatePhoto(photo:GalleryPhoto):Void
+    {
+        // Enlarge new focus to make it stand out
+        photo.setGraphicSize(0, GalleryPhoto.PHOTO_ROW_HEIGHT * 1.25);
+        photo.updateHitbox();
+
+        photo.x = photo.center.x - photo.width * 0.5;
+        photo.y = photo.center.y - photo.height * 0.5;
+
+        // Move new focus to top of draw stack, but below highlighted photos
+        final members = gallery.members;
+        members.push(members.splice(members.indexOf(photo), 1)[0]);
+    }
+
+    function deflatePhoto(photo:GalleryPhoto):Void
+    {
+        // Restore old focus to original size
+        photo.x = photo.portrait.x;
+        photo.y = photo.portrait.y;
+        photo.scale.set(photo.portrait.scale, photo.portrait.scale);
+        photo.updateHitbox();
     }
 
     override public function closeSubState():Void
@@ -135,34 +256,31 @@ class GalleryState extends FlxTransitionableState
 
     override public function destroy():Void
     {
+        focus = null;
+        gallery = null;
+        input = null;
+        filteredByNickname = null;
+
         super.destroy();
 
+        camTarget = FlxDestroyUtil.destroy(camTarget);
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto
     {
-        if(focus != null && subState == null)
+        if(subState == null && focus != null)
         {
-            // Restore old focus to original size
-            focus.x = focus.portrait.x;
-            focus.y = focus.portrait.y;
-            focus.scale.set(focus.portrait.scale, focus.portrait.scale);
-            focus.updateHitbox();
+            if(!focus.highlighted && searching)
+                focus.alpha = 0.4;
+            deflatePhoto(focus);
         }
 
         if(value != null)
         {
-            // Enlarge new focus to make it stand out
-            value.setGraphicSize(0, GalleryPhoto.PHOTO_ROW_HEIGHT * 1.25);
-            value.updateHitbox();
-
-            value.x = value.center.x - value.width * 0.5;
-            value.y = value.center.y - value.height * 0.5;
-
-            // Move new focus to top of draw stack
-            final members = gallery.members;
-            members.push(members.splice(members.indexOf(value), 1)[0]);
+            if(searching)
+                value.alpha = 1.0;
+            inflatePhoto(value);
         }
 
         return focus = value;
