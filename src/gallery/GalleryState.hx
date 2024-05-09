@@ -33,6 +33,8 @@ class GalleryState extends FlxTransitionableState
     {
         super.create();
 
+        FlxG.cameras.bgColor = AppUtil.SOFT_WHITE;
+
         var savedGallery = AssetPaths.getGallery();
 
         if(savedGallery.length <  1)
@@ -53,7 +55,7 @@ class GalleryState extends FlxTransitionableState
             for(item in savedGallery)
             {
                 var photo = new GalleryPhoto(item.graphic, item.data, this);
-                if(photo.width + width > FlxG.width)
+                if(photo.width + width + 5 > FlxG.width)
                 {
                     matrix.push([]);
                     row++;
@@ -71,9 +73,9 @@ class GalleryState extends FlxTransitionableState
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.updatePortrait(last.x + last.width, FlxG.height / 3 * j);
+                        photo.updatePortrait(last.x + last.width + 5, last.y);
                     else
-                        photo.updatePortrait(dx, FlxG.height / 3 * j);
+                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * 5);
                     gallery.add(photo);
                 }
             }
@@ -93,8 +95,8 @@ class GalleryState extends FlxTransitionableState
             add(gallery);
             add(input);
 
-            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
-            FlxG.camera.setScrollBounds(0, FlxG.width, 0, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length);
+            FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2));
+            FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
         }
     }
@@ -121,7 +123,7 @@ class GalleryState extends FlxTransitionableState
         final keys = FlxG.keys;
         if(searching)
         {
-            if(keys.justReleased.ESCAPE)
+            if(keys.justReleased.ESCAPE || (FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input)))
             {
                 searching = false;
                 input.kill();
