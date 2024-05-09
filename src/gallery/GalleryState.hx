@@ -1,14 +1,17 @@
 package gallery;
 
-import flixel.util.FlxColor;
-import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+
+import openfl.events.KeyboardEvent;
+import openfl.events.MouseEvent;
 
 class GalleryState extends FlxTransitionableState
 {
@@ -98,6 +101,9 @@ class GalleryState extends FlxTransitionableState
             FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2));
             FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
+
+            FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
+            FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
         }
     }
 
@@ -120,48 +126,62 @@ class GalleryState extends FlxTransitionableState
     {
         super.update(elapsed);
 
-        final keys = FlxG.keys;
-        if(searching)
+        if(FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
+            hideSearchBar();
+    }
+
+    function onKeyReleased(event:KeyboardEvent):Void
+    {
+        if(subState != null) return;
+
+        switch(event.keyCode)
         {
-            if(keys.justReleased.ESCAPE || (FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input)))
-            {
-                searching = false;
-                input.kill();
+            case FlxKey.ESCAPE:
+                if(searching)
+                    hideSearchBar();
+                else
+                    FlxG.switchState(MainMenuState.new);
 
-                for(photo in gallery.members)
-                {
-                    if(photo == focus) continue;
-
-                    photo.alpha = 1.0;
-                    photo.highlighted = false;
-                }
-            }
+            case FlxKey.F:
+                if(subState == null && gallery != null && !searching && #if mac event.commandKey #else event.controlKey #end)
+                    showSearchBar();
         }
-        else
+    }
+
+    function onMouseWheel(event:MouseEvent):Void
+    {
+        if(gallery == null || subState != null) return;
+
+        // Update scroll
+        camTarget.y -= event.delta * 40;
+        if(camTarget.y < FlxG.worldBounds.y)
+            camTarget.y = 0;
+        else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
+            camTarget.y = FlxG.worldBounds.height - camTarget.height;
+    }
+
+    function showSearchBar():Void
+    {
+        searching = true;
+
+        input.revive();
+        input.hasFocus = true;
+
+        findPhoto(input.text, "open");
+    }
+
+    function hideSearchBar():Void
+    {
+        searching = false;
+        input.hasFocus = false;
+        input.kill();
+
+        for(photo in gallery.members)
         {
-            if(keys.justReleased.ESCAPE)
-            {
-                FlxG.switchState(MainMenuState.new);
-            }
-            if(gallery != null && keys.justReleased.F && keys.pressed.CONTROL)
-            {
-                searching = true;
+            if(photo == focus) continue;
 
-                input.revive();
-                input.hasFocus = true;
-
-                findPhoto(input.text, "open");
-            }
-        }
-
-        if(gallery != null && camTarget != null)
-        {
-            // Update scroll
-            camTarget.y -= FlxG.mouse.wheel * 40;
-            if(camTarget.y < FlxG.worldBounds.y)
-                camTarget.y = 0;
-            else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
-                camTarget.y = FlxG.worldBounds.height - camTarget.height;
+            photo.alpha = 1.0;
+            photo.highlighted = false;
         }
     }
 
