@@ -85,14 +85,30 @@ class GalleryViewSubState extends FlxSubState
 
         orientation = photo.frameWidth > photo.frameHeight ? LANDSCAPE : PORTRAIT;
 
-        var name = photo.data.breeds[0].name;
-        var origin = photo.data.breeds[0].origin;
-        var temperament = photo.data.breeds[0].temperament;
-        var desc = photo.data.breeds[0].description;
-        var displayText = '@Cat name:@ ${name}\n\n' 
-				+ '@Origin:@ ${origin}\n\n'
-				+ '@Temperament:@ ${temperament}\n\n'
-				+ '@Description:@ ${desc}';
+        var displayText = new StringBuf();
+
+        if(photo.data.user_note != null && photo.data.user_nickname.length > 0)
+            displayText.add('@Nickname:@ ${photo.data.user_nickname}\n\n');
+        else
+            displayText.add("@Nickname:@ none provided\n\n");
+        
+        if(photo.data.user_note != null && photo.data.user_note.length > 0)
+            displayText.add('@Note:@ ${photo.data.user_note}\n\n\n');
+        else
+            displayText.add("@Note:@ none provided\n\n\n");
+
+        if(photo.data.breeds != null && photo.data.breeds.length > 0)
+        {
+            displayText.add('@Breed:@ ${photo.data.breeds[0].name}\n\n');
+            displayText.add('@Origin:@ ${photo.data.breeds[0].origin}\n\n');
+            displayText.add('@Temperament:@ ${photo.data.breeds[0].temperament}\n\n');
+            displayText.add('@Description:@ ${photo.data.breeds[0].description}\n\n');
+        }
+        else
+        {
+            displayText.add("No data available");
+        }
+
 
         if(orientation == LANDSCAPE)
         {
@@ -109,7 +125,7 @@ class GalleryViewSubState extends FlxSubState
             var boxWidth = FlxG.width - scaledWidth - 30;
 
             testText.fieldWidth = boxWidth - 8;
-            testText.applyMarkup(displayText, [textFormat]);
+            testText.applyMarkup(displayText.toString(), [textFormat]);
 
             textBox.setGraphicSize(boxWidth, testText.height + 8);
             textBox.updateHitbox();
@@ -121,7 +137,7 @@ class GalleryViewSubState extends FlxSubState
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width - 8;
-        description.applyMarkup(displayText, [textFormat]);
+        description.applyMarkup(displayText.toString(), [textFormat]);
         description.start(0.01, true, false, [SPACE]);
     }
 

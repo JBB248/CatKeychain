@@ -20,6 +20,18 @@ import openfl.net.URLRequest;
  */
 class CatGenerator
 {
+    public static var emptyData:CatData = {
+        breeds: null,
+        id: "",
+        url: null,
+        width: 0,
+        height: 0,
+
+        image: null,
+        user_nickname: null,
+        user_note: null
+    };
+
     public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
     var catLoader:CatLoader;

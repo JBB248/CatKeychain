@@ -126,7 +126,7 @@ class GalleryState extends FlxTransitionableState
     {
         super.update(elapsed);
 
-        if(FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
+        if(gallery != null && FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
             hideSearchBar();
     }
 
