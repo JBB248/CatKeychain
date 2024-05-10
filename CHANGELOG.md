@@ -4,12 +4,21 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2024-05-10
+### Added
+- Ability to reload the browse menu
+
+### Fixed
+- Escape key being read extra times and closng menus prematurely
+
+
 ## [0.4.1] - 2024-05-09
 ### Added
 - Menu descriptions when hovering over buttons in main menu
 
 ### Fixed
 - Deselecting photo in gallery menu completely exited the menu
+
 
 ## [0.4.0] - 2024-05-09
 ### Added
@@ -23,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when the gallery is first used
 - Crash when no data for a photo is found
 - Text flowing off the screen
+
 
 ## [0.3.1] - 2024-05-08
 ### Fixed
