@@ -91,6 +91,7 @@ class BrowseState extends FlxTransitionableState
 		add(downloadMenu);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
 		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
 
 		transitionIn();
@@ -151,7 +152,15 @@ class BrowseState extends FlxTransitionableState
 				spinCarousel(COUNTER_CLOCKWISE);
 			case FlxKey.RIGHT:
 				spinCarousel(CLOCKWISE);
+		}
+	}
 
+	function onKeyReleased(event:KeyboardEvent):Void
+	{
+		if(downloadMenu.hasFocus) return;
+
+		switch(event.keyCode)
+		{
 			case FlxKey.ENTER | FlxKey.UP:
 				isolatePhoto();
 
@@ -322,6 +331,7 @@ class BrowseState extends FlxTransitionableState
 		generator = null;
 
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
 		FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
 	}
 

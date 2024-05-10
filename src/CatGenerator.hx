@@ -195,7 +195,7 @@ class CatLoader
     function checkRequests():Void
     {
         focus = requests.shift();
-        if(StringTools.endsWith(focus.url, ".jpg"))
+        if(StringTools.endsWith(focus.url, ".jpg") || StringTools.endsWith(focus.url, ".png"))
         {
             loader.load(new URLRequest(focus.url));
         }

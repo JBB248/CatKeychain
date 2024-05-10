@@ -71,16 +71,17 @@ class GalleryState extends FlxTransitionableState
                 matrix[matrix.length - 1].push(photo);
             }
 
+            final gutter = 5.0;
             for(j => row in matrix) // Find a way to remove this
             {
-                var dx = (FlxG.width - Lambda.fold(row, (item, result) -> result + item.width, 0)) / 2;
+                var dx = (FlxG.width - Lambda.fold(row, (item, result) -> result + item.width + gutter, 0)) / 2 + gutter / 2;
                 for(i => photo in row)
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.updatePortrait(last.x + last.width + 5, last.y);
+                        photo.updatePortrait(last.x + last.width + gutter, last.y);
                     else
-                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * 5);
+                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * gutter);
                     gallery.add(photo);
                 }
             }
@@ -221,6 +222,15 @@ class GalleryState extends FlxTransitionableState
 
     function findPhoto(text:String, action:String):Void
     {
+        for(photo in gallery)
+        {
+            photo.highlighted = false;
+            if(photo != focus)
+            {
+                photo.alpha = 0.4;
+            }
+        }
+
         for(photo in filteredByNickname)
         {
             var fName = photo.data.user_nickname.substr(0, text.length).toLowerCase();
@@ -230,12 +240,6 @@ class GalleryState extends FlxTransitionableState
             {
                 photo.highlighted = true;
                 photo.alpha = 1.0;
-            }
-            else
-            {
-                photo.highlighted = false;
-                if(photo != focus)
-                    photo.alpha = 0.4;
             }
         }
     }
@@ -281,6 +285,9 @@ class GalleryState extends FlxTransitionableState
 
         camTarget = FlxDestroyUtil.destroy(camTarget);
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
+
+        FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
+        FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto
