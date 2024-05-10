@@ -281,6 +281,9 @@ class GalleryState extends FlxTransitionableState
 
         camTarget = FlxDestroyUtil.destroy(camTarget);
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
+
+        FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
+        FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto
