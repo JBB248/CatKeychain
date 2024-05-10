@@ -71,16 +71,17 @@ class GalleryState extends FlxTransitionableState
                 matrix[matrix.length - 1].push(photo);
             }
 
+            final gutter = 5.0;
             for(j => row in matrix) // Find a way to remove this
             {
-                var dx = (FlxG.width - Lambda.fold(row, (item, result) -> result + item.width, 0)) / 2;
+                var dx = (FlxG.width - Lambda.fold(row, (item, result) -> result + item.width + gutter, 0)) / 2 + gutter / 2;
                 for(i => photo in row)
                 {
                     var last = row[i - 1];
                     if(last != null)
-                        photo.updatePortrait(last.x + last.width + 5, last.y);
+                        photo.updatePortrait(last.x + last.width + gutter, last.y);
                     else
-                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * 5);
+                        photo.updatePortrait(dx, GalleryPhoto.PHOTO_ROW_HEIGHT * j + j * gutter);
                     gallery.add(photo);
                 }
             }
