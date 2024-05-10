@@ -221,6 +221,15 @@ class GalleryState extends FlxTransitionableState
 
     function findPhoto(text:String, action:String):Void
     {
+        for(photo in gallery)
+        {
+            photo.highlighted = false;
+            if(photo != focus)
+            {
+                photo.alpha = 0.4;
+            }
+        }
+
         for(photo in filteredByNickname)
         {
             var fName = photo.data.user_nickname.substr(0, text.length).toLowerCase();
@@ -230,12 +239,6 @@ class GalleryState extends FlxTransitionableState
             {
                 photo.highlighted = true;
                 photo.alpha = 1.0;
-            }
-            else
-            {
-                photo.highlighted = false;
-                if(photo != focus)
-                    photo.alpha = 0.4;
             }
         }
     }
