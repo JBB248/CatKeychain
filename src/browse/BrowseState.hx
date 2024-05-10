@@ -68,10 +68,11 @@ class BrowseState extends FlxTransitionableState
 
 		textFormat = AppUtil.getIceTextFormat();
 		
-		textBox = new FlxSprite(32, TILE_SIZE * 22).makeGraphic(FlxG.width - 64, TILE_SIZE * 8, SOFT_NAVY);
+		textBox = new FlxSprite(32, TILE_SIZE * 22 - 8).makeGraphic(FlxG.width - 64, TILE_SIZE * 8 + 8, SOFT_NAVY);
 		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko :3");
 		ctrlText = new FlxText();
-		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@ | Exit: @ESCAPE@", [textFormat]);
+		ctrlText.fieldWidth = infoText.fieldWidth;
+		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@ \nReset photos: @CTRL+R@ | Exit: @ESCAPE@", [textFormat]);
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
@@ -161,6 +162,10 @@ class BrowseState extends FlxTransitionableState
 				else if(event.keyCode == FlxKey.ESCAPE)
 					FlxG.switchState(MainMenuState.new);
 			}
+
+			case FlxKey.R:
+				if(#if mac event.commandKey #else event.controlKey #end)
+					FlxG.resetState();
 		}
 	}
 
