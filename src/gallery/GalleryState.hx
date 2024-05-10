@@ -144,21 +144,37 @@ class GalleryState extends FlxTransitionableState
     {
         super.update(elapsed);
 
-        if(gallery != null && FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
-            hideSearchBar();
+        if(gallery != null) // See if mouse clicked off targets
+        {
+            if(subState == null)
+            {
+                if(FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
+                    hideSearchBar();
+            }
+            else
+            {
+                if(viewSubState.checkMouse())
+                    closeSubState();
+            }
+        }
     }
 
     function onKeyReleased(event:KeyboardEvent):Void
     {
-        if(subState != null) return;
-
         switch(event.keyCode)
         {
             case FlxKey.ESCAPE:
-                if(searching)
-                    hideSearchBar();
+                if(subState == null)
+                {
+                    if(searching)
+                        hideSearchBar();
+                    else
+                        FlxG.switchState(MainMenuState.new);
+                }
                 else
-                    FlxG.switchState(MainMenuState.new);
+                {
+                    closeSubState();
+                }
 
             case FlxKey.F:
                 if(subState == null && gallery != null && !searching && #if mac event.commandKey #else event.controlKey #end)

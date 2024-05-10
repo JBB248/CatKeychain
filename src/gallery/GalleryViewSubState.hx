@@ -148,12 +148,9 @@ class GalleryViewSubState extends FlxSubState
         remove(photo);
     }
 
-    override public function update(elapsed:Float):Void
+    public inline function checkMouse():Bool
     {
-        if((FlxG.mouse.justReleased && !FlxG.mouse.overlaps(photo) && !FlxG.mouse.overlaps(textBox)) || FlxG.keys.justReleased.ESCAPE)
-            close();
-        
-        super.update(elapsed);
+        return FlxG.mouse.justReleased && !FlxG.mouse.overlaps(photo) && !FlxG.mouse.overlaps(textBox);
     }
 
     override public function destroy():Void
