@@ -120,10 +120,10 @@ class GalleryState extends FlxTransitionableState
             FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2) + ctrlTextBD.height);
             FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
-
-            FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-            FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
         }
+
+        FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
+        FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
     }
 
     override public function finishTransIn():Void
@@ -145,23 +145,21 @@ class GalleryState extends FlxTransitionableState
     {
         super.update(elapsed);
 
-        if(gallery != null) // See if mouse clicked off targets
+        if(gallery != null)
         {
-            if(subState == null)
-            {
-                if(FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
-                    hideSearchBar();
-            }
-            else
-            {
-                if(viewSubState.checkMouse())
-                    closeSubState();
-            }
+            if(FlxG.mouse.justPressed && !FlxG.mouse.overlaps(input))
+                hideSearchBar();
         }
     }
 
     function onKeyReleased(event:KeyboardEvent):Void
     {
+        if(gallery == null && event.keyCode == FlxKey.ESCAPE)
+        {
+            FlxG.switchState(MainMenuState.new);
+            return;
+        }
+
         switch(event.keyCode)
         {
             case FlxKey.ESCAPE:
