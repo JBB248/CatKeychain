@@ -20,6 +20,8 @@ class GalleryPhoto extends FlxSprite
 
     public var gallery:GalleryState;
 
+    public var highlighted:Bool = false;
+
     public var data:CatData;
 
     public var portrait:{

@@ -20,6 +20,18 @@ import openfl.net.URLRequest;
  */
 class CatGenerator
 {
+    public static var emptyData:CatData = {
+        breeds: null,
+        id: "",
+        url: null,
+        width: 0,
+        height: 0,
+
+        image: null,
+        user_nickname: null,
+        user_note: null
+    };
+
     public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
     var catLoader:CatLoader;
@@ -50,7 +62,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if (debug && !USE_API)
-        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")));
+        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -77,7 +89,7 @@ class CatGenerator
             #if USE_API 
             // Without an api key, only ten photos can be requested at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
-            + "&mime_types=jpg"
+            + "&mime_types=jpg,png"
             + "&api_key=" + Sys.getEnv("CAT_API_KEY") 
             #end
         ));
@@ -122,7 +134,7 @@ class CatGenerator
  */
 class CatLoader
 {
-    public var progress:Float = 0.0;
+    public var progress:Float = 1.0;
     public var requests:Array<CatData> = [];
 
     var generator:CatGenerator;
@@ -145,14 +157,25 @@ class CatLoader
     /**
      * Appends a request to `requests` and begins image loading if not busy
      */
-    public function pushRequests(newRequests:Array<CatData>):Void
+    public function pushRequests(newRequests:Array<CatData>, ?local:Bool = false):Void
     {
-        requests = requests.concat(newRequests);
-
-        if(!busy)
+        if(local)
         {
-            busy = true;
-            checkRequests();
+            for(request in newRequests)
+            {
+                request.image = AssetPaths.getGalleryPhoto(request.id).bitmap;
+                generator.onCatGenerated.dispatch(request);
+            }
+        }
+        else
+        {
+            requests = requests.concat(newRequests);
+
+            if(!busy)
+            {
+                busy = true;
+                checkRequests();
+            }
         }
     }
 
@@ -172,7 +195,7 @@ class CatLoader
     function checkRequests():Void
     {
         focus = requests.shift();
-        if(StringTools.endsWith(focus.url, ".jpg"))
+        if(StringTools.endsWith(focus.url, ".jpg") || StringTools.endsWith(focus.url, ".png"))
         {
             loader.load(new URLRequest(focus.url));
         }
@@ -210,9 +233,12 @@ typedef CatData = {
     var breeds:Array<CatBreedData>;
     var id:String;
     var url:String;
-    var image:BitmapData;
     var width:Int;
     var height:Int;
+
+    var image:BitmapData;
+    var user_nickname:String;
+    var user_note:String;
 }
 
 typedef CatBreedData = {

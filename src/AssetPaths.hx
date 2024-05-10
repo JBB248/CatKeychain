@@ -44,13 +44,21 @@ class AssetPaths
         return [for(id in dirs) {graphic: getGalleryPhoto(id), data: getGalleryData(id)}];
     }
 
-    public static inline function getGalleryPhoto(id:String):FlxGraphic
+    public static function getGalleryPhoto(id:String):FlxGraphic
     {
-        return FlxG.bitmap.add(BitmapData.fromBytes(File.getBytes('gallery/${id}/photo.jpg')));
+        var path = 'gallery/${id}/photo.png';
+        if(FileSystem.exists(path))
+            return FlxG.bitmap.add(BitmapData.fromFile('gallery/${id}/photo.png'));
+        else
+            return getEmbeddedImage("default-photo.png");
     }
 
-    public static inline function getGalleryData(id:String):CatData
+    public static function getGalleryData(id:String):CatData
     {
-        return (cast Json.parse(File.getContent('gallery/${id}/data.json')));
+        var path = 'gallery/${id}/data.json';
+        if(FileSystem.exists(path))
+            return (cast Json.parse(File.getContent(path)));
+        else
+            return CatGenerator.emptyData;
     }
 }

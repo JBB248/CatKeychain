@@ -1,6 +1,6 @@
 # Cat Gallery
 A simple app that stores and displays photos and information about cats.
-Photos can be uploaded to the app or downloaded from [TheCatAPI](https://thecatapi.com/).
+Photos can be downloaded from [TheCatAPI](https://thecatapi.com/).
 
 This is a practice project I challenged myself with to improve my work efficiency, 
 and my skills with HaxeFlixel, reactive UI, and API requests.

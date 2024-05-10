@@ -15,9 +15,6 @@ import openfl.filters.BlurFilter;
 
 class GalleryViewSubState extends FlxSubState
 {
-    // To-do: this is a duplicate. Maybe make a utility class
-    public var mintTextFormat:FlxTextFormatMarkerPair = new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF60D4A6), "@");
-
     public var parent:GalleryState;
 
     public var orientation:Orientation = LANDSCAPE;
@@ -54,15 +51,12 @@ class GalleryViewSubState extends FlxSubState
 
     override public function create():Void
     {
-        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, 0xFF2C2E39);
-        textBox.alpha = 0.6;
+        textBox = new FlxSprite(0, FlxG.width + 20).makeGraphic(1, 1, AppUtil.SOFT_BLACK);
+        textBox.alpha = 0.8;
         textBox.cameras = [viewCam];
         testText = new FlxText(0, 0, 1);
         description = new FlxTypeText(0, 0, 1, "Neko");
         description.cameras = [viewCam];
-
-        FlxG.watch.add(description, "height");
-        FlxG.watch.add(testText, "height");
 
         add(textBox);
         add(description);
@@ -88,14 +82,30 @@ class GalleryViewSubState extends FlxSubState
 
         orientation = photo.frameWidth > photo.frameHeight ? LANDSCAPE : PORTRAIT;
 
-        var name = photo.data.breeds[0].name;
-        var origin = photo.data.breeds[0].origin;
-        var temperament = photo.data.breeds[0].temperament;
-        var desc = photo.data.breeds[0].description;
-        var displayText = '@Cat name:@ ${name}\n\n' 
-				+ '@Origin:@ ${origin}\n\n'
-				+ '@Temperament:@ ${temperament}\n\n'
-				+ '@Description:@ ${desc}';
+        var displayText = new StringBuf();
+
+        if(photo.data.user_note != null && photo.data.user_nickname.length > 0)
+            displayText.add('@Nickname:@ ${photo.data.user_nickname}' + (orientation == LANDSCAPE ? ", " : "\n\n"));
+        else
+            displayText.add("@Nickname:@ none provided" + (orientation == LANDSCAPE ? ", " : "\n\n"));
+        
+        if(photo.data.user_note != null && photo.data.user_note.length > 0)
+            displayText.add('@Note:@ ${photo.data.user_note}\n\n\n');
+        else
+            displayText.add("@Note:@ none provided\n\n\n");
+
+        if(photo.data.breeds != null && photo.data.breeds.length > 0)
+        {
+            displayText.add('@Breed:@ ${photo.data.breeds[0].name}' + (orientation == LANDSCAPE ? ", " : "\n\n"));
+            displayText.add('@Origin:@ ${photo.data.breeds[0].origin}\n\n');
+            displayText.add('@Temperament:@ ${photo.data.breeds[0].temperament}\n\n');
+            displayText.add('@Description:@ ${photo.data.breeds[0].description}\n\n');
+        }
+        else
+        {
+            displayText.add("No data available");
+        }
+
 
         if(orientation == LANDSCAPE)
         {
@@ -112,7 +122,7 @@ class GalleryViewSubState extends FlxSubState
             var boxWidth = FlxG.width - scaledWidth - 30;
 
             testText.fieldWidth = boxWidth - 8;
-            testText.applyMarkup(displayText, [mintTextFormat]);
+            testText.applyMarkup(displayText.toString(), [parent.textFormat]);
 
             textBox.setGraphicSize(boxWidth, testText.height + 8);
             textBox.updateHitbox();
@@ -124,7 +134,7 @@ class GalleryViewSubState extends FlxSubState
         description.x = textBox.x + 4;
         description.y = textBox.y + 4;
         description.fieldWidth = textBox.width - 8;
-        description.applyMarkup(displayText, [mintTextFormat]);
+        description.applyMarkup(displayText.toString(), [parent.textFormat]);
         description.start(0.01, true, false, [SPACE]);
     }
 
@@ -138,12 +148,9 @@ class GalleryViewSubState extends FlxSubState
         remove(photo);
     }
 
-    override public function update(elapsed:Float):Void
+    public inline function checkMouse():Bool
     {
-        super.update(elapsed);
-
-        if(FlxG.keys.justReleased.ESCAPE)
-            close();
+        return FlxG.mouse.justReleased && !FlxG.mouse.overlaps(photo) && !FlxG.mouse.overlaps(textBox);
     }
 
     override public function destroy():Void
