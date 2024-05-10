@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Escape key being read extra times and closng menus prematurely
+- Gallery being inescapable when there's nothing present
 
 
 ## [0.4.1] - 2024-05-09
