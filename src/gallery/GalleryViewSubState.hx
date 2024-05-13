@@ -109,7 +109,7 @@ class GalleryViewSubState extends FlxSubState
 
         if(orientation == LANDSCAPE)
         {
-            var scaledHeight = photo.frameHeight * (GalleryPhoto.LANDSCAPE_WIDTH / photo.frameWidth);
+            var scaledHeight = photo.frameHeight * (GalleryPhoto.LANDSCAPE_HEIGHT / photo.frameHeight);
             var boxHeight = FlxG.height - scaledHeight - 15;
             textBox.x = 15;
             textBox.y = scaledHeight + 30;

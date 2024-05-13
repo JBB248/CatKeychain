@@ -15,7 +15,7 @@ class GalleryPhoto extends FlxSprite
 {
     public static inline var PHOTO_ROW_HEIGHT:Float = 160;
 
-    public static inline var LANDSCAPE_WIDTH:Float = 440; // FlxG.width * 0.6875; Can't use FlxG properties for constants
+    public static inline var LANDSCAPE_HEIGHT:Float = 320; // FlxG.height * 0.67; Can't use FlxG properties for constants
     public static inline var PORTRAIT_HEIGHT:Float = 408; // FlxG.height * 0.85;
 
     public var gallery:GalleryState;
@@ -73,7 +73,7 @@ class GalleryPhoto extends FlxSprite
         if(frameWidth > frameHeight) // Landscape
         {
             y -= gallery.camTarget.y;
-            var scale = LANDSCAPE_WIDTH / frameWidth;
+            var scale = LANDSCAPE_HEIGHT / frameHeight;
             values = {
                 x: FlxG.width * 0.5 - (frameWidth * scale * 0.5),
                 y: 15,
