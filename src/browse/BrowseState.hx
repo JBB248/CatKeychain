@@ -224,7 +224,7 @@ class BrowseState extends FlxTransitionableState
 
 			infoText.applyMarkup(displayText, [textFormat]);
 		}
-		else if(StringTools.endsWith(meta.url, ".jpg"))
+		else if(StringTools.endsWith(meta.url, ".jpg") || StringTools.endsWith(meta.url, ".png"))
 		{
 			infoText.resetText("No description available :/");
 		}
@@ -238,7 +238,8 @@ class BrowseState extends FlxTransitionableState
 
 	function isolatePhoto():Void
 	{
-		if(isolated || carousel.length != photoCount) return;
+		if(isolated || carousel.length != photoCount || 
+			StringTools.endsWith(carousel.positions[0].sprite.meta.url, ".gif")) return;
 
 		isolated = true;
 

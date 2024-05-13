@@ -31,7 +31,7 @@ class AssetPaths
         return new FlxSound().loadEmbedded(getPath(path, library, true));
     }
 
-    static function getPath(path:String, library:String, embedded:Bool = false):String
+    public static function getPath(path:String, library:String, embedded:Bool = false):String
     {
         return '${embedded ? "embedded" : "assets"}/${library}/${path}';
     }
