@@ -1,20 +1,29 @@
-# Cat Gallery
+<img src="docs/menu-preview.gif" alt="menu-preview" height="480px"/>
+
 A simple app that stores and displays photos and information about cats.
-Photos can be downloaded from [TheCatAPI](https://thecatapi.com/).
+Photos are downloaded within the app from [TheCatAPI](https://thecatapi.com/).
 
 This is a practice project I challenged myself with to improve my work efficiency, 
 and my skills with HaxeFlixel, reactive UI, and API requests.
 
+Unfortunately, I cannot distribute an executable version, but the instructions to build it yourself are simple (and listed below).
+
 ## Building
-If you want to use this source code and build your own version, the steps are simple:
+If you want to build your own copy or even create your own version, the steps are simple:
 
-- __First__: Download and install [Haxe](https://haxe.org)
+- __First__: [Download](https://github.com/JBB248/CatGallery/archive/refs/heads/main.zip) the source code or [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this repository (the latter requires [git](https://git-scm.com/))
 
-- __Second__: Follow the instructions to [install HaxeFlixel](https://haxeflixel.com/documentation/getting-started/)
+- __Second__: Download and install [Haxe](https://haxe.org)
 
-- __Third__: While this project will work without an api key to [TheCatAPI](https://thecatapi.com/),
-it won't work quite as well. 
-    - If you're okay __without__ a key, just disable the `USE_API` flag on `project.xml` by commenting out or deleting the line
+- __Third__: Follow the instructions to [install HaxeFlixel](https://haxeflixel.com/documentation/getting-started/)
+
+- __Fourth__: If you aren't going to use Neko, you'll need to set lime up for your OS
+    - Windows: [Setup Windows](https://lime.openfl.org/docs/advanced-setup/windows/)
+    - MacOS: [Setup MacOS](https://lime.openfl.org/docs/advanced-setup/macos/)
+    - Linux: [Setup Linux](https://lime.openfl.org/docs/advanced-setup/linux/)
+
+- __Fifth__: While this project will work without an api key to [TheCatAPI](https://thecatapi.com/), it won't be nearly as cool. 
+    - If you're okay _without_ a key, just disable the `USE_API` flag on `project.xml` by commenting out or deleting the line
     ```xml
     <define name="USE_API">
     ```
