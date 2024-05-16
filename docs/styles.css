@@ -1,0 +1,69 @@
+@font-face {
+    font-family: "nokiafc22";
+    src: 
+        local("nokiafc22"),
+        url("./nokiafc22.woff");
+}
+
+body {
+    font-family: "nokiafc22";
+    text-align: center;
+    background-color: white;
+
+    margin: 0px;
+}
+
+p {
+    font-size: small;
+}
+
+a {
+    color: #17C1E8;
+}
+
+.light {
+    color: white;
+}
+
+.dark {
+    color: #212529;
+}
+
+.desc {
+    margin: 40px;
+}
+
+.row {
+    justify-content: space-around; 
+    align-items: center; 
+    display: flex; 
+    flex-direction: row;
+}
+
+.preview-light {
+    width: 45%;
+    border: 8px solid white;
+    border-radius: 15px;
+
+    padding: 12px;
+}
+
+.preview-dark {
+    width: 75%;
+    border: 5px solid white;
+    border-radius: 15px;
+
+    padding: 12px;
+
+    margin: auto;
+    display: block;
+}
+
+#main-menu, #build-menu {
+    background-color: #212529;
+
+    margin-top: none;
+
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}

@@ -1,6 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <title>Cat Gallery</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="./styles.css"/>
+    </head>
     <body>
-        <p>Test</p>
+        <div id="main-menu">
+            <h1 class="light">The Cat Gallery</h1>
+            <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/>
+            <div class="desc">
+                <p class="light">
+                    This is a practice project I challenged myself with to improve my work efficiency, 
+                    and my skills with HaxeFlixel, reactive UI, and API requests.
+                </p>
+            </div>
+        </div>
+        <div id="show-menu">
+            <h1 class="dark">What it does</h1>
+            <div class="row">
+                <img class="preview-dark dark" src="./gallery-preview.png" alt="gallery-preview"/>
+                <img class="preview-dark dark" src="./browser-preview.png" alt="browser-preview"/>
+            </div>
+            <div class="desc">
+                <p class="dark">
+                    The cat gallery stores and displays photos and information about cats.
+                    Photos can be downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                </p>
+            </div>
+        </div>
+        <div id="build-menu">
+            <h1 class="light">How to Use it</h1>
+            <p class="light">Because this app uses an API with limited requests, I cannot distribute an executable version.</p>
+            <p class="light">However, I <em>can</em> distribute the source code and building instructions on <a href="https://github.com/jbb248/catgallery/">github.com<a/></p>
+        </div>
     </body>
 </html>
