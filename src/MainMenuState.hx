@@ -78,14 +78,19 @@ class MainMenuState extends FlxTransitionableState
 
         springSFX = AssetPaths.getEmbeddedSound("boing.ogg");
         
-        var titleText = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
-        titleText.color = SOFT_BLACK;
+        var title = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
+        title.color = SOFT_BLACK;
+
+        var subTitle = new FlxText("By Joe Bray", 16);
+        subTitle.x = 5;
+        subTitle.y = FlxG.height - subTitle.height - 5;
+        subTitle.color = SOFT_BLACK;
 
         var buttonColors = [SOFT_WHITE, SOFT_BLACK, FlxColor.WHITE];
 
-        var galleryButton = new MenuButton(22, titleText.y +  titleText.height + 15, "Visit Gallery", buttonColors);
+        var galleryButton = new MenuButton(22, title.y +  title.height + 15, "Visit Gallery", buttonColors);
         galleryButton.onUp.callback = () -> FlxG.switchState(gallery.GalleryState.new);
-        var galleryText = new FlxText(galleryButton.x, galleryButton.y + galleryButton.height + 24, 0, "View your library of saved cat photos");
+        var galleryText = new FlxText(galleryButton.x, galleryButton.y + galleryButton.height + 24, 0, "View your gallery of saved cat photos");
         galleryText.color = AppUtil.SOFT_BLACK;
         galleryText.kill();
         galleryButton.onOver.callback = () -> galleryText.revive();
@@ -109,7 +114,8 @@ class MainMenuState extends FlxTransitionableState
         creditsButton.onOut.callback = () -> creditsText.kill();
 
         add(spinningCat);
-        add(titleText);
+        add(title);
+        add(subTitle);
         add(galleryButton);
         add(browseButton);
         add(creditsButton);
