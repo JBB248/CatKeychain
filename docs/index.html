@@ -8,33 +8,49 @@
         <link rel="stylesheet" href="./styles.css"/>
     </head>
     <body>
-        <div id="main-menu">
-            <h1 class="light">The Cat Gallery</h1>
-            <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/>
-            <div class="desc">
-                <p class="light">
-                    This is a practice project I challenged myself with to improve my work efficiency, 
-                    and my skills with HaxeFlixel, reactive UI, and API requests.
-                </p>
+        <div id="content">
+            <div id="main-menu">
+                <h1 class="light">--The Digital Cat Gallery--</h1>
+                <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/>
+                <div class="desc">
+                    <p class="light">
+                        This is a practice project I challenged myself with to improve my work efficiency, 
+                        and my skills with HaxeFlixel, reactive UI, and API requests.
+                    </p>
+                    <p class="light">
+                        The cat gallery stores and displays photos and information about cats.
+                        Photos can be downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                    </p>
+                </div>
+            </div>
+            <div id="show-menu">
+                <h1 class="dark">--What it does--</h1>
+                <div class="aligned-container">
+                    <p class="img-label left-text">
+                        Here, photos can be viewed and downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                        Before downloading, each photo can be assigned a nickname (used for the gallery's search feature) and a custom note.
+                        <br/><br/>
+                        If the photos provided aren't to your liking, they can be reshuffled using <em>CTRL+R</em>.
+                    </p>
+                    <img class="preview-light" src="./browser-preview.gif" alt="browser-preview"/>
+                </div>
+                <div class="aligned-container">
+                    <img class="preview-light" src="./gallery-preview.gif" alt="gallery-preview"/>
+                    <p class="img-label right-text">
+                        The gallery houses all of the photos in an organized and easy to navigate manner.
+                        <br/><br/>
+                        Use <em>CTRL+F</em> to activate the search function to find a specific photo using its given nickname.
+                    </p>
+                </div>
+            </div>
+            <div id="build-menu">
+                <h1 class="light">--How to Use it--</h1>
+                <p class="light">Because this app uses an API with limited requests, I cannot distribute an executable version.</p>
+                <p class="light">However, I <em>can</em> distribute the source code and building instructions on <a href="https://github.com/jbb248/catgallery/">github.com</a></p>
             </div>
         </div>
-        <div id="show-menu">
-            <h1 class="dark">What it does</h1>
-            <div class="row">
-                <img class="preview-dark dark" src="./gallery-preview.png" alt="gallery-preview"/>
-                <img class="preview-dark dark" src="./browser-preview.png" alt="browser-preview"/>
-            </div>
-            <div class="desc">
-                <p class="dark">
-                    The cat gallery stores and displays photos and information about cats.
-                    Photos can be downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
-                </p>
-            </div>
-        </div>
-        <div id="build-menu">
-            <h1 class="light">How to Use it</h1>
-            <p class="light">Because this app uses an API with limited requests, I cannot distribute an executable version.</p>
-            <p class="light">However, I <em>can</em> distribute the source code and building instructions on <a href="https://github.com/jbb248/catgallery/">github.com<a/></p>
-        </div>
+        <footer>
+            <p class="light">Joe Bray | GitHub: <a href="https://github.com/jbb248">JBB248</a></p>
+        </footer>
     </body>
 </html>
