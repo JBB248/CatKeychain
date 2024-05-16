@@ -118,7 +118,7 @@ class GalleryState extends FlxTransitionableState
             add(ctrlText);
 
             FlxG.worldBounds.set(0, 0, FlxG.width, GalleryPhoto.PHOTO_ROW_HEIGHT * matrix.length + 5 * (matrix.length - 2) + ctrlTextBD.height);
-            FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, FlxG.worldBounds.height);
+            FlxG.camera.setScrollBounds(FlxG.worldBounds.x, FlxG.worldBounds.width, FlxG.worldBounds.y, Math.max(FlxG.height, FlxG.worldBounds.height));
             FlxG.camera.follow(camTarget, NO_DEAD_ZONE, 0.5);
         }
 

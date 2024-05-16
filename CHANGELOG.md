@@ -4,13 +4,19 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-05-10
+
+## [1.0.0] - 2024-05-13
 ### Added
 - Ability to reload the browse menu
+
+### Changed
+- Photos that failed to download can no longer be downloaded
 
 ### Fixed
 - Escape key being read extra times and closng menus prematurely
 - Gallery being inescapable when there's nothing present
+- Camera acting weird when there's not enough photos to fit the screen
+- Landscape photos pushing text offscreen
 
 
 ## [0.4.1] - 2024-05-09

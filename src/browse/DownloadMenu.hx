@@ -1,6 +1,5 @@
 package browse;
 
-import sys.FileSystem;
 import AppUtil.*;
 import MainMenuState.MenuButton;
 
@@ -9,6 +8,7 @@ import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
 import flixel.text.FlxText;
 
+import sys.FileSystem;
 import sys.io.File;
 
 class DownloadMenu extends FlxSpriteContainer
