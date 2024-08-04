@@ -27,12 +27,14 @@ If you want to build your own copy or even create your own version, the steps ar
     ```xml
     <define name="USE_API">
     ```
-    - If you do want to use a key, you must first get one from [here](https://thecatapi.com/#pricing). Then make a new file called `env.xml`. Inside it, paste the following code, replacing `YOUR_KEY_HERE` with the key you recieved from TheCatAPI in an email: 
-    ```xml
-    <?xml version="1.0" encoding="utf-8"?>
-    <project>
-        <setenv name="CAT_API_KEY" value="YOUR_KEY_HERE"/>
-    </project>
+    - If you do want to use a key, you must first get one from [here](https://thecatapi.com/#pricing). Then make a new file in the `src` folder called `Keys.hx`. Inside it, paste the following code, replacing `YOUR_KEY_HERE` with the key you recieved from TheCatAPI in an email: 
+    ```haxe
+    package;
+
+    class Keys
+    {
+        public static var CAT_API_KEY:String = "YOUR_KEY_HERE";
+    }
     ```
         
     
