@@ -1,6 +1,6 @@
 # Unnecessary
 export/*
-env.xml
 
-# Hidden code
+# Personal code
+Keys.hx
 src/burst/*

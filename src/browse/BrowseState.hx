@@ -49,7 +49,7 @@ class BrowseState extends FlxTransitionableState
 	{
 		progressBar = new FlxBar(0, 0, null, TILE_SIZE * 16, TILE_SIZE, this, "progress", 0, 1);
 		progressBar.createFilledBar(FlxColor.WHITE, SOFT_BLACK);
-		progressBar.filledCallback = allCatsGenerated;
+		// progressBar.filledCallback = allCatsGenerated; // Bar never actually fills
 		progressBar.screenCenter();
 
 		carousel = new Carousel(photoCount, FlxG.width * 0.5, FlxG.height * 0.5 - 120, 250, 80);
