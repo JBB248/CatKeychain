@@ -39,9 +39,6 @@
 	<haxelib name="flixel-addons" version="3.2.2"/>
 	<haxelib name="flixel-ui" version="2.6.1"/>
 
-	<!--In case you want to use the ui package-->
-	<!-- <haxelib name="flixel-ui"/> -->
-
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
 
@@ -87,6 +84,4 @@
 	<icon path="assets/build/kitten-64.png" size="64"/>
 
 	<define name="USE_API"/>
-
-	<include path="env.xml" if="USE_API"/>
 </project>
