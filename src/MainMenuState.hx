@@ -107,7 +107,7 @@ class MainMenuState extends FlxTransitionableState
         var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits", buttonColors);
         creditsButton.onUp.callback = () -> catSpring();
         var creditsText = new FlxText(galleryText.x, galleryText.y, 0, 
-            "- Downloadable photos sourced from TheCatAPI.com\n\n- Spinning cat sourced from r/Catloaf\n\n- Powered by HaxeFlixel");
+            "- Cat photos sourced from TheCatAPI.com\n\n- Spinning maxwell cat sourced from r/Catloaf\n\n- Powered by HaxeFlixel");
         creditsText.color = AppUtil.SOFT_BLACK;
         creditsText.kill();
         creditsButton.onOver.callback = () -> creditsText.revive();

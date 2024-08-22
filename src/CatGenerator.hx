@@ -3,6 +3,8 @@ package;
 import flixel.FlxG;
 import flixel.util.FlxSignal;
 
+import haxe.Json;
+
 import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.events.HTTPStatusEvent;
@@ -20,17 +22,17 @@ import openfl.net.URLRequest;
  */
 class CatGenerator
 {
-    public static var emptyData:CatData = {
-        breeds: null,
-        id: "",
-        url: null,
-        width: 0,
-        height: 0,
+    public static var emptyData:String = "{
+        \"breeds\": null,
+        \"id\": \"\",
+        \"url\": null,
+        \"width\": 0,
+        \"height\": 0,
 
-        image: null,
-        user_nickname: null,
-        user_note: null
-    };
+        \"image\": null,
+        \"user_nickname\": null,
+        \"user_note\": null
+    }";
 
     public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
@@ -62,7 +64,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if (debug && !USE_API)
-        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")), true);
+        catLoader.pushRequests(Json.parse(openfl.Assets.getText("test-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -107,7 +109,7 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var response:Array<CatData> = haxe.Json.parse(event.target.data);
+        var response:Array<CatData> = Json.parse(event.target.data);
 
         catLoader.pushRequests(response);
 
