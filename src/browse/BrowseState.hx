@@ -88,7 +88,9 @@ class BrowseState extends FlxTransitionableState
 		add(textBox);
 		add(infoText);
 		add(ctrlText);
+		#if !html5
 		add(downloadMenu);
+		#end
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
