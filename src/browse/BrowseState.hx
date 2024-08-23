@@ -72,7 +72,13 @@ class BrowseState extends FlxTransitionableState
 		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko :3");
 		ctrlText = new FlxText();
 		ctrlText.fieldWidth = infoText.fieldWidth;
-		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@ \nReset photos: @CTRL+R@ | Exit: @ESCAPE@", [textFormat]);
+		ctrlText.applyMarkup(
+			"Skip text: @SPACE@ | " 
+			+ "Select photo: @W@ | " 
+			+ "Deselect photo: @S@ | "
+			+ "Spin carousel: @A@, @D@, or @Scroll wheel@ \n" 
+			#if desktop + "Reset photos: @CTRL+R@ | "  #end
+			+ "Exit: @ESCAPE@", [textFormat]);
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
@@ -150,9 +156,9 @@ class BrowseState extends FlxTransitionableState
 
 		switch(event.keyCode)
 		{
-			case FlxKey.LEFT:
+			case FlxKey.A:
 				spinCarousel(COUNTER_CLOCKWISE);
-			case FlxKey.RIGHT:
+			case FlxKey.D:
 				spinCarousel(CLOCKWISE);
 		}
 	}
@@ -163,10 +169,10 @@ class BrowseState extends FlxTransitionableState
 
 		switch(event.keyCode)
 		{
-			case FlxKey.ENTER | FlxKey.UP:
+			case FlxKey.ENTER | FlxKey.W:
 				isolatePhoto();
 
-			case FlxKey.ESCAPE | FlxKey.DOWN:
+			case FlxKey.ESCAPE | FlxKey.S:
 			{
 				if(isolated)
 					deisolatePhoto();
@@ -174,9 +180,11 @@ class BrowseState extends FlxTransitionableState
 					FlxG.switchState(MainMenuState.new);
 			}
 
+			#if desktop
 			case FlxKey.R:
 				if(#if mac event.commandKey #else event.controlKey #end)
 					FlxG.resetState();
+			#end
 		}
 	}
 
