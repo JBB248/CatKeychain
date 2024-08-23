@@ -68,7 +68,7 @@ class MainMenuState extends FlxTransitionableState
         FlxG.camera.bgColor = FlxColor.WHITE;
 
         spinningCat = new FlxSprite();
-        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(AssetPaths.getEmbeddedImage("spin-cat.png"), AssetPaths.getEmbeddedData("spin-cat.json", "images")));
+        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(AssetPaths.getImage("spin-cat.png", true), AssetPaths.getData("spin-cat.json", "images", true)));
         spinningCat.animation.addByPrefix("spin", "spin");
         spinningCat.animation.play("spin");
         spinningCat.setGraphicSize(catSize);
@@ -76,7 +76,7 @@ class MainMenuState extends FlxTransitionableState
         spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
         spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
 
-        springSFX = AssetPaths.getEmbeddedSound("boing.ogg");
+        springSFX = AssetPaths.getSound("boing.ogg", true);
         
         var title = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
         title.color = SOFT_BLACK;

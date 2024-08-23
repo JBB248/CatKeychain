@@ -45,7 +45,7 @@ class GalleryState extends FlxTransitionableState
         if(savedGallery.length <  1)
         {
             var cat = new FlxSprite();
-            cat.loadGraphic(AssetPaths.getEmbeddedImage("default-photo.png"));
+            cat.loadGraphic(AssetPaths.getImage("default-photo.png", true));
             cat.screenCenter();
 
             add(cat);

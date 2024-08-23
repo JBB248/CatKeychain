@@ -75,7 +75,7 @@ class DownloadMenu extends FlxSpriteContainer
 
     @:noCompletion function get_hasFocus():Bool
     {
-        return nameInput.hasFocus || notesInput.hasFocus;
+        #if html5 return false #else return nameInput.hasFocus || notesInput.hasFocus #end;
     }
 
     override public inline function get_width():Float

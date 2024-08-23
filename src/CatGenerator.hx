@@ -64,7 +64,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if (debug && !USE_API)
-        catLoader.pushRequests(Json.parse(openfl.Assets.getText("test-data.json")), true);
+        catLoader.pushRequests(Json.parse(AssetPaths.getData("test-data.json", "data")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -165,7 +165,7 @@ class CatLoader
         {
             for(request in newRequests)
             {
-                request.image = AssetPaths.getGalleryPhoto(request.id).bitmap;
+                request.image = @:privateAccess AssetPaths.getGalleryPhoto(request.id).bitmap;
                 generator.onCatGenerated.dispatch(request);
             }
         }
@@ -203,7 +203,7 @@ class CatLoader
         }
         else
         {
-            focus.image = AssetPaths.getEmbeddedImage("default-photo.png").bitmap;
+            focus.image = AssetPaths.getImage("default-photo.png", true).bitmap;
             generator.onCatGenerated.dispatch(focus);
             checkForNewRequest();
         }

@@ -18,7 +18,6 @@
 	<!--These window settings apply to all targets-->
 	<window width="640" height="480" fps="60" background="#000000" hardware="true" vsync="false"/>
 
-
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true"/>
 
@@ -29,9 +28,13 @@
 
 	<source path="src"/>
 
-	<assets path="assets/embedded/images" rename="embedded/images" embed="true"/>
-	<assets path="assets/embedded/sounds" rename="embedded/sounds" embed="true"/>
-	<assets path="debug" if="debug" rename=""/>
+	<!-- The web version can't use the API code, so it should just display the testing-data -->
+	<section if="html5 || debug">
+		<assets path="debug/data"    rename="assets/data"/>
+		<assets path="debug/gallery" rename="gallery"/>
+	</section>
+
+	<assets path="assets/embedded" rename="embedded" embed="true"/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
@@ -75,6 +78,8 @@
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug"/>
+
+	<haxedef name="message.reporting" value="pretty"/>
 
 	<!-- _________________________________ Custom _______________________________ -->
 
