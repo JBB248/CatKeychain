@@ -64,7 +64,7 @@ class CatGenerator
     public function requestCat(count:Int = 1):Void
     {
         #if (debug && !USE_API)
-        catLoader.pushRequests(Json.parse(AssetPaths.getData("test-data.json", "data")), true);
+        catLoader.pushRequests(Json.parse(AssetPaths.getData("test-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();

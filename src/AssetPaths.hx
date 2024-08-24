@@ -46,8 +46,10 @@ class AssetPaths
         var dirs = FileSystem.readDirectory("gallery");
         return [for(id in dirs) {graphic: getGalleryPhoto(id), data: getGalleryData(id)}];
         #else
-        return [];
+        var data:Array<CatData> = Json.parse(AssetPaths.getData("test-data.json"));
+        return [for(object in data) {graphic: getGalleryPhoto(object.id), data: getGalleryData(object.id)}];
         #end
+
     }
 
     static function getGalleryPhoto(id:String):FlxGraphic
