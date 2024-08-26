@@ -1,0 +1,52 @@
+{
+	"user_nickname": "Empty",
+	"width": 1080,
+	"id": "sWvKIFxBM",
+	"url": "https://cdn2.thecatapi.com/images/sWvKIFxBM.jpg",
+	"height": 1080,
+	"user_note": "",
+	"breeds": [
+		{
+			"short_legs": 0,
+			"suppressed_tail": 0,
+			"name": "Ragamuffin",
+			"vocalisation": 1,
+			"origin": "United States",
+			"rare": 0,
+			"wikipedia_url": "https://en.wikipedia.org/wiki/Ragamuffin_cat",
+			"affection_level": 5,
+			"description": "The Ragamuffin is calm, even tempered and gets along well with all family members. Changes in routine generally do not upset her. She is an ideal companion for those in apartments, and with children due to her patient nature.",
+			"vcahospitals_url": "https://vcahospitals.com/know-your-pet/cat-breeds/ragamuffin",
+			"hairless": 0,
+			"life_span": "12 - 16",
+			"intelligence": 5,
+			"dog_friendly": 5,
+			"shedding_level": 3,
+			"reference_image_id": "SMuZx-bFM",
+			"cfa_url": "http://cfa.org/Breeds/BreedsKthruR/Ragamuffin.aspx",
+			"alt_names": "",
+			"health_issues": 3,
+			"country_codes": "US",
+			"adaptability": 5,
+			"id": "raga",
+			"lap": 1,
+			"rex": 0,
+			"weight": {
+				"imperial": "8 - 20",
+				"metric": "4 - 9"
+			},
+			"child_friendly": 4,
+			"indoor": 0,
+			"social_needs": 3,
+			"country_code": "US",
+			"stranger_friendly": 5,
+			"grooming": 3,
+			"energy_level": 3,
+			"temperament": "Affectionate, Friendly, Gentle, Calm",
+			"hypoallergenic": 0,
+			"experimental": 0,
+			"vetstreet_url": "http://www.vetstreet.com/cats/ragamuffin",
+			"natural": 0
+		}
+	]
+}
