@@ -18,6 +18,9 @@
 	<!--These window settings apply to all targets-->
 	<window width="640" height="480" fps="60" background="#000000" hardware="true" vsync="false"/>
 
+	<!--HTML5-specific-->
+	<window if="html5" resizable="true"/>
+
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true"/>
 
@@ -30,8 +33,8 @@
 
 	<!-- The web version can't use the API code, so it should just display the testing-data -->
 	<section if="html5 || debug">
-		<assets path="debug/data"    rename="assets/data"/>
-		<assets path="debug/gallery" rename="gallery"/>
+		<assets path="demo/data"    rename="assets/data"/>
+		<assets path="demo/gallery" rename="gallery"/>
 	</section>
 
 	<assets path="assets/embedded" rename="embedded" embed="true"/>
@@ -90,5 +93,5 @@
 	<icon path="assets/build/kitten-32.png" size="32"/>
 	<icon path="assets/build/kitten-64.png" size="64"/>
 
-	<!-- <define name="USE_API" unless="html5"/> -->
+	<define name="DEMO_BUILD" if="html5" unless="CAT_API_KEY"/>
 </project>

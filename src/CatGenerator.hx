@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.util.FlxSignal;
 
 import haxe.Json;
+import haxe.macro.Compiler;
 
 import openfl.display.BitmapData;
 import openfl.events.Event;
@@ -63,8 +64,8 @@ class CatGenerator
      */
     public function requestCat(count:Int = 1):Void
     {
-        #if (debug && !USE_API)
-        catLoader.pushRequests(Json.parse(AssetPaths.getData("test-data.json")), true);
+        #if DEMO_BUILD
+        catLoader.pushRequests(Json.parse(AssetPaths.getData("demo-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -76,19 +77,19 @@ class CatGenerator
         busy = true;
 
         var limit = 1;
+        var key = Compiler.getDefine("CAT_API_KEY");
         if(requestCount > 1)
         {
-            #if USE_API
-            limit = Std.int(Math.min(100, requestCount)); // Requests can be in batches of up to 100 items with api key
-            #else
-            limit = 10; // Requests can either be single or batches of ten without api key
-            #end
+            if(key == null)
+                limit = 10; // Requests can either be single or batches of ten without an api key
+            else
+                limit = Std.int(Math.min(100, requestCount)); // Requests can be in batches of up to 100 items with api key
         }
         requestCount -= limit;
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
             + "?limit=" + limit
-            #if USE_API 
+            #if !DEMO_BUILD 
             // Without an api key, only ten photos can be requested at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
             + "&mime_types=jpg,png"
