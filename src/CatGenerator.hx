@@ -93,7 +93,7 @@ class CatGenerator
             // Without an api key, only ten photos can be requested at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
             + "&mime_types=jpg,png"
-            + "&api_key=" + Keys.CAT_API_KEY
+            + "&api_key=" + key
             #end
         ));
     }

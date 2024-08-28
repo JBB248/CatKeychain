@@ -47,7 +47,9 @@ class DownloadMenu extends FlxSpriteContainer
 		add(nameInput);
 		add(notesInput);
 		add(note);
+        #if !DEMO_BUILD
 		add(button);
+        #end
     }
 
     public function downloadPhoto():Void

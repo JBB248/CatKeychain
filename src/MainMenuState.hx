@@ -33,7 +33,7 @@ class MainMenuState extends FlxTransitionableState
 
         if(!initialized)
         {
-            #if burst
+            #if BURST_BUILD
             burst.Burst.init();
             #end
 
@@ -124,6 +124,7 @@ class MainMenuState extends FlxTransitionableState
         add(creditsText);
     }
 
+    // helper vars to manage spinning cat
     var catBounceElapsed:Float = 1.8;
     var deltaX:Float = 0;
     var ratioY:Float = 1;
@@ -136,7 +137,7 @@ class MainMenuState extends FlxTransitionableState
         {
             catSpring();
         }
-        if(catBounceElapsed < 1.8)
+        if(catBounceElapsed < 1.8) // Simulate FlxTween so that hitbox can be updated each frame
         {
             catBounceElapsed += elapsed;
 
@@ -150,6 +151,9 @@ class MainMenuState extends FlxTransitionableState
         }
     }
 
+    /**
+     * Make the cat go BOING!!
+     */
     function catSpring():Void
     {
         springSFX.play(true);

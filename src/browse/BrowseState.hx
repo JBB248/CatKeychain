@@ -20,7 +20,7 @@ import openfl.events.MouseEvent;
 
 class BrowseState extends FlxTransitionableState
 {
-	public static inline var TILE_SIZE:Int = 16;
+	public static inline var TILE_SIZE:Int = 16; // Relic from old build that's still necessary
 
 	public var textBox:FlxSprite;
 	public var infoText:FlxTypeText;
