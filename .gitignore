@@ -4,3 +4,5 @@ export/*
 # Personal code
 Keys.hx
 src/burst/*
+
+old-docs/*

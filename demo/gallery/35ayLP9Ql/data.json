@@ -1,0 +1,51 @@
+{
+	"user_nickname": "Ginger",
+	"width": 1440,
+	"id": "35ayLP9Ql",
+	"url": "https://cdn2.thecatapi.com/images/35ayLP9Ql.jpg",
+	"height": 1080,
+	"user_note": "",
+	"breeds": [
+		{
+			"short_legs": 0,
+			"suppressed_tail": 0,
+			"name": "Somali",
+			"vocalisation": 1,
+			"origin": "Somalia",
+			"rare": 0,
+			"wikipedia_url": "https://en.wikipedia.org/wiki/Somali_(cat)",
+			"affection_level": 5,
+			"description": "The Somali lives life to the fullest. He climbs higher, jumps farther, plays harder. Nothing escapes the notice of this highly intelligent and inquisitive cat. Somalis love the company of humans and other animals.",
+			"vcahospitals_url": "https://vcahospitals.com/know-your-pet/cat-breeds/somali",
+			"hairless": 0,
+			"life_span": "12 - 16",
+			"intelligence": 5,
+			"dog_friendly": 4,
+			"shedding_level": 4,
+			"reference_image_id": "EPF2ejNS0",
+			"cfa_url": "http://cfa.org/Breeds/BreedsSthruT/Somali.aspx",
+			"alt_names": "Fox Cat, Long-Haired Abyssinian",
+			"health_issues": 2,
+			"country_codes": "SO",
+			"adaptability": 5,
+			"id": "soma",
+			"rex": 0,
+			"weight": {
+				"imperial": "6 - 12",
+				"metric": "3 - 5"
+			},
+			"child_friendly": 3,
+			"indoor": 0,
+			"social_needs": 5,
+			"country_code": "SO",
+			"stranger_friendly": 5,
+			"grooming": 3,
+			"energy_level": 5,
+			"temperament": "Mischievous, Tenacious, Intelligent, Affectionate, Gentle, Interactive, Loyal",
+			"hypoallergenic": 0,
+			"experimental": 0,
+			"vetstreet_url": "http://www.vetstreet.com/cats/somali",
+			"natural": 0
+		}
+	]
+}

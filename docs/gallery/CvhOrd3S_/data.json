@@ -1,0 +1,51 @@
+{
+	"user_nickname": "Blue",
+	"width": 1620,
+	"id": "CvhOrd3S_",
+	"url": "https://cdn2.thecatapi.com/images/CvhOrd3S_.jpg",
+	"height": 1080,
+	"user_note": "",
+	"breeds": [
+		{
+			"short_legs": 0,
+			"suppressed_tail": 0,
+			"name": "Balinese",
+			"vocalisation": 5,
+			"origin": "United States",
+			"rare": 0,
+			"wikipedia_url": "https://en.wikipedia.org/wiki/Balinese_(cat)",
+			"affection_level": 5,
+			"description": "Balinese are curious, outgoing, intelligent cats with excellent communication skills. They are known for their chatty personalities and are always eager to tell you their views on life, love, and what you’ve served them for dinner. ",
+			"vcahospitals_url": "https://vcahospitals.com/know-your-pet/cat-breeds/balinese",
+			"hairless": 0,
+			"life_span": "10 - 15",
+			"intelligence": 5,
+			"dog_friendly": 5,
+			"shedding_level": 3,
+			"reference_image_id": "13MkvUreZ",
+			"cfa_url": "http://cfa.org/Breeds/BreedsAB/Balinese.aspx",
+			"alt_names": "Long-haired Siamese",
+			"health_issues": 3,
+			"country_codes": "US",
+			"adaptability": 5,
+			"id": "bali",
+			"rex": 0,
+			"weight": {
+				"imperial": "4 - 10",
+				"metric": "2 - 5"
+			},
+			"child_friendly": 4,
+			"indoor": 0,
+			"social_needs": 5,
+			"country_code": "US",
+			"stranger_friendly": 5,
+			"grooming": 3,
+			"energy_level": 5,
+			"temperament": "Affectionate, Intelligent, Playful",
+			"hypoallergenic": 1,
+			"experimental": 0,
+			"vetstreet_url": "http://www.vetstreet.com/cats/balinese",
+			"natural": 0
+		}
+	]
+}

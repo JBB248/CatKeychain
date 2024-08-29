@@ -149,5 +149,7 @@ class GalleryPhoto extends FlxSprite
         portrait = null;
         center = FlxDestroyUtil.put(center);
         tween = null;
+        
+        FlxMouseEvent.remove(this);
     }
 }

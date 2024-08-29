@@ -7,6 +7,10 @@ import flixel.tweens.FlxTween;
 
 import lime.tools.Orientation;
 
+/**
+ * Photo used in Carousel with shortcuts to recalculate size base on depth.
+ * Check `meta` for data on the photo from theCatAPI.
+ */
 class CarouselPhoto extends FlxSprite
 {
     public var orientation:Orientation = LANDSCAPE;
@@ -29,7 +33,7 @@ class CarouselPhoto extends FlxSprite
         orientation = frameWidth > frameHeight ? LANDSCAPE : PORTRAIT;
     }
 
-    public  function calculateScale(size:Float):Float
+    public function calculateScale(size:Float):Float
     {
         var scale = orientation == LANDSCAPE ? size / frameWidth : size / frameHeight;
         scaledWidth = frameWidth * scale;

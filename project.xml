@@ -18,6 +18,8 @@
 	<!--These window settings apply to all targets-->
 	<window width="640" height="480" fps="60" background="#000000" hardware="true" vsync="false"/>
 
+	<!--HTML5-specific-->
+	<window if="html5" resizable="true"/>
 
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true"/>
@@ -29,15 +31,21 @@
 
 	<source path="src"/>
 
-	<assets path="assets/embedded/images" rename="embedded/images" embed="true"/>
-	<assets path="assets/embedded/sounds" rename="embedded/sounds" embed="true"/>
-	<assets path="debug" if="debug" rename=""/>
+	<!-- The web version can't use the API code, so it should just display the testing-data -->
+	<section if="html5 || debug">
+		<assets path="demo/data"    rename="assets/data"/>
+		<assets path="demo/gallery" rename="gallery"/>
+	</section>
+
+	<assets path="assets/embedded" rename="embedded" embed="true"/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" version="5.8.0"/>
 	<haxelib name="flixel-addons" version="3.2.2"/>
 	<haxelib name="flixel-ui" version="2.6.1"/>
+
+	<haxelib name="hxcpp-debug-server" if="debug"/>
 
 	<!--In case you want to use nape with flixel-->
 	<!--<haxelib name="nape-haxe4" />-->
@@ -74,6 +82,8 @@
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug"/>
 
+	<haxedef name="message.reporting" value="pretty"/>
+
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
@@ -83,5 +93,5 @@
 	<icon path="assets/build/kitten-32.png" size="32"/>
 	<icon path="assets/build/kitten-64.png" size="64"/>
 
-	<define name="USE_API"/>
+	<define name="DEMO_BUILD" if="html5" unless="CAT_API_KEY"/>
 </project>

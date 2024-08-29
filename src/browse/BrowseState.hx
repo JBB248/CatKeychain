@@ -20,7 +20,7 @@ import openfl.events.MouseEvent;
 
 class BrowseState extends FlxTransitionableState
 {
-	public static inline var TILE_SIZE:Int = 16;
+	public static inline var TILE_SIZE:Int = 16; // Relic from old build that's still necessary
 
 	public var textBox:FlxSprite;
 	public var infoText:FlxTypeText;
@@ -72,7 +72,13 @@ class BrowseState extends FlxTransitionableState
 		infoText = new FlxTypeText(textBox.x + 4, textBox.y + 4, Std.int(textBox.width) - 8, "Neko :3");
 		ctrlText = new FlxText();
 		ctrlText.fieldWidth = infoText.fieldWidth;
-		ctrlText.applyMarkup("Skip text: @SPACE@ | Select photo: @UP@ | Deselect photo: @DOWN@ | Spin carousel: @LEFT@, @RIGHT@, or @Scroll wheel@ \nReset photos: @CTRL+R@ | Exit: @ESCAPE@", [textFormat]);
+		ctrlText.applyMarkup(
+			"Skip text: @SPACE@ | " 
+			+ "Select photo: @W@ | " 
+			+ "Deselect photo: @S@ | "
+			+ "Spin carousel: @A@, @D@, or @Scroll wheel@ \n" 
+			#if desktop + "Reset photos: @CTRL+R@ | "  #end
+			+ "Exit: @ESCAPE@", [textFormat]);
 		ctrlText.alignment = CENTER;
 		ctrlText.screenCenter(X);
 		ctrlText.y = FlxG.height - ctrlText.height;
@@ -88,7 +94,9 @@ class BrowseState extends FlxTransitionableState
 		add(textBox);
 		add(infoText);
 		add(ctrlText);
+		#if !html5
 		add(downloadMenu);
+		#end
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
@@ -148,9 +156,9 @@ class BrowseState extends FlxTransitionableState
 
 		switch(event.keyCode)
 		{
-			case FlxKey.LEFT:
+			case FlxKey.A:
 				spinCarousel(COUNTER_CLOCKWISE);
-			case FlxKey.RIGHT:
+			case FlxKey.D:
 				spinCarousel(CLOCKWISE);
 		}
 	}
@@ -161,10 +169,10 @@ class BrowseState extends FlxTransitionableState
 
 		switch(event.keyCode)
 		{
-			case FlxKey.ENTER | FlxKey.UP:
+			case FlxKey.ENTER | FlxKey.W:
 				isolatePhoto();
 
-			case FlxKey.ESCAPE | FlxKey.DOWN:
+			case FlxKey.ESCAPE | FlxKey.S:
 			{
 				if(isolated)
 					deisolatePhoto();
@@ -172,9 +180,11 @@ class BrowseState extends FlxTransitionableState
 					FlxG.switchState(MainMenuState.new);
 			}
 
+			#if desktop
 			case FlxKey.R:
 				if(#if mac event.commandKey #else event.controlKey #end)
 					FlxG.resetState();
+			#end
 		}
 	}
 
@@ -258,10 +268,15 @@ class BrowseState extends FlxTransitionableState
 					scale = photo.calculateScale(textBox.width - downloadMenu.width - 32);
 				else
 					scale = photo.calculateScale(height);
+				
 
 				photo.transitionTween = FlxTween.tween(photo, {
+					#if desktop
 					x: 32 + (textBox.width - downloadMenu.width) * 0.5 - photo.scaledWidth * 0.5, 
-					y: 16 + height * 0.5 - photo.scaledHeight * 0.5, 
+					#else
+					x: 32 + textBox.width * 0.5 - photo.scaledWidth * 0.5,
+					#end
+					y: 16 + height * 0.5 - photo.scaledHeight * 0.5,
 					"scale.x": scale, 
 					"scale.y": scale
 				}, 0.8, {

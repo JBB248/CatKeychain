@@ -1,0 +1,52 @@
+{
+	"user_nickname": "Striker",
+	"width": 768,
+	"id": "j6oFGLpRG",
+	"url": "https://cdn2.thecatapi.com/images/j6oFGLpRG.jpg",
+	"height": 1024,
+	"user_note": "",
+	"breeds": [
+		{
+			"short_legs": 0,
+			"suppressed_tail": 0,
+			"name": "Chartreux",
+			"vocalisation": 1,
+			"origin": "France",
+			"rare": 0,
+			"wikipedia_url": "https://en.wikipedia.org/wiki/Chartreux",
+			"affection_level": 5,
+			"description": "The Chartreux is generally silent but communicative. Short play sessions, mixed with naps and meals are their perfect day. Whilst appreciating any attention you give them, they are not demanding, content instead to follow you around devotedly, sleep on your bed and snuggle with you if you’re not feeling well.",
+			"vcahospitals_url": "https://vcahospitals.com/know-your-pet/cat-breeds/chartreux",
+			"hairless": 0,
+			"life_span": "12 - 15",
+			"intelligence": 4,
+			"dog_friendly": 5,
+			"shedding_level": 3,
+			"reference_image_id": "j6oFGLpRG",
+			"cfa_url": "http://cfa.org/Breeds/BreedsCJ/Chartreux.aspx",
+			"alt_names": "",
+			"health_issues": 2,
+			"country_codes": "FR",
+			"adaptability": 5,
+			"id": "char",
+			"lap": 1,
+			"rex": 1,
+			"weight": {
+				"imperial": "6 - 15",
+				"metric": "3 - 7"
+			},
+			"child_friendly": 4,
+			"indoor": 0,
+			"social_needs": 5,
+			"country_code": "FR",
+			"stranger_friendly": 5,
+			"grooming": 1,
+			"energy_level": 2,
+			"temperament": "Affectionate, Loyal, Intelligent, Social, Lively, Playful",
+			"hypoallergenic": 1,
+			"experimental": 0,
+			"vetstreet_url": "http://www.vetstreet.com/cats/chartreux",
+			"natural": 0
+		}
+	]
+}
