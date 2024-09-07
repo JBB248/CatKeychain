@@ -123,7 +123,7 @@ class GalleryState extends FlxTransitionableState
         }
 
         FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-        FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        AppUtil.mouseWheel.addEventListener(onMouseScroll);
     }
 
     override public function finishTransIn():Void
@@ -181,7 +181,7 @@ class GalleryState extends FlxTransitionableState
         }
     }
 
-    function onMouseWheel(event:MouseEvent):Void
+    function onMouseScroll(event:MouseEvent):Void
     {
         if(gallery == null || subState != null) return;
 
@@ -285,7 +285,7 @@ class GalleryState extends FlxTransitionableState
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
 
         FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-        FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        AppUtil.mouseWheel.removeEventListener(onMouseScroll);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto

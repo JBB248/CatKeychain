@@ -42,6 +42,8 @@ class MainMenuState extends FlxTransitionableState
             FlxG.sound.volumeDownKeys = null; // Prevent these from dinging while the user is typing
             FlxG.sound.volumeUpKeys = null;
             FlxG.sound.muteKeys = null;
+
+            AppUtil.mouseWheel = new MouseWheel();
             
             var transitionTile = FlxGraphic.fromClass(GraphicTransTileSquare);
             transitionTile.persist = true;
