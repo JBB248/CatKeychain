@@ -100,7 +100,7 @@ class BrowseState extends FlxTransitionableState
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-		FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
+		AppUtil.mouseWheel.addEventListener(onMouseScroll);
 
 		transitionIn();
 	}
@@ -348,7 +348,7 @@ class BrowseState extends FlxTransitionableState
 
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-		FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseScroll);
+		AppUtil.mouseWheel.removeEventListener(onMouseScroll);
 	}
 
 	@:access(CatGenerator)

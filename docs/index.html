@@ -1,62 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	
-	<meta charset="utf-8">
-	
-	<title>Cat Gallery</title>
-	
-	<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	
-	
-	<link rel="shortcut icon" type="image/png" href="./favicon.png">
-	
-	
-	<script type="text/javascript" src="./CatGallery.js"></script>
-	
-	<script>
-		window.addEventListener ("touchmove", function (event) { event.preventDefault (); }, { capture: false, passive: false });
-		if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
-			var meta = document.getElementById ("viewport");
-			meta.setAttribute ('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
-		}
-	</script>
-	
-	<style>
-		html,body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-		#openfl-content { background: #000000; width: 100%; height: 100%; }
-		@font-face {
-			font-family: 'Nokia Cellphone FC Small';
-			src: url('flixel/fonts/nokiafc22.eot?#iefix') format('embedded-opentype'),
-			url('flixel/fonts/nokiafc22.woff') format('woff'),
-			url('flixel/fonts/nokiafc22.ttf') format('truetype'),
-			url('flixel/fonts/nokiafc22.svg#Nokia%20Cellphone%20FC%20Small') format('svg');
-			font-weight: normal;
-			font-style: normal;
-		}
-		@font-face {
-			font-family: 'Monsterrat';
-			src: url('flixel/fonts/monsterrat.eot?#iefix') format('embedded-opentype'),
-			url('flixel/fonts/monsterrat.woff') format('woff'),
-			url('flixel/fonts/monsterrat.ttf') format('truetype'),
-			url('flixel/fonts/monsterrat.svg#Monsterrat') format('svg');
-			font-weight: normal;
-			font-style: normal;
-		}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cat Keychain</title>
 
-	</style>
-	
-</head>
-<body>
-	
-	<noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this page.</noscript>
-	
-	<div id="openfl-content"></div>
-	
-	<script type="text/javascript">
-		lime.embed ("CatGallery", "openfl-content", 640, 480, { parameters: {} });
-	</script>
-	
-</body>
+        <link rel="stylesheet" href="./styles.css"/>
+    </head>
+    <body>
+        <div id="content">
+            <div id="main-menu">
+                <h1 class="light">Cat Keychain</h1>
+                <!-- <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/> -->
+                <iframe id="cat-app" src="./CatKeychain.html" title="CatKeychain-App" width="640" height="480"></iframe>
+                <div class="desc">
+                    <p class="light">
+                        <em>
+                            --This webpage is currently under development--
+                            <br>
+                            If you find any problems, please report them <a href="https://github.com/JBB248/CatKeychain/issues" target="_blank">here</a>.
+                        </em>
+                    </p>
+                    <br>
+                    <p class="light">
+                        The CatKeychain is a clever app that can hide secrets within photos of cats.
+                    </p>
+                    <p class="light">
+                        Powered by HaxeFlixel; Photos are sourced from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                    </p>
+                </div>
+            </div>
+            <!-- <div id="show-menu">
+                <h1 class="dark">--What it does--</h1>
+                <div class="aligned-container">
+                    <p class="img-label left-text">
+                        Here, photos can be viewed and downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                        Before downloading, each photo can be assigned a nickname (used for the gallery's search feature) and a custom note.
+                        <br/><br/>
+                        If the photos provided aren't to your liking, they can be reshuffled using <em>CTRL+R</em>.
+                    </p>
+                    <img class="preview-light" src="./browser-preview.gif" alt="browser-preview"/>
+                </div>
+                <div class="aligned-container">
+                    <img class="preview-light" src="./gallery-preview.gif" alt="gallery-preview"/>
+                    <p class="img-label right-text">
+                        The gallery houses all of the photos in an organized and easy to navigate manner.
+                        <br/><br/>
+                        Use <em>CTRL+F</em> to activate the search function to find a specific photo using its given nickname.
+                    </p>
+                </div>
+            </div>
+            <div id="build-menu">
+                <h1 class="light">--How to Use it--</h1>
+                <p class="light">Because this app uses an API with limited requests, I cannot distribute an executable version.</p>
+                <p class="light">However, I <em>can</em> distribute the source code and building instructions on <a href="https://github.com/jbb248/catgallery/">github.com</a></p>
+            </div>
+        </div> -->
+        <footer>
+            <p class="light">Joe Bray | GitHub: <a href="https://github.com/jbb248">JBB248</a></p>
+        </footer>
+    </body>
 </html>
