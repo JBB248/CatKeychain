@@ -60,6 +60,8 @@ class MainMenuState extends FlxTransitionableState
             transOut =
             FlxTransitionableState.defaultTransIn = 
             FlxTransitionableState.defaultTransOut = transitionData;
+
+            initialized = true;
         }
     }
 

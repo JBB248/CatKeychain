@@ -4,6 +4,16 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - in-progress
+### Added
+- HTML5 code for webpage demo (yippee)
+
+### Fixed
+- Some event listeners weren't not properly removed
+
+### Security
+- Completely excluded API key from demo build
+
 ## [1.0.1] - 2024-08-04
 ### Fixed
 - API key wouldn't exist after first run
