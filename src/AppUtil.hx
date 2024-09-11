@@ -11,6 +11,8 @@ class AppUtil
     public static var SOFT_NAVY:FlxColor = 0xFF252F40;
     public static var ICE:FlxColor = 0xFF17C1E8;
 
+    public static var mouseWheel:MouseWheel;
+
 	public static function getIceTextFormat():FlxTextFormatMarkerPair
 	{
         return new FlxTextFormatMarkerPair(new FlxTextFormat(ICE), "@");

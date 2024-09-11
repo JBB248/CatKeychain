@@ -8,8 +8,10 @@ import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
 import flixel.text.FlxText;
 
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
 
 class DownloadMenu extends FlxSpriteContainer
 {
@@ -45,11 +47,14 @@ class DownloadMenu extends FlxSpriteContainer
 		add(nameInput);
 		add(notesInput);
 		add(note);
+        #if !DEMO_BUILD
 		add(button);
+        #end
     }
 
     public function downloadPhoto():Void
     {
+        #if sys
         var photo = parent.carousel.members[parent.carousel.length - 1];
         var pixels = photo.graphic.bitmap;
         var data:Dynamic = {};
@@ -67,11 +72,12 @@ class DownloadMenu extends FlxSpriteContainer
         File.saveContent('gallery/${data.id}/data.json', haxe.Json.stringify(data, null, "\t"));
 
         // parent.celebrate();
+        #end
     }
 
     @:noCompletion function get_hasFocus():Bool
     {
-        return nameInput.hasFocus || notesInput.hasFocus;
+        #if html5 return false #else return nameInput.hasFocus || notesInput.hasFocus #end;
     }
 
     override public inline function get_width():Float

@@ -12,6 +12,12 @@ typedef CarouselItem = {
 	var size:Float;
 }
 
+/**
+ * Photo wheel with declarable position and size
+ * 
+ * _Note:_ The size cannot be alterred after the wheel is instantiated
+ * _Note:_ A change in position will not take effect until the wheel is spun
+ */
 class Carousel extends FlxTypedGroup<CarouselPhoto>
 {
     public static inline var PHOTO_SIZE:Int = 115;

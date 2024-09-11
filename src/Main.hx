@@ -6,6 +6,6 @@ class Main extends openfl.display.Sprite
 	{
 		super();
 
-		addChild(new flixel.FlxGame(0, 0, MainMenuState, true));
+		addChild(new flixel.FlxGame(0, 0, MainMenuState, #if debug true #end));
 	}
 }

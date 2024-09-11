@@ -3,6 +3,9 @@ package;
 import flixel.FlxG;
 import flixel.util.FlxSignal;
 
+import haxe.Json;
+import haxe.macro.Compiler;
+
 import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.events.HTTPStatusEvent;
@@ -20,17 +23,17 @@ import openfl.net.URLRequest;
  */
 class CatGenerator
 {
-    public static var emptyData:CatData = {
-        breeds: null,
-        id: "",
-        url: null,
-        width: 0,
-        height: 0,
+    public static var emptyData:String = "{
+        \"breeds\": null,
+        \"id\": \"\",
+        \"url\": null,
+        \"width\": 0,
+        \"height\": 0,
 
-        image: null,
-        user_nickname: null,
-        user_note: null
-    };
+        \"image\": null,
+        \"user_nickname\": null,
+        \"user_note\": null
+    }";
 
     public var onCatGenerated:FlxTypedSignal<CatData->Void>;
 
@@ -61,8 +64,8 @@ class CatGenerator
      */
     public function requestCat(count:Int = 1):Void
     {
-        #if (debug && !USE_API)
-        catLoader.pushRequests(haxe.Json.parse(sys.io.File.getContent("test-data.json")), true);
+        #if DEMO_BUILD
+        catLoader.pushRequests(Json.parse(AssetPaths.getData("demo-data.json")), true);
         #else
         requestCount += count;
         if(!busy) getDataFromAPI();
@@ -74,23 +77,23 @@ class CatGenerator
         busy = true;
 
         var limit = 1;
+        var key = Compiler.getDefine("CAT_API_KEY");
         if(requestCount > 1)
         {
-            #if USE_API
-            limit = Std.int(Math.min(100, requestCount)); // Requests can be in batches of up to 100 items with api key
-            #else
-            limit = 10; // Requests can either be single or batches of ten without api key
-            #end
+            if(key == null)
+                limit = 10; // Requests can either be single or batches of ten without an api key
+            else
+                limit = Std.int(Math.min(100, requestCount)); // Requests can be in batches of up to 100 items with api key
         }
         requestCount -= limit;
         loader.load(new URLRequest(
             "https://api.thecatapi.com/v1/images/search"
             + "?limit=" + limit
-            #if USE_API 
+            #if !DEMO_BUILD 
             // Without an api key, only ten photos can be requested at a time, data isn't guaranteed, and non-jpegs may be retrieved
             + "&has_breeds=1"
             + "&mime_types=jpg,png"
-            + "&api_key=" + Keys.CAT_API_KEY
+            + "&api_key=" + key
             #end
         ));
     }
@@ -107,7 +110,7 @@ class CatGenerator
 
     function onComplete(event:Event):Void
     {
-        var response:Array<CatData> = haxe.Json.parse(event.target.data);
+        var response:Array<CatData> = Json.parse(event.target.data);
 
         catLoader.pushRequests(response);
 
@@ -163,7 +166,7 @@ class CatLoader
         {
             for(request in newRequests)
             {
-                request.image = AssetPaths.getGalleryPhoto(request.id).bitmap;
+                request.image = @:privateAccess AssetPaths.getGalleryPhoto(request.id).bitmap;
                 generator.onCatGenerated.dispatch(request);
             }
         }
@@ -201,7 +204,7 @@ class CatLoader
         }
         else
         {
-            focus.image = AssetPaths.getEmbeddedImage("default-photo.png").bitmap;
+            focus.image = AssetPaths.getImage("default-photo.png", true).bitmap;
             generator.onCatGenerated.dispatch(focus);
             checkForNewRequest();
         }

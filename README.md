@@ -1,53 +1,45 @@
 <img src="docs/menu-preview.gif" alt="menu-preview" height="480px"/>
 
-A simple app that stores and displays photos and information about cats.
+A clever app that hides secrets within photos of cats.
+<br/>
 Photos are downloaded within the app from [TheCatAPI](https://thecatapi.com/).
-
-This is a practice project I challenged myself with to improve my work efficiency, 
-and my skills with HaxeFlixel, reactive UI, and API requests.
-
-Unfortunately, I cannot distribute an executable version, but the instructions to build it yourself are simple (and listed below).
+<br/><br/>
+I cannot distribute an executable version (yet), but a demo is available [here](https://jbb248.github.io/CatKeychain/) and the instructions to build it yourself are simple (and listed below).
 
 ## Building
 If you want to build your own copy or even create your own version, the steps are simple:
-
-- __First__: [Download](https://github.com/JBB248/CatGallery/archive/refs/heads/main.zip) the source code or [clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this repository (the latter requires [git](https://git-scm.com/))
-
-- __Second__: Download and install [Haxe](https://haxe.org)
-
-- __Third__: Follow the instructions to [install HaxeFlixel](https://haxeflixel.com/documentation/getting-started/)
-
-- __Fourth__: If you aren't going to use Neko, you'll need to set lime up for your OS
-    - Windows: [Setup Windows](https://lime.openfl.org/docs/advanced-setup/windows/)
-    - MacOS: [Setup MacOS](https://lime.openfl.org/docs/advanced-setup/macos/)
-    - Linux: [Setup Linux](https://lime.openfl.org/docs/advanced-setup/linux/)
-
-- __Fifth__: While this project will work without an api key to [TheCatAPI](https://thecatapi.com/), it won't be nearly as cool. 
-    - If you're okay _without_ a key, just disable the `USE_API` flag on `project.xml` by commenting out or deleting the line
-    ```xml
-    <define name="USE_API">
-    ```
-    - If you do want to use a key, you must first get one from [here](https://thecatapi.com/#pricing). Then make a new file in the `src` folder called `Keys.hx`. Inside it, paste the following code, replacing `YOUR_KEY_HERE` with the key you recieved from TheCatAPI in an email: 
-    ```haxe
-    package;
-
-    class Keys
-    {
-        public static var CAT_API_KEY:String = "YOUR_KEY_HERE";
-    }
-    ```
-        
-    
-    > ___WARNING:___ Make sure you do not accidentally reveal your API key! Someone can abuse it without you knowing! TheCatAPI is pretty lenient with theirs, but it still should be avoided at all costs!
+<br/><em>Note: the encryption functionality is hidden from github. This is to simply build an app that views cat photos.</em>
+<ol>
+    <li>
+        <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">Clone</a> or <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo">fork</a> this repository (requires <a href="https://git-scm.com/">git</a>) or simply <a href="https://github.com/JBB248/CatGallery/archive/refs/heads/main.zip">download</a> the source code 
+    </li>
+    <li>
+        Download and install <a href="https://haxe.org">Haxe</a>
+    </li>
+    <li>
+        Follow the instructions to <a href="https://haxeflixel.com/documentation/getting-started/">install HaxeFlixel</a>
+    </li>
+    <li>
+        If you aren't going to use Neko, you'll need to set lime up for your OS
+        <ul>
+            <li>Windows: <a href="https://lime.openfl.org/docs/advanced-setup/windows/">Setup Windows</a></li>
+            <li>Windows: <a href="https://lime.openfl.org/docs/advanced-setup/macos/">Setup MacOS</a></li>
+            <li>Windows: <a href="https://lime.openfl.org/docs/advanced-setup/linux/">Setup Linux</a></li>
+        </ul>
+    </li>
+    <li>
+        Without a key to <a href="https://thecatapi.com/">TheCatAPI</a>, the code will compile into a demo build which will use predetermined photos and data.
+        To get around this, get yourself a key, then add <code>-DCAT_API_KEY="YOUR_KEY_HERE"</code> to your build command. (Windows example: <code>lime build windows -DCAT_API_KEY="YOUR_KEY_HERE"</code>)
+    </li>
+</ol>
 
 ### Note:
-This is built with Neko and Windows in mind.
+This is built with Windows and HTML5 in mind.
 I do not have the means to test on Mac or Linux, so those builds may not function as expected.
-Html5 definitely doesn't work :sweat_smile:
 
 If you have any questions, leave them in the discussions tab.
 
 ## Credits
 - Downloadable photos are sourced from [TheCatAPI](https://thecatapi.com/)
-- Spinning cat sourced from [r/Catloaf](https://www.reddit.com/r/Catloaf/comments/yrvghr/found_it_the_very_rare_3d_360_degrees_catloaf/)
+- Spinning maxwell cat sourced from [r/Catloaf](https://www.reddit.com/r/Catloaf/comments/yrvghr/found_it_the_very_rare_3d_360_degrees_catloaf/)
 - Powered by [HaxeFlixel](https://haxeflixel.com)

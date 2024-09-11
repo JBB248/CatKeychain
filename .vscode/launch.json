@@ -1,21 +1,18 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Build + Debug",
-			"type": "lime",
-			"request": "launch"
-		},
-		{
-			"name": "Debug",
-			"type": "lime",
-			"request": "launch",
-			"preLaunchTask": null
-		},
-		{
-			"name": "Macro",
-			"type": "haxe-eval",
-			"request": "launch"
-		}
-	]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Windows",
+            "type": "hxcpp",
+            "request": "launch",
+            "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe",
+        },
+        {
+            "name": "Build and Debug Windows",
+            "type": "hxcpp",
+            "request": "launch",
+            "preLaunchTask": "lime: build windows -debug",
+            "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe"
+        }
+    ]
 }

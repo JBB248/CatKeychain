@@ -33,7 +33,7 @@ class MainMenuState extends FlxTransitionableState
 
         if(!initialized)
         {
-            #if burst
+            #if BURST_BUILD
             burst.Burst.init();
             #end
 
@@ -42,6 +42,8 @@ class MainMenuState extends FlxTransitionableState
             FlxG.sound.volumeDownKeys = null; // Prevent these from dinging while the user is typing
             FlxG.sound.volumeUpKeys = null;
             FlxG.sound.muteKeys = null;
+
+            AppUtil.mouseWheel = new MouseWheel();
             
             var transitionTile = FlxGraphic.fromClass(GraphicTransTileSquare);
             transitionTile.persist = true;
@@ -58,6 +60,8 @@ class MainMenuState extends FlxTransitionableState
             transOut =
             FlxTransitionableState.defaultTransIn = 
             FlxTransitionableState.defaultTransOut = transitionData;
+
+            initialized = true;
         }
     }
 
@@ -68,7 +72,7 @@ class MainMenuState extends FlxTransitionableState
         FlxG.camera.bgColor = FlxColor.WHITE;
 
         spinningCat = new FlxSprite();
-        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(AssetPaths.getEmbeddedImage("spin-cat.png"), AssetPaths.getEmbeddedData("spin-cat.json", "images")));
+        spinningCat.setFrames(FlxAtlasFrames.fromTexturePackerJson(AssetPaths.getImage("spin-cat.png", true), AssetPaths.getData("spin-cat.json", "images", true)));
         spinningCat.animation.addByPrefix("spin", "spin");
         spinningCat.animation.play("spin");
         spinningCat.setGraphicSize(catSize);
@@ -76,7 +80,7 @@ class MainMenuState extends FlxTransitionableState
         spinningCat.x = FlxG.width * 0.75 - spinningCat.width * 0.5;
         spinningCat.y = FlxG.height * 0.5 - spinningCat.height * 0.5;
 
-        springSFX = AssetPaths.getEmbeddedSound("boing.ogg");
+        springSFX = AssetPaths.getSound("boing.ogg", true);
         
         var title = new FlxText(20, 40, FlxG.width * 0.5 - 40, "Cat Gallery", 60);
         title.color = SOFT_BLACK;
@@ -107,7 +111,7 @@ class MainMenuState extends FlxTransitionableState
         var creditsButton = new MenuButton(browseButton.x + browseButton.width + 10, galleryButton.y, "View Credits", buttonColors);
         creditsButton.onUp.callback = () -> catSpring();
         var creditsText = new FlxText(galleryText.x, galleryText.y, 0, 
-            "- Downloadable photos sourced from TheCatAPI.com\n\n- Spinning cat sourced from r/Catloaf\n\n- Powered by HaxeFlixel");
+            "- Cat photos sourced from TheCatAPI.com\n\n- Spinning maxwell cat sourced from r/Catloaf\n\n- Powered by HaxeFlixel");
         creditsText.color = AppUtil.SOFT_BLACK;
         creditsText.kill();
         creditsButton.onOver.callback = () -> creditsText.revive();
@@ -124,6 +128,7 @@ class MainMenuState extends FlxTransitionableState
         add(creditsText);
     }
 
+    // helper vars to manage spinning cat
     var catBounceElapsed:Float = 1.8;
     var deltaX:Float = 0;
     var ratioY:Float = 1;
@@ -136,7 +141,7 @@ class MainMenuState extends FlxTransitionableState
         {
             catSpring();
         }
-        if(catBounceElapsed < 1.8)
+        if(catBounceElapsed < 1.8) // Simulate FlxTween so that hitbox can be updated each frame
         {
             catBounceElapsed += elapsed;
 
@@ -150,6 +155,9 @@ class MainMenuState extends FlxTransitionableState
         }
     }
 
+    /**
+     * Make the cat go BOING!!
+     */
     function catSpring():Void
     {
         springSFX.play(true);

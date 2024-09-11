@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Cat Gallery</title>
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cat Keychain</title>
 
         <link rel="stylesheet" href="./styles.css"/>
     </head>
     <body>
         <div id="content">
             <div id="main-menu">
-                <h1 class="light">--The Digital Cat Gallery--</h1>
-                <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/>
+                <h1 class="light">Cat Keychain</h1>
+                <!-- <img class="preview-dark" src="./menu-preview.gif" alt="menu-preview"/> -->
+                <iframe id="cat-app" src="./CatKeychain.html" title="CatKeychain-App" width="640" height="480"></iframe>
                 <div class="desc">
                     <p class="light">
-                        This is a practice project I challenged myself with to improve my work efficiency, 
-                        and my skills with HaxeFlixel, reactive UI, and API requests.
+                        <em>
+                            --This webpage is currently under development--
+                            <br>
+                            If you find any problems, please report them <a href="https://github.com/JBB248/CatKeychain/issues" target="_blank">here</a>.
+                        </em>
+                    </p>
+                    <br>
+                    <p class="light">
+                        The CatKeychain is a clever app that can hide secrets within photos of cats.
                     </p>
                     <p class="light">
-                        The cat gallery stores and displays photos and information about cats.
-                        Photos can be downloaded from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                        Powered by HaxeFlixel; Photos are sourced from <a href="https://thecatapi.com/" target="_blank">TheCatAPI</a>.
+                    </p>
+                    <p class="light">
+                        <a href="https://github.com/jbb248/catkeychain/" target="_blank">&lt;source code&gt;</a>
                     </p>
                 </div>
             </div>
-            <div id="show-menu">
+            <!-- <div id="show-menu">
                 <h1 class="dark">--What it does--</h1>
                 <div class="aligned-container">
                     <p class="img-label left-text">
@@ -48,7 +58,7 @@
                 <p class="light">Because this app uses an API with limited requests, I cannot distribute an executable version.</p>
                 <p class="light">However, I <em>can</em> distribute the source code and building instructions on <a href="https://github.com/jbb248/catgallery/">github.com</a></p>
             </div>
-        </div>
+        </div> -->
         <footer>
             <p class="light">Joe Bray | GitHub: <a href="https://github.com/jbb248">JBB248</a></p>
         </footer>

@@ -45,7 +45,7 @@ class GalleryState extends FlxTransitionableState
         if(savedGallery.length <  1)
         {
             var cat = new FlxSprite();
-            cat.loadGraphic(AssetPaths.getEmbeddedImage("default-photo.png"));
+            cat.loadGraphic(AssetPaths.getImage("default-photo.png", true));
             cat.screenCenter();
 
             add(cat);
@@ -123,7 +123,7 @@ class GalleryState extends FlxTransitionableState
         }
 
         FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-        FlxG.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        AppUtil.mouseWheel.addEventListener(onMouseScroll);
     }
 
     override public function finishTransIn():Void
@@ -181,12 +181,12 @@ class GalleryState extends FlxTransitionableState
         }
     }
 
-    function onMouseWheel(event:MouseEvent):Void
+    function onMouseScroll(event:MouseEvent):Void
     {
         if(gallery == null || subState != null) return;
 
         // Update scroll
-        camTarget.y -= event.delta * 40;
+        camTarget.y -= event.delta * #if html5 5 #else 40 #end;
         if(camTarget.y < FlxG.worldBounds.y)
             camTarget.y = 0;
         else if(camTarget.y + camTarget.height > FlxG.worldBounds.height)
@@ -285,7 +285,7 @@ class GalleryState extends FlxTransitionableState
         viewSubState = FlxDestroyUtil.destroy(viewSubState);
 
         FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyReleased);
-        FlxG.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+        AppUtil.mouseWheel.removeEventListener(onMouseScroll);
     }
 
     @:noCompletion function set_focus(value:GalleryPhoto):GalleryPhoto

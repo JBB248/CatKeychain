@@ -2,7 +2,7 @@
     font-family: "nokiafc22";
     src: 
         local("nokiafc22"),
-        url("./nokiafc22.woff");
+        url("./flixel/fonts/nokiafc22.woff");
 }
 
 body {
