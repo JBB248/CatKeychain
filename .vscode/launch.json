@@ -13,6 +13,21 @@
             "request": "launch",
             "preLaunchTask": "lime: build windows -debug",
             "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe"
+        },
+        {
+            "name": "Debug HashLink",
+            "type": "hl",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/export/hl/bin",
+            "program": "${workspaceFolder}/export/hl/obj/ApplicationMain.hl",
+        },
+        {
+            "name": "Build and Debug HashLink",
+            "type": "hl",
+            "request": "launch",
+            "preLaunchTask": "lime: build hl -debug",
+            "cwd": "${workspaceFolder}/export/hl/bin",
+            "program": "${workspaceFolder}/export/hl/obj/ApplicationMain.hl",
         }
     ]
 }
