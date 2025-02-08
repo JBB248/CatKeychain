@@ -4,8 +4,8 @@ import AppUtil.*;
 import MainMenuState.MenuButton;
 
 import flixel.FlxSprite;
-import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxSpriteContainer;
+import flixel.text.FlxInputText;
 import flixel.text.FlxText;
 
 #if sys
@@ -34,7 +34,7 @@ class DownloadMenu extends FlxSpriteContainer
 		text = new FlxText(4, 4, 36, "Name:\n\nNote:");
 		nameInput = new FlxInputText(text.x + text.width + 2, text.y, 145);
 		notesInput = new FlxInputText(nameInput.x, nameInput.y + nameInput.height + 4, 145);
-		notesInput.maxLength = 24;
+		notesInput.maxChars = 24;
 		var note = new FlxText(notesInput.x - 1, notesInput.y + notesInput.height + 2, 145, "- 24 character max");
 
 		button = new MenuButton(text.x, note.y + note.height + 4, "Save to gallery", [NAVY, SOFT_WHITE, SOFT_NAVY]);

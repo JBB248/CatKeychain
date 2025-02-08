@@ -4,9 +4,9 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.text.FlxInputText;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
@@ -92,7 +92,7 @@ class GalleryState extends FlxTransitionableState
             input = new FlxInputText(5, 5, 145, null, 8, FlxColor.WHITE, AppUtil.SOFT_NAVY);
             input.fieldBorderColor = AppUtil.NAVY;
             input.fieldBorderThickness = 5;
-            input.callback = findPhoto;
+            input.onEnter.add(findPhoto);
             input.scrollFactor.y = 0;
             input.kill();
 
@@ -198,15 +198,12 @@ class GalleryState extends FlxTransitionableState
         searching = true;
 
         input.revive();
-        input.hasFocus = true;
-
-        findPhoto(input.text, "open");
+        findPhoto(input.text);
     }
 
     function hideSearchBar():Void
     {
         searching = false;
-        input.hasFocus = false;
         input.kill();
 
         for(photo in gallery.members)
@@ -218,7 +215,7 @@ class GalleryState extends FlxTransitionableState
         }
     }
 
-    function findPhoto(text:String, action:String):Void
+    function findPhoto(text:String):Void
     {
         for(photo in gallery)
         {

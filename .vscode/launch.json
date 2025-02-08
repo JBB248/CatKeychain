@@ -5,7 +5,7 @@
             "name": "Debug Windows",
             "type": "hxcpp",
             "request": "launch",
-            "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe",
+            "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe"
         },
         {
             "name": "Build and Debug Windows",
@@ -14,20 +14,23 @@
             "preLaunchTask": "lime: build windows -debug",
             "program": "${workspaceFolder}/export/debug/windows/bin/CatGallery.exe"
         },
+        
+        // Note: There is currently a weird issue with these where it tries to load
+        // at the manifest folder at the hl.exe root instead of the export folder
         {
             "name": "Debug HashLink",
             "type": "hl",
             "request": "launch",
-            "cwd": "${workspaceFolder}/export/hl/bin",
-            "program": "${workspaceFolder}/export/hl/obj/ApplicationMain.hl",
+            "cwd": "${workspaceFolder}/export/debug/hl/bin",
+            "program": "${workspaceFolder}/export/debug/hl/obj/ApplicationMain.hl"
         },
         {
             "name": "Build and Debug HashLink",
             "type": "hl",
             "request": "launch",
             "preLaunchTask": "lime: build hl -debug",
-            "cwd": "${workspaceFolder}/export/hl/bin",
-            "program": "${workspaceFolder}/export/hl/obj/ApplicationMain.hl",
+            "cwd": "${workspaceFolder}/export/debug/hl/bin",
+            "program": "${workspaceFolder}/export/debug/hl/obj/ApplicationMain.hl"
         }
     ]
 }
