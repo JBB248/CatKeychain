@@ -1,7 +1,6 @@
-<img src="docs/menu-preview.gif" alt="menu-preview" height="480px"/>
+<!-- <img src="docs/menu-preview.gif" alt="menu-preview" height="480px"/> -->
 
 A clever app that hides secrets within photos of cats.
-<br/>
 Photos are downloaded within the app from [TheCatAPI](https://thecatapi.com/).
 <br/><br/>
 I cannot distribute an executable version (yet), but a demo is available [here](https://jbb248.github.io/CatKeychain/) and the instructions to build it yourself are simple (and listed below).
